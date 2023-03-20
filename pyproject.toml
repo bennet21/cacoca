@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "cacoca"
+version = "0.1.0"
+description = ""
+authors = ["Jakob Duerrwaechter <jakob.duerrwaechter@pik-potsdam.de>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+plotly = "^5.13.1"
+pandas = "^1.5.3"
+numpy = "^1.24.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
