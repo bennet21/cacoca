@@ -1,0 +1,3 @@
+[submodule "data/posted"]
+	path = data/posted
+	url = git@github.com:PhilippVerpoort/posted.git
