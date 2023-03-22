@@ -1,7 +1,7 @@
-# IMPORTS --------------------------------------------------
+# IMPORTS ----------------------------------------------------------------
 import pandas as pd
 import numpy as np
-# TECHNOLOGY PARAMETER SHEET -------------------------------
+# BEGIN READING TECHNOLOGY PARAMETER SHEET -------------------------------
 # read in technology param inverted sheet
 techparam = pd.read_excel(
    io='Input_Modellierung_2023-0321.xlsx',
@@ -62,16 +62,16 @@ techparam_filtered = techparam_filtered.assign(type = techparam_filtered['variab
 
 # add missing columns
 techparam_filtered = techparam_filtered.assign(Subcomponent = np.nan,
-                                               Region = np.nan,
-                                               Period = np.nan,
-                                               Usage = np.nan,
-                                               Reported_uncertainty = np.nan,
-                                               Non_unit_conversion_factor = np.nan,
-                                               Used_value = techparam_filtered['value'],
-                                               Used_uncertainty = np.nan,
-                                               Used_unit = techparam_filtered['unit'],
-                                               Value_and_uncertainty_comment = np.nan,
-                                               Source_comment = np.nan)
+                               Region = np.nan,
+                               Period = np.nan,
+                               Usage = np.nan,
+                               Reported_uncertainty = np.nan,
+                               Non_unit_conversion_factor = np.nan,
+                               Used_value = techparam_filtered['value'],
+                               Used_uncertainty = np.nan,
+                               Used_unit = techparam_filtered['unit'],
+                               Value_and_uncertainty_comment = np.nan,
+                               Source_comment = np.nan)
 
 # rename the columns of the final dataframe
 techparam_filtered.columns = ['Industry', 'Technology', 'Source reference', 'Mode',
@@ -81,23 +81,93 @@ techparam_filtered.columns = ['Industry', 'Technology', 'Source reference', 'Mod
                               'Non-unit conversion factor','Used value','Used uncertainty',
                               'Used unit','Value and uncertainty comment','Source comment']
 
+# END READING TECHNOLOGY PARAMETER SHEET -------------------------------
+
+# BEGIN READING CAPEX TECHNOLOGY ---------------------------------------
+# read in excel sheet
+capextech = pd.read_excel(
+   io='Input_Modellierung_2023-0321.xlsx',
+   sheet_name ='CAPEX Technology '
+)
+# remove first row
+capextech = capextech.iloc[2:,]
+
+# rename columns
+capextech.columns = ['Technology',
+       'Industry', 'Source reference', 'Scenario', 'Reported unit', 'Reported value']
+
+# fill in missing technology values with value from previous row (due to the structure of the excel sheet)
+capextech['Technology'].fillna(method='ffill', inplace=True)
+
+# filter out row with missing scenario or value
+capextech = capextech[~capextech['Scenario'].isnull() & ~capextech['Reported value'].isnull() & ~(capextech['Reported value'] == 0)]
+
+# add Type, Component and Mode column
+capextech =  capextech.assign(Component = "CAPEX",
+                              Mode = np.nan,
+                              Type = np.nan)
+
+# fill Type column
+# Set values to 'High CAPEX' for rows where Scenario ends with "_High"
+capextech.loc[capextech['Scenario'].str.endswith('_High'), 'Type'] = 'High CAPEX'
+    
+# Set values to 'Low CAPEX' for rows where Scenario ends with "_Low"
+capextech.loc[capextech['Scenario'].str.endswith('_Low'), 'Type'] = 'Low CAPEX'
+
+# reorder columns to match techparam dataframe
+capextech = capextech[['Industry', 'Technology', 'Source reference', 'Mode',
+                              'Component', 'Reported value', 'Reported unit', "Type"]]
+
+# add missing columns
+capextech = capextech.assign(Subcomponent = np.nan,
+                               Region = np.nan,
+                               Period = 2022,
+                               Usage = np.nan,
+                               Reported_uncertainty = np.nan,
+                               Non_unit_conversion_factor = np.nan,
+                               Used_value = capextech['Reported value'],
+                               Used_uncertainty = np.nan,
+                               Used_unit = capextech['Reported unit'],
+                               Value_and_uncertainty_comment = np.nan,
+                               Source_comment = np.nan)
+
+# rename the columns of the final dataframe
+capextech.columns = ['Industry', 'Technology', 'Source reference', 'Mode',
+                              'Component', 'Reported value', 'Reported unit', "Type",
+                              'Subcomponent','Region','Period',
+                              'Usage','Reported uncertainty',
+                              'Non-unit conversion factor','Used value','Used uncertainty',
+                              'Used unit','Value and uncertainty comment','Source comment']
+
+# END READING CAPEX TECHNOLOGY -------------------------------
+
+# BEGIN JOIN TWO DATAFRAMES ----------------------------------
+
+# columns are the same at this point, so the two dataframes can easily be concatenated
+all_params = pd.concat([capextech, techparam_filtered])
+
+# END JOIN TWO DATAFRAMES ------------------------------------
+
+# BEGIN WRITE RESULTS ----------------------------------------
 # reorder the columns
-techparam_filtered = techparam_filtered[['Industry','Technology','Mode','Type','Component',
+all_params = all_params[['Industry','Technology','Mode','Type','Component',
        'Subcomponent','Region','Period','Usage','Reported value','Reported uncertainty',
        'Reported unit','Non-unit conversion factor','Used value','Used uncertainty',
        'Used unit','Value and uncertainty comment','Source reference','Source comment']]
 
-# write the result to a csv file
-techparam_filtered.to_csv("techparam.csv", encoding="utf-16", index=None)
+# strip industry values
+all_params['Industry'] = all_params['Industry'].str.strip()
 
 # iterate over all industries and create a coresponding csv file with the matching data entries
-for industry in techparam_filtered.Industry.unique():
+for industry in all_params.Industry.unique():
        # Get the rows that have the current industry in the industry column
-       industry_rows = techparam_filtered[techparam_filtered['Industry'] == industry]
+       industry_rows = all_params[all_params['Industry'] == industry]
 
        # delete Industry column
        industry_rows = industry_rows.drop("Industry", axis=1)
 
-       # Write the rows to a csv file with the same name as the value
+       # Write the rows to a csv file with the same name as the industry
        filename = str(industry).lower().replace(" ", "_") + ".csv"
        industry_rows.to_csv(filename, index=False)
+
+# END WRITE RESULTS ------------------------------------------

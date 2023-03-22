@@ -1,0 +1,5 @@
+Technology,Mode,Type,Component,Subcomponent,Region,Period,Usage,Reported value,Reported uncertainty,Reported unit,Non-unit conversion factor,Used value,Used uncertainty,Used unit,Value and uncertainty comment,Source reference,Source comment
+Erdgasbasierte Ammoniaksynthese,,High CAPEX,CAPEX,,,2022.0,,817.0,,€/t annual production capacity,,817.0,,€/t annual production capacity,,PIK_Ueckert,
+H2-Ammoniaksynthese,,High CAPEX,CAPEX,,,2022.0,,97.52,,€/t annual production capacity,,97.52,,€/t annual production capacity,,PIK_Ueckert (Without Electrolysis-Capacity),
+Naphthabasierte Olefineproduktion,,High CAPEX,CAPEX,,,2022.0,,1954.0,,€/t annual production capacity,,1954.0,,€/t annual production capacity,,PIK_Ueckert,
+MtO (H2-basiertes Methanol),,High CAPEX,CAPEX,,,2022.0,,3197.0,,€/t annual production capacity,,3197.0,,€/t annual production capacity,,PIK_Ueckert,
