@@ -1,0 +1,103 @@
+# IMPORTS --------------------------------------------------
+import pandas as pd
+import numpy as np
+# TECHNOLOGY PARAMETER SHEET -------------------------------
+# read in technology param inverted sheet
+techparam = pd.read_excel(
+   io='Input_Modellierung_2023-0321.xlsx',
+   sheet_name ='Technology Parameter inverted'
+)
+# remove first rows
+techparam = techparam.iloc[2:,]
+
+# rename column names
+techparam.columns = ['Index', 'Industry', 'Technology', 'Datasource', 'Reference Technology',
+       'Unit', 'CO2','Natural Gas','Electricity','Hydrogen' ,
+       'Coking Coal','Injection Carbon','Iron ore','Scrap Steel',
+       'DRI-Pellets','Naphta','Additional OPEX','Steel: DRI- Alternative Tech (Fuel)',
+       'Technology Benchmark','Kommentar',
+       'Unused_1', 'Technology_2','Energy Intensity', 'Factor',
+       'Natural Gas_2', 'Electricity_2', 'Hydrogen_2',
+       'Coking Coal_2', 'Injection Carbon_2', 'Iron ore_2', 'Scrap Steel_2',
+       'DRI-Pellets_2', 'Naphta_2', 'Unnamed: 33', 'Unnamed: 34', 'Hydrogen .1',
+       'Coking Coal.1', 'Injection Carbon.1', 'Naphta.1']
+
+# BEGIN TECHNOLOGY MAPPING CSV -------------------------------
+# creata a mapping dataframe for technology to reference technology
+tech_mapping = techparam[['Technology', 'Reference Technology']]
+
+# filter out NaN values
+tech_mapping_filtered = tech_mapping[~tech_mapping['Technology'].isnull()]
+
+# write technology mapping to csv file
+tech_mapping_filtered.to_csv("technology_reference_mapping.csv", encoding="utf-16", index=None)
+# END TECHNOLOGY MAPPING CSV -------------------------------
+
+# melt down dataframe to create desired format
+# the columns for the melted dataframe are all selected here (lots of the original columns are not needed)
+techparam_primary = pd.melt(techparam, id_vars=['Industry', 'Technology', 'Datasource','Kommentar'],
+                  value_vars=['CO2','Natural Gas','Electricity','Hydrogen' ,
+       'Coking Coal','Injection Carbon','Iron ore','Scrap Steel',
+       'DRI-Pellets','Naphta','Additional OPEX'],
+        var_name='variable', value_name='value')
+
+# filter out NaN values
+techparam_filtered = techparam_primary[~techparam_primary['value'].isnull() & ~techparam_primary['Industry'].isnull()]
+
+# append Units (The units are not stored as a column in the excel file)
+units_dict = {'CO2': 't/t RS', 'Natural Gas': 'MWh/t RS', 'Electricity': 'MWh/t RS',
+               'Hydrogen': 'kg/t RS', 'Coking Coal': 't/t RS', 'Injection Carbon': 't/t RS',
+               'Iron ore': 't/t RS', 'Scrap Steel': 't/t RS', 'DRI-Pellets': 't/t RS',
+               'Naphta': 't/t RS', 'Additional OPEX': '€/t RS'}
+
+techparam_filtered = techparam_filtered.assign(unit = techparam_filtered['variable'].map(units_dict))
+
+# append Type
+units_dict = {'CO2': 'Emissions', 'Natural Gas': 'Energy demand', 'Electricity': 'Energy demand',
+               'Hydrogen': 'Energy demand', 'Coking Coal': 'Energy demand', 'Injection Carbon': 'Energy demand',
+               'Iron ore': 'Feedstock demand', 'Scrap Steel': 'Feedstock demand', 'DRI-Pellets': 'Feedstock demand',
+               'Naphta': 'Feedstock demand', 'Additional OPEX': 'OPEX'}
+
+techparam_filtered = techparam_filtered.assign(type = techparam_filtered['variable'].map(units_dict))
+
+# add missing columns
+techparam_filtered = techparam_filtered.assign(Subcomponent = np.nan,
+                                               Region = np.nan,
+                                               Period = np.nan,
+                                               Usage = np.nan,
+                                               Reported_uncertainty = np.nan,
+                                               Non_unit_conversion_factor = np.nan,
+                                               Used_value = techparam_filtered['value'],
+                                               Used_uncertainty = np.nan,
+                                               Used_unit = techparam_filtered['unit'],
+                                               Value_and_uncertainty_comment = np.nan,
+                                               Source_comment = np.nan)
+
+# rename the columns of the final dataframe
+techparam_filtered.columns = ['Industry', 'Technology', 'Source reference', 'Mode',
+                              'Component', 'Reported value', 'Reported unit', "Type",
+                              'Subcomponent','Region','Period',
+                              'Usage','Reported uncertainty',
+                              'Non-unit conversion factor','Used value','Used uncertainty',
+                              'Used unit','Value and uncertainty comment','Source comment']
+
+# reorder the columns
+techparam_filtered = techparam_filtered[['Industry','Technology','Mode','Type','Component',
+       'Subcomponent','Region','Period','Usage','Reported value','Reported uncertainty',
+       'Reported unit','Non-unit conversion factor','Used value','Used uncertainty',
+       'Used unit','Value and uncertainty comment','Source reference','Source comment']]
+
+# write the result to a csv file
+techparam_filtered.to_csv("techparam.csv", encoding="utf-16", index=None)
+
+# iterate over all industries and create a coresponding csv file with the matching data entries
+for industry in techparam_filtered.Industry.unique():
+       # Get the rows that have the current industry in the industry column
+       industry_rows = techparam_filtered[techparam_filtered['Industry'] == industry]
+
+       # delete Industry column
+       industry_rows = industry_rows.drop("Industry", axis=1)
+
+       # Write the rows to a csv file with the same name as the value
+       filename = str(industry).lower().replace(" ", "_") + ".csv"
+       industry_rows.to_csv(filename, index=False)
