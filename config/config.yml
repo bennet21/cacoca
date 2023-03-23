@@ -1,0 +1,71 @@
+# general: 
+output_formats: 
+- PIK_csv
+techdata_dir: 'data/tech/isi/'
+techdata_files:
+- cement
+- other_industries
+- steel 
+- steel_dri
+projects_file: 'config/projects.xlsx'
+start_year: 2022
+end_year: 2040
+
+# scenarios:
+scenarios_dir: 'data/scenarios/isi/'
+scenarios_actual: 
+  Free Allocations: 'Joint product benchmarks, new technologies affect benchmark, incl. CBAM'
+  Prices CO2: 'KSV-Base-CO2'
+  Prices Natural Gas: 'KSV-Base-Erdgas'
+  Prices Electricity: 'KSV-Base-Strom'
+  Prices Hydrogen: 'ISI: best-guess'
+  Prices Coking Coal: 'KSV-Base-Kohle'
+  Prices Injection Coal: 'Einblaskohle a)'
+  Prices Iron Ore: 'Eisenerz Agora'
+  Prices Scrap Steel: 'Zero_Dummy_Scrap'
+  Prices DRI-Pellets: 'DRI-Pellets Agora'
+  Prices Naphta: 'Naphta a)'
+scenarios_bidding: 
+  Free Allocations: 'Joint product benchmarks, new technologies affect benchmark, incl. CBAM'
+  Prices CO2: 'KSV-Base-CO2'
+  Prices Natural Gas: 'KSV-Base-Erdgas'
+  Prices Electricity: 'KSV-Base-Strom'
+  Prices Hydrogen: 'ISI: best-guess'
+  Prices Coking Coal: 'KSV-Base-Kohle'
+  Prices Injection Coal: 'Einblaskohle a)'
+  Prices Iron Ore: 'Eisenerz Agora'
+  Prices Scrap Steel: 'Zero_Dummy_Scrap'
+  Prices DRI-Pellets: 'DRI-Pellets Agora'
+  Prices Naphta: 'Naphta a)'
+default_wacc: 0.06
+
+# auction:
+auction_type: 'price_based'
+rest_budget_treatment: 'do not fill'
+include_negative_payout_projects: True
+criteria_weighting:
+  cost_efficiency: 0.7
+  relative_emission_reduction: 0.15
+  energy_efficiency: 0.15
+budget_cap_parameters: 
+  alpha: 0.2 
+  min_co2_price: 30.
+auction_rounds:
+- name: 'Call 1 (1/2023)'
+  year: 2023
+  budget_MEUR: 3.0 
+- name: 'Call 2 (2/2023)'
+  year: 2023
+  budget_MEUR: 3.0 
+- name: 'Call 3 (1/2024)'
+  year: 2023
+  budget_MEUR: 4.0 
+- name: 'Call 4 (2/2024)'
+  year: 2023
+  budget_MEUR: 4.0 
+- name: 'Call 5 (1/2025)'
+  year: 2023
+  budget_MEUR: 5.0 
+- name: 'Call 6 (2/2025)'
+  year: 2023
+  budget_MEUR: 5.0

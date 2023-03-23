@@ -1,9 +1,0 @@
-Technology,Mode,Type,Component,Subcomponent,Region,Period,Usage,Reported value,Reported uncertainty,Reported unit,Non-unit conversion factor,Used value,Used uncertainty,Used unit,Value and uncertainty comment,Source reference,Source comment
-Agora-BF-BOF,,Emissions,CO2,,,,,1.71,,t/t RS,,1.71,,t/t RS,,Agora Stahlrechner,
-Agora-BF-BOF,,Energy demand,Natural Gas,,,,,0.17,,MWh/t RS,,0.17,,MWh/t RS,,Agora Stahlrechner,
-Agora-BF-BOF,,Energy demand,Electricity,,,,,0,,MWh/t RS,,0,,MWh/t RS,,Agora Stahlrechner,
-Agora-BF-BOF,,Energy demand,Coking Coal,,,,,0.4,,t/t RS,,0.4,,t/t RS,,Agora Stahlrechner,
-Agora-BF-BOF,,Energy demand,Injection Carbon,,,,,0.17,,t/t RS,,0.17,,t/t RS,,Agora Stahlrechner,
-Agora-BF-BOF,,Feedstock demand,Iron ore,,,,,1.39,,t/t RS,,1.39,,t/t RS,,Agora Stahlrechner,
-Agora-BF-BOF,,Feedstock demand,Scrap Steel,,,,,0.17,,t/t RS,,0.17,,t/t RS,,Agora Stahlrechner,
-Agora-BF-BOF,,OPEX,Additional OPEX,,,,,38.49,,€/t RS,,38.49,,€/t RS,,Agora Stahlrechner,
