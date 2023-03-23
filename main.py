@@ -2,6 +2,7 @@ from src.input.read_config import read_config
 from src.input.read_projects import read_projects
 from src.input.read_techdata import read, expand_by_years
 from src.input.read_scenario_data import read_scenario_data
+from src.calc_costs.calc_capex import calc_capex
 
 
 # import sys
@@ -17,11 +18,15 @@ techdata = read(config['techdata_dir'],
                 config['techdata_files'] 
                 )
 
-techdata = expand_by_years(techdata, 
-                           config['years'])
+# techdata = expand_by_years(techdata, 
+#                            config['years'])
 
 data_actual, data_bidding, h2share, cbam_factor = read_scenario_data(
     config['scenarios_dir'], 
     config['scenarios_actual'], 
     config['scenarios_bidding'] 
 )
+
+projects = calc_capex(projects, techdata)
+
+print()

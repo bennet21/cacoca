@@ -3,5 +3,7 @@ Questions:
 
 TODO: 
 - NG vs. H2 is mode in POSTED logic, not technology
+- separate "data source" from technology to make data more POSTED-conform
 - Write Replacement for scenario dropdown menu
 - Checks for data completeness
+- Check units 
