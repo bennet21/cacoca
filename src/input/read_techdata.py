@@ -23,8 +23,8 @@ column_list = ['Technology',
 def read(dir_path: str, filenames_base: list):
     techdata = [
         pd.read_csv(
-            dir_path+'/'+fnb+'.csv', 
-            names = column_list
+            dir_path+'/'+fnb+'.csv'#, 
+            #names = column_list
             ) for fnb in filenames_base 
     ]
     for df, fnb in zip(techdata, filenames_base): 

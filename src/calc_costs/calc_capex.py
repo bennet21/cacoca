@@ -3,8 +3,8 @@ import numpy_financial as npf
 def calc_capex(projects, techdata):
     def single_tech_param(name: str):
         return techdata.query(f"Type=='{name}'") \
-            .filter(["Technology", "Reported value"]) \
-            .rename(columns={"Reported value": name})
+            .filter(["Technology", "Value"]) \
+            .rename(columns={"Value": name})
 
     projects = projects \
         .merge(single_tech_param('High CAPEX'), how='left', on='Technology') \
