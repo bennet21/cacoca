@@ -65,21 +65,17 @@ techparam_filtered = techparam_filtered.assign(Subcomponent = np.nan,
                                Region = np.nan,
                                Period = np.nan,
                                Usage = np.nan,
-                               Reported_uncertainty = np.nan,
+                               Uncertainty = np.nan,
                                Non_unit_conversion_factor = np.nan,
-                               Used_value = techparam_filtered['value'],
-                               Used_uncertainty = np.nan,
-                               Used_unit = techparam_filtered['unit'],
-                               Value_and_uncertainty_comment = np.nan,
+                               Mode = np.nan,
                                Source_comment = np.nan)
 
 # rename the columns of the final dataframe
-techparam_filtered.columns = ['Industry', 'Technology', 'Source reference', 'Mode',
-                              'Component', 'Reported value', 'Reported unit', "Type",
+techparam_filtered.columns = ['Industry', 'Technology', 'Source reference', 'Value and uncertainty comment',
+                              'Component', 'Value', 'Unit', "Type",
                               'Subcomponent','Region','Period',
-                              'Usage','Reported uncertainty',
-                              'Non-unit conversion factor','Used value','Used uncertainty',
-                              'Used unit','Value and uncertainty comment','Source comment']
+                              'Usage','Uncertainty',
+                              'Non-unit conversion factor','Mode','Source comment']
 
 # END READING TECHNOLOGY PARAMETER SHEET -------------------------------
 
@@ -94,18 +90,23 @@ capextech = capextech.iloc[2:,]
 
 # rename columns
 capextech.columns = ['Technology',
-       'Industry', 'Source reference', 'Scenario', 'Reported unit', 'Reported value']
+       'Industry', 'Source reference', 'Scenario', 'Unit', 'Value']
 
 # fill in missing technology values with value from previous row (due to the structure of the excel sheet)
 capextech['Technology'].fillna(method='ffill', inplace=True)
 
 # filter out row with missing scenario or value
-capextech = capextech[~capextech['Scenario'].isnull() & ~capextech['Reported value'].isnull() & ~(capextech['Reported value'] == 0)]
+capextech = capextech[~capextech['Scenario'].isnull() & ~capextech['Value'].isnull() & ~(capextech['Value'] == 0)]
 
 # add Type, Component and Mode column
 capextech =  capextech.assign(Component = "CAPEX",
-                              Mode = np.nan,
+                              Value_and_uncertainty_comment = np.nan,
                               Type = np.nan)
+
+# rename columns
+capextech.columns = ['Technology',
+       'Industry', 'Source reference', 'Scenario', 'Unit', 'Value',
+       'Component', 'Value and uncertainty comment', 'Type',]
 
 # fill Type column
 # Set values to 'High CAPEX' for rows where Scenario ends with "_High"
@@ -115,29 +116,25 @@ capextech.loc[capextech['Scenario'].str.endswith('_High'), 'Type'] = 'High CAPEX
 capextech.loc[capextech['Scenario'].str.endswith('_Low'), 'Type'] = 'Low CAPEX'
 
 # reorder columns to match techparam dataframe
-capextech = capextech[['Industry', 'Technology', 'Source reference', 'Mode',
-                              'Component', 'Reported value', 'Reported unit', "Type"]]
+capextech = capextech[['Industry', 'Technology', 'Source reference', 'Value and uncertainty comment',
+                              'Component', 'Value', 'Unit', "Type"]]
 
 # add missing columns
 capextech = capextech.assign(Subcomponent = np.nan,
                                Region = np.nan,
                                Period = 2022,
                                Usage = np.nan,
-                               Reported_uncertainty = np.nan,
+                               Uncertainty = np.nan,
                                Non_unit_conversion_factor = np.nan,
-                               Used_value = capextech['Reported value'],
-                               Used_uncertainty = np.nan,
-                               Used_unit = capextech['Reported unit'],
-                               Value_and_uncertainty_comment = np.nan,
+                               Mode = np.nan,
                                Source_comment = np.nan)
 
 # rename the columns of the final dataframe
-capextech.columns = ['Industry', 'Technology', 'Source reference', 'Mode',
-                              'Component', 'Reported value', 'Reported unit', "Type",
+capextech.columns = ['Industry', 'Technology', 'Source reference', 'Value and uncertainty comment',
+                              'Component', 'Value', 'Unit', "Type",
                               'Subcomponent','Region','Period',
-                              'Usage','Reported uncertainty',
-                              'Non-unit conversion factor','Used value','Used uncertainty',
-                              'Used unit','Value and uncertainty comment','Source comment']
+                              'Usage','Uncertainty',
+                              'Non-unit conversion factor','Mode','Source comment']
 
 # END READING CAPEX TECHNOLOGY -------------------------------
 
@@ -151,9 +148,8 @@ all_params = pd.concat([capextech, techparam_filtered])
 # BEGIN WRITE RESULTS ----------------------------------------
 # reorder the columns
 all_params = all_params[['Industry','Technology','Mode','Type','Component',
-       'Subcomponent','Region','Period','Usage','Reported value','Reported uncertainty',
-       'Reported unit','Non-unit conversion factor','Used value','Used uncertainty',
-       'Used unit','Value and uncertainty comment','Source reference','Source comment']]
+       'Subcomponent','Region','Period','Usage','Value','Uncertainty',
+       'Unit','Non-unit conversion factor','Value and uncertainty comment','Source reference','Source comment']]
 
 # strip industry values
 all_params['Industry'] = all_params['Industry'].str.strip()
