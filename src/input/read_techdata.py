@@ -1,5 +1,6 @@
 import pandas as pd 
 import numpy as np
+import os
 
 column_list = ['Technology', 
                 'Mode', 
@@ -23,14 +24,20 @@ column_list = ['Technology',
 def read(dir_path: str, filenames_base: list):
     techdata = [
         pd.read_csv(
-            dir_path+'/'+fnb+'.csv'#, 
+            os.path.join(dir_path, fnb+'.csv')#, 
             #names = column_list
             ) for fnb in filenames_base 
     ]
     for df, fnb in zip(techdata, filenames_base): 
         df.insert(0, "Industry", fnb, True)
     techdata = pd.concat(techdata)
-    return techdata
+
+    reference_tech = pd.read_csv(
+        os.path.join(dir_path, 'technology_reference_mapping.csv'), 
+        encoding="utf-16"
+        ) 
+
+    return techdata, reference_tech
 
 def expand_by_years(techdata: pd.DataFrame, years: np.ndarray): 
     years_df = pd.DataFrame.from_dict({'Period': years})

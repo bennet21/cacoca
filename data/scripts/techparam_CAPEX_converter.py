@@ -1,10 +1,14 @@
 # IMPORTS ----------------------------------------------------------------
 import pandas as pd
 import numpy as np
+import os
+# CONFIG -----------------------------------------------------------------
+input_file = 'data/scripts/Input_Modellierung_2023-0321_adapted.xlsx'
+output_dir = 'data/tech/isi/'
 # BEGIN READING TECHNOLOGY PARAMETER SHEET -------------------------------
 # read in technology param inverted sheet
 techparam = pd.read_excel(
-   io='Input_Modellierung_2023-0321.xlsx',
+   io = input_file,
    sheet_name ='Technology Parameter inverted'
 )
 # remove first rows
@@ -13,14 +17,14 @@ techparam = techparam.iloc[2:,]
 # rename column names
 techparam.columns = ['Index', 'Industry', 'Technology', 'Datasource', 'Reference Technology',
        'Unit', 'CO2','Natural Gas','Electricity','Hydrogen' ,
-       'Coking Coal','Injection Carbon','Iron ore','Scrap Steel',
+       'Coking Coal','Injection Coal','Iron ore','Scrap Steel',
        'DRI-Pellets','Naphta','Additional OPEX','Steel: DRI- Alternative Tech (Fuel)',
        'Technology Benchmark','Kommentar',
        'Unused_1', 'Technology_2','Energy Intensity', 'Factor',
        'Natural Gas_2', 'Electricity_2', 'Hydrogen_2',
-       'Coking Coal_2', 'Injection Carbon_2', 'Iron ore_2', 'Scrap Steel_2',
+       'Coking Coal_2', 'Injection Coal_2', 'Iron ore_2', 'Scrap Steel_2',
        'DRI-Pellets_2', 'Naphta_2', 'Unnamed: 33', 'Unnamed: 34', 'Hydrogen .1',
-       'Coking Coal.1', 'Injection Carbon.1', 'Naphta.1']
+       'Coking Coal.1', 'Injection Coal.1', 'Naphta.1']
 
 # BEGIN TECHNOLOGY MAPPING CSV -------------------------------
 # creata a mapping dataframe for technology to reference technology
@@ -30,14 +34,14 @@ tech_mapping = techparam[['Technology', 'Reference Technology']]
 tech_mapping_filtered = tech_mapping[~tech_mapping['Technology'].isnull()]
 
 # write technology mapping to csv file
-tech_mapping_filtered.to_csv("technology_reference_mapping.csv", encoding="utf-16", index=None)
+tech_mapping_filtered.to_csv(os.path.join(output_dir, "technology_reference_mapping.csv"), encoding="utf-16", index=None)
 # END TECHNOLOGY MAPPING CSV -------------------------------
 
 # melt down dataframe to create desired format
 # the columns for the melted dataframe are all selected here (lots of the original columns are not needed)
 techparam_primary = pd.melt(techparam, id_vars=['Industry', 'Technology', 'Datasource','Kommentar'],
                   value_vars=['CO2','Natural Gas','Electricity','Hydrogen' ,
-       'Coking Coal','Injection Carbon','Iron ore','Scrap Steel',
+       'Coking Coal','Injection Coal','Iron ore','Scrap Steel',
        'DRI-Pellets','Naphta','Additional OPEX'],
         var_name='variable', value_name='value')
 
@@ -46,7 +50,7 @@ techparam_filtered = techparam_primary[~techparam_primary['value'].isnull() & ~t
 
 # append Units (The units are not stored as a column in the excel file)
 units_dict = {'CO2': 't/t RS', 'Natural Gas': 'MWh/t RS', 'Electricity': 'MWh/t RS',
-               'Hydrogen': 'kg/t RS', 'Coking Coal': 't/t RS', 'Injection Carbon': 't/t RS',
+               'Hydrogen': 'kg/t RS', 'Coking Coal': 't/t RS', 'Injection Coal': 't/t RS',
                'Iron ore': 't/t RS', 'Scrap Steel': 't/t RS', 'DRI-Pellets': 't/t RS',
                'Naphta': 't/t RS', 'Additional OPEX': '€/t RS'}
 
@@ -54,7 +58,7 @@ techparam_filtered = techparam_filtered.assign(unit = techparam_filtered['variab
 
 # append Type
 units_dict = {'CO2': 'Emissions', 'Natural Gas': 'Energy demand', 'Electricity': 'Energy demand',
-               'Hydrogen': 'Energy demand', 'Coking Coal': 'Energy demand', 'Injection Carbon': 'Energy demand',
+               'Hydrogen': 'Energy demand', 'Coking Coal': 'Energy demand', 'Injection Coal': 'Energy demand',
                'Iron ore': 'Feedstock demand', 'Scrap Steel': 'Feedstock demand', 'DRI-Pellets': 'Feedstock demand',
                'Naphta': 'Feedstock demand', 'Additional OPEX': 'OPEX'}
 
@@ -82,7 +86,7 @@ techparam_filtered.columns = ['Industry', 'Technology', 'Source reference', 'Val
 # BEGIN READING CAPEX TECHNOLOGY ---------------------------------------
 # read in excel sheet
 capextech = pd.read_excel(
-   io='Input_Modellierung_2023-0321.xlsx',
+   io=input_file,
    sheet_name ='CAPEX Technology '
 )
 # remove first row
@@ -164,6 +168,6 @@ for industry in all_params.Industry.unique():
 
        # Write the rows to a csv file with the same name as the industry
        filename = str(industry).lower().replace(" ", "_") + ".csv"
-       industry_rows.to_csv(filename, index=False)
+       industry_rows.to_csv(os.path.join(output_dir, filename), index=False)
 
 # END WRITE RESULTS ------------------------------------------

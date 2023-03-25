@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 import os
 
+
+
 input_file = 'data/scripts/Input_Modellierung_2023-0321_adapted.xlsx'
 output_dir = 'data/scenarios/isi/'
 

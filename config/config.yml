@@ -9,7 +9,9 @@ techdata_files:
 - steel_dri
 projects_file: 'config/projects.xlsx'
 start_year: 2022
-end_year: 2040
+end_year: 2045
+ccfd_duration: 15
+default_wacc: 0.06
 
 # scenarios:
 scenarios_dir: 'data/scenarios/isi/'
@@ -37,7 +39,7 @@ scenarios_bidding:
   Prices Scrap Steel: 'Zero_Dummy_Scrap'
   Prices DRI-Pellets: 'DRI-Pellets Agora'
   Prices Naphta: 'Naphta a)'
-default_wacc: 0.06
+
 
 # auction:
 auction_type: 'price_based'
@@ -58,14 +60,14 @@ auction_rounds:
   year: 2023
   budget_MEUR: 3.0 
 - name: 'Call 3 (1/2024)'
-  year: 2023
+  year: 2024
   budget_MEUR: 4.0 
 - name: 'Call 4 (2/2024)'
-  year: 2023
+  year: 2024
   budget_MEUR: 4.0 
 - name: 'Call 5 (1/2025)'
-  year: 2023
+  year: 2025
   budget_MEUR: 5.0 
 - name: 'Call 6 (2/2025)'
-  year: 2023
+  year: 2025
   budget_MEUR: 5.0
