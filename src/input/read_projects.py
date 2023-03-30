@@ -3,6 +3,7 @@ import pandas as pd
 
 def read_projects(filepath: str, default_wacc: float):
     projects = pd.read_excel(filepath, sheet_name='Projects')
+    projects = projects.query("Active == 1")
     projects['WACC'].fillna(default_wacc, inplace=True)
     return projects
 

@@ -2,7 +2,8 @@ import numpy_financial as npf
 import pandas as pd
 
 
-def calc_capex(projects, techdata: pd.DataFrame):
+def calc_capex(projects: pd.DataFrame, techdata: pd.DataFrame):
+
     def single_tech_param(name: str):
         single_param = techdata.query(f"Type=='{name}'") \
             .filter(["Technology", "Value"]) \

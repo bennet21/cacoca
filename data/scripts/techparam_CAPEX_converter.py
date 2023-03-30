@@ -5,6 +5,9 @@ import os
 # CONFIG -----------------------------------------------------------------
 input_file = 'data/scripts/Input_Modellierung_2023-0321_adapted.xlsx'
 output_dir = 'data/tech/isi/'
+# input_file = 'data/scripts/Tool_ALL.xlsm'
+# output_dir = 'data/tech/isi_all/'
+
 # BEGIN READING TECHNOLOGY PARAMETER SHEET -------------------------------
 # read in technology param inverted sheet
 techparam = pd.read_excel(
@@ -89,8 +92,8 @@ capextech = pd.read_excel(
    io=input_file,
    sheet_name ='CAPEX Technology '
 )
-# remove first row
-capextech = capextech.iloc[2:,]
+# remove first row and all columns after 6
+capextech = capextech.iloc[2:,:6]
 
 # rename columns
 capextech.columns = ['Technology',
@@ -115,7 +118,7 @@ capextech.columns = ['Technology',
 # fill Type column
 # Set values to 'High CAPEX' for rows where Scenario ends with "_High"
 capextech.loc[capextech['Scenario'].str.endswith('_High'), 'Type'] = 'High CAPEX'
-    
+
 # Set values to 'Low CAPEX' for rows where Scenario ends with "_Low"
 capextech.loc[capextech['Scenario'].str.endswith('_Low'), 'Type'] = 'Low CAPEX'
 
