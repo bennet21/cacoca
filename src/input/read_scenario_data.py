@@ -71,7 +71,7 @@ def choose_by_projects(h2share: pd.DataFrame, projects: pd.DataFrame):
             left_on='H2 Share Scenario',
             right_on='Scenario'
         ) \
-        .drop(columns=['Scenario'])
+        .drop(columns=['H2 Share Scenario', 'Scenario'])
 
 
 def years_to_rows(data: pd.DataFrame, year_name: str, value_name: str):

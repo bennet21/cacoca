@@ -8,6 +8,7 @@ from src.calc_costs.calc_opex import calc_opex
 
 # import sys
 # config_filepath = sys.argv[1]
+# config_filepath = 'config/config_all.yml'
 config_filepath = 'config/config.yml'
 
 config = read_config(config_filepath)
@@ -34,12 +35,10 @@ data_actual, data_bidding, h2share = read_scenario_data(
 
 projects = calc_capex(projects, techdata)
 
-opex_actual, opex_actual_ref = calc_opex(projects, techdata, reference_tech,
-                                         data_actual, h2share, config)
-opex_bidding, opex_bidding_ref = calc_opex(projects, techdata, reference_tech,
-                                           data_bidding, h2share, config)
+opex_actual = calc_opex(projects, techdata, reference_tech, data_actual, h2share, config)
+opex_bidding = calc_opex(projects, techdata, reference_tech, data_bidding, h2share, config)
 
-# calc_lcop() #  sum(opex)/duration + capex / auslastungsfaktor
+# calc_lcop() # sum(opex)/duration + capex / auslastungsfaktor
 # calc_abatement_cost() # npv( lcop_t - lcop_ref ) / npv( e_t - e_ref ), all per t of product
 # calc_strike_price()
 # calc_eff_co2_price()
