@@ -1,0 +1,71 @@
+Project name;Active;Sector;Technology;Project size/Production capacity [Mt/a] or GW;Planned production volume p.a.;Max. full load hours;Technical lifetime;Time of investment;WACC;Share of high CAPEX;H2 Share Scenario
+Glass_0.3MT_2028a);1;Other Industries;Behälterglas: Vollelektrische Schmelzwanne;0,3;0,3;8760;20;2028;;0,2;H2-only
+Zement_2;1;Other Industries;Agora-Oxyfuel-Drehrohrofen ;0,92;0,92;8760;20;2028;;0,5;H2-only
+Power2Heat HT-WPb);0;Other Industries;Agora-Höchsttemperatur WP;1;0,5;4380;15;2024;;0,3;H2-only
+P2H_0.5MT_2027a);0;Other Industries;Agora-Elektrodenkessel;1;1;8760;20;2027;;0;H2-only
+Glass_0.17MT_2028a);1;Other Industries;Flachglas: Vollelektrische Schmelzwanne;0,17;0,17;8760;20;2028;;0,2;H2-only
+Stahl_1;1;Other Industries;Agora_DRI-10%_Scrap;0,7;0,7;8760;20;2027;;1;Hochlauf auf 30 %
+Stahl_2;1;Other Industries;Agora_DRI-10%_Scrap;0,12;0,12;8760;20;2026;;1;Hochlauf auf 30 %
+Stahl_3;1;Other Industries;Agora_DRI-10%_Scrap;0,15;0,15;8760;20;2028;;1;Hochlauf auf 30 %
+HT_WP_0.1MT_2026;1;Other Industries;Agora-Höchsttemperatur WP-5%E;0,1;0,1;8760;20;2025;;1;H2-only
+HT_WP_0.3MT_2028;1;Other Industries;Agora-Höchsttemperatur WP-5%E;0,3;0,3;8760;20;2028;;1;H2-only
+P2H_0.05MT_2026;1;Other Industries;Agora-Elektrodenkessel;0,05;0,05;8760;20;2028;;1;H2-only
+Glass_0.2Mt_2027b);1;Other Industries;Flachglas: Vollelektrische Schmelzwanne;0,2;0,2;8760;20;2026;;0;H2-only
+Glass_0.2Mt_2025;1;Other Industries;Flachglas: Vollelektrische Schmelzwanne;0,2;0,2;8760;20;2026;;0;H2-only
+Glass_0.3Mt_2025c);0;Other Industries;Flachglas: Vollelektrische Schmelzwanne;0,3;0,3;8760;20;2025;;0;H2-only
+Zement _3;1;Other Industries;Agora-Oxyfuel-Drehrohrofen ;1;1;8760;20;2027;;0,9;H2-only
+Cement_1Mt_2027;1;Other Industries;Agora-Oxyfuel-Drehrohrofen ;1;1;8760;20;2026;;0,9;H2-only
+Cement_1.5MT_2028;1;Other Industries;Agora-Oxyfuel-Drehrohrofen ;1,5;1,5;8760;20;2027;;0,9;H2-only
+Cement_0.6MT_2028;1;Other Industries;Agora-Oxyfuel-Drehrohrofen ;0,6;0,6;8760;20;2028;;0,9;H2-only
+Cement_1MT_2028;1;Other Industries;Agora-Oxyfuel-Drehrohrofen-5%E;1;1;8760;20;2028;;0,5;H2-only
+Cement_0.5MT_2028;1;Other Industries;Agora-Oxyfuel-Drehrohrofen-5%E;0,5;0,5;8760;20;2028;;0,5;H2-only
+Glass_0.15MT_2026;1;Other Industries;Flachglas: Vollelektrische Schmelzwanne;0,15;0,15;8760;20;2026;;0,5;H2-only
+Glass_0.2MT_2024;1;Other Industries;Flachglas: Vollelektrische Schmelzwanne;0,2;0,2;8760;20;2026;;0,5;H2-only
+Glass_0.25Mt_2023;0;Other Industries;Flachglas: Vollelektrische Schmelzwanne;0,25;0,25;8760;20;2026;;0,5;H2-only
+Glass_0.05Mt_2024;1;Other Industries;Flachglas: Vollelektrische Schmelzwanne;0,05;0,05;8760;20;2026;;0,5;H2-only
+Glass_0.05Mt_2026;1;Other Industries;Flachglas: Vollelektrische Schmelzwanne;0,05;0,05;8760;20;2027;;0,5;H2-only
+Glass_0.2Mt_2027;1;Other Industries;Flachglas: Vollelektrische Schmelzwanne;0,2;0,2;8760;20;2026;;0,5;H2-only
+Glass_0.1MT_2027;1;Other Industries;Flachglas: Vollelektrische Schmelzwanne;0,1;0,1;8760;20;2026;;0,3;H2-only
+Glass_0.2MT_2028b);1;Other Industries;Flachglas: Vollelektrische Schmelzwanne;0,0511;0,0511;8760;20;2028;;0,3;H2-only
+Glass_0.15MT_2027;1;Other Industries;Flachglas: Vollelektrische Schmelzwanne;0,0511;0,0511;8760;20;2027;;0,3;H2-only
+Power2Heat El.-Agora;1;Other Industries;Agora-Elektrodenkessel;0,5;0,5;8760;15;2027;;0,3;H2-only
+Power2Heat WP;1;Other Industries;Agora-Höchsttemperatur WP;0,5;0,5;8760;15;2027;;0,3;H2-only
+Power2Heat HT-WP;1;Other Industries;Agora-Höchsttemperatur WP;0,5;0,5;8760;15;2027;;0,3;H2-only
+Power2Heat El.;1;Other Industries;Elektrische Dampferzeugung;0,5;0,5;8760;15;2028;;0,3;H2-only
+Test- Elektrodenkessel +5%E;1;Other Industries;Agora-Elektrodenkessel+5%E;0,5;0,5;8760;15;2024;;0,1;H2-only
+Test- Elektrodenkessel -5%E;1;Other Industries;Agora-Elektrodenkessel+5%E;0,5;0,5;8760;15;2027;;0,1;H2-only
+Test HT WP a);1;Other Industries;Agora-Hochtemperatur WP+5%E;0,5;0,5;8760;15;2027;;0;H2-only
+Test HT WP -5%E;1;Other Industries;Agora-Elektrodenkessel+5%E;0,2;0,2;8760;15;2024;;0;H2-only
+EL-Kessel_1;1;Other Industries;Agora-Elektrodenkessel+5%E;0,05;0,05;8760;15;2024;;0,7;H2-only
+Schlagmann b);1;Other Industries;Agora-Höchsttemperatur WP;0,5;0,5;8760;15;2025;;0,7;H2-only
+P2H_0.1MT_2026;1;Other Industries;Agora-Elektrodenkessel;0,1;0,1;8760;15;2026;;0,7;H2-only
+HT_WP_0.3MT_2027;1;Other Industries;Agora-Höchsttemperatur WP-5%E;0,3;0,3;8760;15;2027;;0,7;H2-only
+HT_WP_0.35MT_2026;1;Other Industries;Agora-Elektrodenkessel;0,35;0,35;8760;15;2026;;0,7;H2-only
+HT_WP_0.3MT_2028b);1;Other Industries;Agora-Elektrodenkessel;0,3;0,3;8760;15;2028;;0,7;H2-only
+Glass_0.14Mt_2028;1;Other Industries;Flachglas: Vollelektrische Schmelzwanne;0,14;0,14;8760;15;2028;;0,7;H2-only
+Methanol_1Mt_2029;0;Other Industries;H2-Methanolsynthese;1;1;8760;15;2029;;0,7;H2-only
+Methanol_1Mt_2028;0;Other Industries;H2-Methanolsynthese;1;1;8760;15;2028;;0,7;H2-only
+Methanol_0.5Mt_2028;0;Other Industries;H2-Methanolsynthese;0,5;0,5;8760;15;2028;;0,7;H2-only
+Methanol_0.3Mt_2027;0;Other Industries;H2-Methanolsynthese;0,3;0,3;8760;15;2027;;0,7;H2-only
+Ammonia_0.3Mt_2025;1;Other Industries;H2-Ammoniaksynthese;0,3;0,3;8760;15;2025;;0,7;H2-only
+Ammonia_0.5Mt_2026;1;Other Industries;H2-Ammoniaksynthese;0,5;0,5;8760;15;2026;;0,7;H2-only
+Ammonia_0.5Mt_2027;1;Other Industries;H2-Ammoniaksynthese;0,5;0,5;8760;15;2027;;0,7;H2-only
+Ammonia_0.5Mt_2029;1;Other Industries;H2-Ammoniaksynthese;0,5;0,5;8760;15;2029;;0,7;H2-only
+HöT_WP_0.2Mt_2026;1;Other Industries;Agora-Höchsttemperatur WP;0,2;0,2;8760;15;2026;;0,7;H2-only
+HöT_WP_0.2Mt_2027;1;Other Industries;Agora-Elektrodenkessel;0,2;0,2;8760;15;2027;;0,7;H2-only
+HöT_WP_0.15Mt_2026;1;Other Industries;Agora-Höchsttemperatur WP;0,15;0,15;8760;15;2026;;0,7;H2-only
+Glass_0.15MT_2027b);1;Other Industries;Flachglas: Vollelektrische Schmelzwanne;0,15;0,15;8760;15;2027;;0,7;H2-only
+Glass_0.3MT_2028b);1;Other Industries;Flachglas: Vollelektrische Schmelzwanne;0,3;0,3;8760;15;2028;;0,7;H2-only
+Glass_0.2MT_2028;1;Other Industries;Flachglas: Vollelektrische Schmelzwanne;0,2;0,2;8760;15;2028;;0,7;H2-only
+Glass_0.31MT_2027;1;Other Industries;Flachglas: Vollelektrische Schmelzwanne;0,31;0,31;8760;15;2028;;0,7;Hochlauf auf 30 %
+Test_ofen;0;Other Industries;Elektrische Industrieöfen;0,4;0,2;4380;15;2026;;0,7;H2-only
+Test_El-Kessel_4000h;1;Other Industries;Agora-Elektrodenkessel;0,5;0,228;3995;15;2027;;0,7;H2-only
+Test_El-Kessel_2000h;1;Other Industries;Agora-Elektrodenkessel;0,5;0,114;1997;15;2027;;0,7;H2-only
+Stahl 2025;0;Other Industries;Agora_DRI-Original;1;1;8760;15;2025;;1;Hochlauf auf 30 %
+Zement 2025;0;Other Industries;Agora-Oxyfuel-Drehrohrofen ;1;1;8760;15;2026;;0,5;H2-only
+Ammoniak 2025;0;Other Industries;H2-Ammoniaksynthese;1;1;8760;15;2025;;0,5;H2-only
+Olefine 2025;0;Other Industries;MtO (H2-basiertes Methanol);1;1;8760;15;2025;;0,5;H2-only
+Glas 2025;0;Other Industries;Flachglas: Vollelektrische Schmelzwanne;1;1;8760;15;2025;;0,5;H2-only
+HT-WP 2025;0;Other Industries;Agora-Höchsttemperatur WP;1;1;8760;15;2025;;0;H2-only
+Oxyfuel;1;Other Industries;Agora-Oxyfuel-Drehrohrofen ;0,8;0,8;8760;15;2025;;1;H2-only
+Leilac;1;Other Industries;Agora-El.LEILAC-Drehrohrofen;0,8;0,8;8760;15;2025;;1;H2-only

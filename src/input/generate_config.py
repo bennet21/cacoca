@@ -60,20 +60,26 @@ def read_all_component_scenarios(component:str, scenario_dir: str):
               .drop_duplicates())
     else:
         return all_scenarios.free_allocations.filter(items=['Scenario']).drop_duplicates()
-    
-def read_all_scenarios(scenario_dir: str):
+
+def read_all_by_columns(scenario_dir: str, groupByColumn:str, valueColumn:str):
     all_scenarios, h2share = read_all_scenario_data(dirpath=scenario_dir)
     
     prices = pd.concat([
-            all_scenarios.prices.query(f"Component=='{component.replace('Prices ', '')}'")
-            .filter(items=['Component','Scenario'])
+            all_scenarios.prices.query(f"{groupByColumn}=='{component.replace('Prices ', '')}'")
+            .filter(items=[groupByColumn,valueColumn])
             .drop_duplicates()
             for component in all_components if component.startswith("Prices ")
         ])
-    free_allocations = all_scenarios.free_allocations.filter(items=['Scenario']).drop_duplicates()
-    free_allocations["Component"] = "Free Allocations"
+    free_allocations = all_scenarios.free_allocations.filter(items=[valueColumn]).drop_duplicates()
+    free_allocations[groupByColumn] = "Free Allocations"
     all_scenarios = pd.concat([prices, free_allocations])
     return all_scenarios
+
+def read_all_scenarios(scenario_dir: str):
+    return read_all_by_columns(scenario_dir,'Component', 'Scenario')
+
+def read_all_technologies(scenario_dir: str):
+    return read_all_by_columns(scenario_dir,'Component', 'Technology')
 
 def select_scenario(component:str, scenario:str, scenario_dir: str):
     all_scenarios = read_all_scenarios(scenario_dir)
