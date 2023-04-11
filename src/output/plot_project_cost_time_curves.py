@@ -2,7 +2,8 @@ import plotly as pl
 import pandas as pd
 
 
-def plot_all(projects: pd.DataFrame, sector: str = None, project_names: list = None):
+def plot_project_cost_time_curves(projects: pd.DataFrame, sector: str = None,
+                                  project_names: list = None):
 
     fig = pl.graph_objs.Figure()
 

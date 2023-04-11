@@ -6,7 +6,7 @@ from src.input.read_techdata import read_techdata
 from src.input.read_scenario_data import read_scenario_data
 from src.calc_costs.calc_cost_and_emissions import calc_cost_and_emissions
 from src.calc_costs.calc_ccfd import calc_ccfd, calc_strike_price
-from src.output.plot import plot_all
+from src.output.plot_project_cost_time_curves import plot_project_cost_time_curves
 import src.tools.gaussian as gs
 
 
@@ -70,7 +70,7 @@ sector = 'cement'
 # project_names = ['Lhoist', 'Holcim']
 project_names = None
 
-plot_all(cost_and_em_actual, sector=sector, project_names=project_names)
+plot_project_cost_time_curves(cost_and_em_actual, sector=sector, project_names=project_names)
 
 print()
 
