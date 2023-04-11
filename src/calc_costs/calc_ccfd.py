@@ -2,10 +2,10 @@ import pandas as pd
 import src.tools.gaussian as gs
 
 
-def calc_strike_price(opex_and_em: pd.DataFrame, capex: pd.DataFrame, projects: pd.DataFrame):
+def calc_strike_price(cost_and_em: pd.DataFrame, projects: pd.DataFrame):
 
-    # NPV of OPEX difference and Emissions savings
-    data = opex_and_em \
+    # NPV of cost difference and Emissions savings
+    data = cost_and_em \
         .merge(
             projects.filter(['Project name', 'WACC', 'Time of investment', 'Project duration [a]']),
             how='left',
@@ -16,36 +16,29 @@ def calc_strike_price(opex_and_em: pd.DataFrame, capex: pd.DataFrame, projects: 
                (1. + df['WACC'])**(df['Period'] - df['Time of investment'])}
         ) \
         .assign(
-            **{'OPEX_NPV': lambda df:
-               (df['CumInterest'] - df['OPEX_diff']) / df['Project duration [a]']}
+            **{'cost_NPV': lambda df:
+               (df['CumInterest'] - df['cost_diff']) / df['Project duration [a]']}
         ) \
         .assign(
             **{'Emissions_NPV': lambda df:
                (df['CumInterest'] - df['Emissions_diff']) / df['Project duration [a]']}
         ) \
         .groupby(['Project name']) \
-        .agg({'OPEX_NPV': 'sum', 'Emissions_NPV': 'sum'})
+        .agg({'cost_NPV': 'sum', 'Emissions_NPV': 'sum'})
 
     # NPV(Cost_diff - SP*Emission_diff) = 0,
     # so  SP = NPV(Cost_diff)/NPV(Emission_diff)
-    # TODO: Diff to REF!!!
     data = data \
-        .merge(
-            capex.filter(['Project name', 'Allocated CAPEX']),
-            how='left',
-            on=['Project name']
-        ) \
         .assign(
             **{'Strike Price': lambda df:
-               (-df['OPEX_NPV'] + df['Allocated CAPEX']) / df['Emissions_NPV']}
+               -df['cost_NPV'] / df['Emissions_NPV']}
         ) \
         .filter(['Project name', 'Strike Price'])
 
     return data
 
 
-def calc_ccfd(opex_and_em: pd.DataFrame, capex: pd.DataFrame,
-              projects: pd.DataFrame, techdata: pd.DataFrame):
+def calc_ccfd(cost_and_em: pd.DataFrame, projects: pd.DataFrame, techdata: pd.DataFrame):
 
     pr_size = projects \
         .rename(columns={
@@ -54,7 +47,7 @@ def calc_ccfd(opex_and_em: pd.DataFrame, capex: pd.DataFrame,
         }) \
         .filter(['Project name', 'Size'])
 
-    opex_and_em = opex_and_em \
+    cost_and_em = cost_and_em \
         .assign(
             **gs.dict("Effective CO2 Price",
                       lambda df: gs.mul(
@@ -65,17 +58,17 @@ def calc_ccfd(opex_and_em: pd.DataFrame, capex: pd.DataFrame,
                       ))
         )
 
-    opex_and_em = opex_and_em \
+    cost_and_em = cost_and_em \
         .merge(
             techdata.filter(['Technology', 'Industry']),
             how='left',
             on=['Technology']
         ) \
         .assign(
-            **gs.dict('Abatement_cost', lambda df: gs.div(df, "OPEX_diff", -df['Emissions_diff']))
+            **gs.dict('Abatement_cost', lambda df: gs.div(df, "cost_diff", -df['Emissions_diff']))
         )
 
-    total_em_savings = opex_and_em \
+    total_em_savings = cost_and_em \
         .groupby(['Project name']) \
         .agg({'Emissions_diff': 'sum'}) \
         .merge(
@@ -89,14 +82,14 @@ def calc_ccfd(opex_and_em: pd.DataFrame, capex: pd.DataFrame,
         ) \
         .filter(['Project name', "Total Emissions savings"])
 
-    opex_and_em = opex_and_em \
+    cost_and_em = cost_and_em \
         .assign(
             **{"Difference Price": lambda df:
-                (df["OPEX_diff"] / -df["Emissions_diff"]) -
+                (df["cost_diff"] / -df["Emissions_diff"]) -
                 df["Effective CO2 Price"]}
         )
 
-    opex_and_em = opex_and_em \
+    cost_and_em = cost_and_em \
         .merge(
             pr_size,
             how='left',
@@ -107,4 +100,4 @@ def calc_ccfd(opex_and_em: pd.DataFrame, capex: pd.DataFrame,
                 df["Difference Price"] * -df["Emissions_diff"] * df["Size"]}
         )
 
-    return opex_and_em, total_em_savings
+    return cost_and_em, total_em_savings
