@@ -9,7 +9,8 @@ sys.path.append(repo_dir)
 from src.input.read_scenario_data import read_all_scenario_data, years_to_rows, add_variance
 from src.input.read_config import read_config
 from src.input.read_projects import read_projects
-from src.output.plot_project_cost_time_curves import plot_project, add_color
+from src.output.plot_project_cost_time_curves import plot_project
+from src.output.plot_tools import add_color
 from src.tools.gaussian import get_bounds
 from config.project_list_ALL import project_name
 

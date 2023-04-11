@@ -264,7 +264,7 @@ def calc_emissions_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFra
 def merge_operation_modes(data_old: pd.DataFrame, data_new: pd.DataFrame, h2share: pd.DataFrame):
 
     variables = np.setdiff1d(
-        np.union1d(data_old.columns, data_new.columns),
+        np.intersect1d(data_old.columns, data_new.columns),
         ['Project name', 'Period', 'Technology']
     )
     variables = [v for v in variables if not str(v).endswith("_variance")]

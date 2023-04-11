@@ -1,5 +1,6 @@
 import plotly as pl
 import pandas as pd
+from src.output.plot_tools import add_color
 
 
 def plot_project_cost_time_curves(projects: pd.DataFrame, sector: str = None,
@@ -21,7 +22,7 @@ def plot_project_cost_time_curves(projects: pd.DataFrame, sector: str = None,
         projects = projects.query(query_str)
 
     projects = add_color(
-        projects,
+        projects=projects,
         by_column=color_column
     )
 
@@ -49,9 +50,17 @@ def plot_project_cost_time_curves(projects: pd.DataFrame, sector: str = None,
     plot_project(fig,
                  p1,
                  vname='Effective CO2 Price',
-                 legend_name='CO2 Price',
-                 hovername='CO2 Price',
+                 legend_name='Effective CO2 Price',
+                 hovername='Effective CO2 Price',
                  color="#000000")
+
+    # TODO: dotted, no uncertainty, only if different from effective
+    # plot_project(fig,
+    #              p1,
+    #              vname='CO2 Price',
+    #              legend_name='CO2 Price',
+    #              hovername='CO2 Price',
+    #              color="#000000")
 
     fig.update_layout(legend=dict(title=legend_title),
                       title="Vermediungskosten " + sector)
@@ -114,22 +123,3 @@ def plot_project(fig: pl.graph_objs.Figure, df: pd.DataFrame, vname: str, legend
         showlegend=False
     )
     return fig
-
-
-# define colors to use
-def add_color(projects: pd.DataFrame, by_column: str):
-
-    colors = projects.filter([by_column]).drop_duplicates()
-
-    n_scen = colors.shape[0]
-    if n_scen <= 10:
-        cmap = pl.colors.qualitative.D3
-    elif n_scen <= 24:
-        cmap = pl.colors.qualitative.Dark24
-    else:
-        cmap = pl.colors.sample_colorscale('Viridis', n_scen + 1, colortype='rgb')
-
-    colors['color'] = cmap[:colors.shape[0]]
-    projects = projects.merge(colors, how='left', on=[by_column])
-
-    return projects
