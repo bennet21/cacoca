@@ -65,7 +65,12 @@ et = time.time()
 
 cost_and_em_actual = gs.get_bounds(cost_and_em_actual)
 
-plot_all(cost_and_em_actual, 'per_product.png')
+# glass_and_ceramics, other_industries, cement, steel_dri, basic_chemicals
+sector = 'cement'
+# project_names = ['Lhoist', 'Holcim']
+project_names = None
+
+plot_all(cost_and_em_actual, sector=sector, project_names=project_names)
 
 print()
 
