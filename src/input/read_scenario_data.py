@@ -18,6 +18,8 @@ def read_scenario_data(dirpath: str, scenarios_actual: dict,
     data_actual.prices = years_to_rows(
         data_actual.prices, year_name="Period", value_name="Price"
     )
+    add_variance(data_actual.prices, mode='h2_and_co2_sigma0.2')
+
     data_actual.free_allocations = years_to_rows(
         data_actual.free_allocations, year_name="Period", value_name="Free Allocations"
     )
@@ -25,6 +27,8 @@ def read_scenario_data(dirpath: str, scenarios_actual: dict,
     data_bidding.prices = years_to_rows(
         data_bidding.prices, year_name="Period", value_name="Price"
     )
+    add_variance(data_bidding.prices, mode='h2_and_co2_sigma0.2')
+
     data_bidding.free_allocations = years_to_rows(
         data_bidding.free_allocations, year_name="Period", value_name="Free Allocations"
     )
@@ -85,3 +89,16 @@ def years_to_rows(data: pd.DataFrame, year_name: str, value_name: str):
     )
     data[year_name] = data[year_name].astype(int)
     return data
+
+
+def add_variance(prices: pd.DataFrame, mode: str):
+    if mode == 'h2_and_co2_sigma0.2':
+        prices.insert(loc=len(prices.columns),
+                      column='Price_variance', value=0.)
+
+        for component in ['Hydrogen', 'CO2']:
+            h2rows = prices["Component"] == component
+            prices.loc[h2rows, 'Price_variance'] \
+                = (0.2 * prices.loc[h2rows, 'Price'])**2
+    else:
+        raise Exception(f"Invalid mode '{mode}'.")

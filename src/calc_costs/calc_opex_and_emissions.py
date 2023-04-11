@@ -1,5 +1,6 @@
 import pandas as pd
 from src.input.read_scenario_data import ScenarioData
+import src.tools.gaussian as gs
 
 
 def calc_opex_and_emissions(projects: pd.DataFrame, techdata: pd.DataFrame,
@@ -18,6 +19,8 @@ def calc_opex_and_emissions(projects: pd.DataFrame, techdata: pd.DataFrame,
     data_all = merge_with_reference(data_all, data_ref,
                                     variables=['OPEX', 'Emissions', 'Free Allocations'])
 
+    data_all = add_co2_price(data_all, scendata)
+
     return data_all
 
 
@@ -28,7 +31,8 @@ def split_technology_names(projects: pd.DataFrame, techdata: pd.DataFrame,
         .filter(["Technology", "Industry"]) \
         .drop_duplicates()
 
-    data_all = projects.filter(['Project name', 'Technology', 'Time of investment']) \
+    data_all = projects \
+        .filter(['Project name', 'Technology', 'Time of investment']) \
         .merge(
             reference_tech,
             how='left',
@@ -68,11 +72,12 @@ def calc_single_opmode(projects_in: pd.DataFrame, config: dict,
     """
 
     # expand projects by calendar years of operation
-    yearly_data = projects_in.merge(
+    yearly_data = projects_in \
+        .merge(
             pd.DataFrame.from_dict({'Period': config['years']}),
             how='cross'
         ) \
-        .query("Period >= `Time of investment` & Period <= `Time of investment` + 15.") \
+        .query("Period >= `Time of investment` & Period <= `Time of investment` + 15") \
         .drop(columns=['Time of investment'])
 
     yearly_data = calc_opex_single_opmode(yearly_data, techdata, scendata)
@@ -115,9 +120,9 @@ def calc_opex_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFrame,
             how='left',
             on=['Component', 'Period']
         ) \
-        .assign(OPEX=lambda df: df['Material demand'] * df['Price']) \
+        .assign(**gs.dict('OPEX', lambda df: gs.mul(df, 'Material demand', 'Price'))) \
         .groupby(['Project name', 'Period'], as_index=False) \
-        .agg({'OPEX': 'sum', 'Technology': 'first'})
+        .agg({'OPEX': 'sum', 'OPEX_variance': 'sum', 'Technology': 'first'})
 
     # add additional OPEX
     yearly_data = yearly_data \
@@ -131,8 +136,8 @@ def calc_opex_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFrame,
         .rename(columns={"Value": "Additional OPEX"})
     yearly_data["Additional OPEX"].fillna(0., inplace=True)
     yearly_data = yearly_data \
-        .assign(OPEX=lambda df: df['OPEX'] + df['Additional OPEX']) \
-        .drop(columns=['Additional OPEX'])
+        .assign(**gs.dict('OPEX', lambda df: gs.add(df, 'OPEX', 'Additional OPEX'))) \
+        .drop(columns=['Additional OPEX', 'Additional OPEX_variance'], errors='ignore')
 
     return yearly_data
 
@@ -154,18 +159,6 @@ def calc_emissions_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFra
         ) \
         .rename(columns={"Value": "Emissions"})
 
-    # Add CO2 price to df
-    co2prices = scendata.prices \
-        .query("Component == 'CO2'") \
-        .filter(["Period", "Price"]) \
-        .rename(columns={"Price": "CO2 Price"})
-    yearly_data = yearly_data \
-        .merge(
-            co2prices,
-            how='left',
-            on=['Period']
-        ) \
-
     # add free allocations to df
     yearly_data = yearly_data \
         .merge(
@@ -184,7 +177,7 @@ def merge_operation_modes(data_old: pd.DataFrame, data_new: pd.DataFrame,
     # merge old and new dataframes
     data_all = data_old \
         .merge(
-            data_new,
+            data_new.drop(columns=['Technology']),
             how='left',
             on=['Project name', 'Period']
         ) \
@@ -197,16 +190,37 @@ def merge_operation_modes(data_old: pd.DataFrame, data_new: pd.DataFrame,
     # blend opex and emissions of old and new operation mode to overall opex
     for vname in variables:
         data_all = data_all \
+            .rename(columns={vname + '_variance_x': vname + '_x_variance',
+                             vname + '_variance_y': vname + '_y_variance'},
+                    errors='ignore')
+        data_all = data_all \
             .assign(
-                **{vname: lambda df:
-                    (1.-df['H2 Share']) * df[vname+'_x'] + df['H2 Share'] * df[vname+'_y']
-                   }
-            ) \
-            .drop(columns=[vname+suffix for suffix in ['_x', '_y']])
+                **gs.dict(
+                    vname,
+                    lambda df: gs.add(
+                        df,
+                        gs.mul(
+                            df,
+                            1. - df['H2 Share'],
+                            vname + '_x'
+                        ),
+                        gs.mul(
+                            df,
+                            df['H2 Share'],
+                            vname + '_y'
+                        )
+                    ))
+            )
+        data_all = data_all \
+            .drop(
+                columns=[vname + '_x',
+                         vname + '_y',
+                         vname + '_x_variance',
+                         vname + '_y_variance'],
+                errors='ignore')
 
     data_all = data_all \
-        .drop(columns=['H2 Share', 'Technology_x']) \
-        .rename(columns={'Technology_y': 'Technology'})
+        .drop(columns=['H2 Share'])
 
     return data_all
 
@@ -216,7 +230,9 @@ def merge_with_reference(data_all: pd.DataFrame, data_ref: pd.DataFrame, variabl
     # add '_ref' to reference varable names
     data_ref = data_ref \
         .rename(
-            columns={v: v + '_ref' for v in variables}
+            columns={v + suffix: v + '_ref' + suffix
+                     for v in variables for suffix in ['', '_variance']},
+            errors='ignore'
         ) \
         .drop(columns=['Technology'])
     # merge and calculate difference for all variables in input list
@@ -229,7 +245,22 @@ def merge_with_reference(data_all: pd.DataFrame, data_ref: pd.DataFrame, variabl
     for vname in variables:
         data_all = data_all \
             .assign(
-                **{vname + '_diff': lambda df: df[vname] - df[vname + '_ref']}
+                **gs.dict(vname + '_diff', lambda df: gs.sub(df, vname, vname + '_ref'))
             )
 
     return data_all
+
+
+def add_co2_price(yearly_data: pd.DataFrame, scendata: ScenarioData):
+    co2prices = scendata.prices \
+        .query("Component == 'CO2'") \
+        .filter(["Period", "Price", "Price_variance"]) \
+        .rename(columns={"Price": "CO2 Price", "Price_variance": "CO2 Price_variance"},
+                errors='ignore')
+    yearly_data = yearly_data \
+        .merge(
+            co2prices,
+            how='left',
+            on=['Period']
+        )
+    return yearly_data

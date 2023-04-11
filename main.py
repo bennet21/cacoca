@@ -1,3 +1,5 @@
+# %%
+import time
 from src.input.read_config import read_config
 from src.input.read_projects import read_projects
 from src.input.read_techdata import read_techdata
@@ -5,12 +7,16 @@ from src.input.read_scenario_data import read_scenario_data
 from src.calc_costs.calc_capex import calc_capex
 from src.calc_costs.calc_opex_and_emissions import calc_opex_and_emissions
 from src.calc_costs.calc_ccfd import calc_ccfd, calc_strike_price
+from src.output.plot import plot_all
+import src.tools.gaussian as gs
 
 
 # import sys
 # config_filepath = sys.argv[1]
-# config_filepath = 'config/config_all.yml'
-config_filepath = 'config/config.yml'
+config_filepath = 'config/config_all.yml'
+# config_filepath = 'config/config.yml'
+
+st = time.time()
 
 config = read_config(config_filepath)
 
@@ -27,25 +33,28 @@ techdata, reference_tech = read_techdata(
 # techdata = expand_by_years(techdata,
 #                            config['years'])
 
-opex_and_em_actual, opex_and_em_bidding, h2share = read_scenario_data(
+scenarios_actual, scenarios_bidding, h2share = read_scenario_data(
     config['scenarios_dir'],
     config['scenarios_actual'],
     config['scenarios_bidding'],
     projects
 )
 
+
 capex = calc_capex(projects, techdata)
 
 opex_and_em_actual = calc_opex_and_emissions(projects, techdata, reference_tech,
-                                             opex_and_em_actual, h2share, config)
+                                             scenarios_actual, h2share, config)
 opex_and_em_bidding = calc_opex_and_emissions(projects, techdata, reference_tech,
-                                              opex_and_em_bidding, h2share, config)
+                                              scenarios_bidding, h2share, config)
 
 strike_price = calc_strike_price(opex_and_em_bidding, capex, projects)
 
 
-opex_and_em_actual, total_em_savings_actual = calc_ccfd(opex_and_em_actual, capex, projects)
-opex_and_em_bidding, total_em_savings_bidding = calc_ccfd(opex_and_em_bidding, capex, projects)
+opex_and_em_actual, total_em_savings_actual = calc_ccfd(opex_and_em_actual, capex, projects,
+                                                        techdata)
+opex_and_em_bidding, total_em_savings_bidding = calc_ccfd(opex_and_em_bidding, capex, projects,
+                                                          techdata)
 
 # calc_lcop() # sum(opex)/duration + capex / auslastungsfaktor
 # calc_abatement_cost() # npv( lcop_t - lcop_ref ) / npv( e_t - e_ref ), all per t of product
@@ -54,4 +63,15 @@ opex_and_em_bidding, total_em_savings_bidding = calc_ccfd(opex_and_em_bidding, c
 # calc_total_emission_saving()
 # calc_cap()
 
+et = time.time()
+# print(et-st)
+
+# %%
+
+opex_and_em_actual = gs.get_bounds(opex_and_em_actual)
+
+plot_all(opex_and_em_actual, 'per_product.png')
+
 print()
+
+# %%
