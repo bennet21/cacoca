@@ -1,10 +1,10 @@
 import plotly as pl
 import pandas as pd
-from src.output.plot_tools import add_color
+from src.output.plot_tools import add_color, show_and_save
 
 
 def plot_project_cost_time_curves(projects: pd.DataFrame, sector: str = None,
-                                  project_names: list = None):
+                                  project_names: list = None, print_name: str = None):
 
     fig = pl.graph_objs.Figure()
 
@@ -63,10 +63,10 @@ def plot_project_cost_time_curves(projects: pd.DataFrame, sector: str = None,
     #              color="#000000")
 
     fig.update_layout(legend=dict(title=legend_title),
-                      title="Vermediungskosten " + sector)
+                      title="Vermeidungskosten " + sector)
     fig.update_xaxes(title='Jahr')
     fig.update_yaxes(title='€/t CO2')
-    fig.show()
+    show_and_save(fig, 'cost_diff_curve_' + print_name)
 
 
 def plot_project(fig: pl.graph_objs.Figure, df: pd.DataFrame, vname: str, legend_name: str,

@@ -22,3 +22,10 @@ def get_color(variables: list):
         cmap = pl.colors.sample_colorscale('Viridis', n_scen + 1, colortype='rgb')
 
     return cmap[:n_scen]
+
+
+def show_and_save(fig: pl.graph_objs.Figure, base_name: str = None):
+    fig.show()
+    if base_name:
+        dir_path = '/mnt/c/Users/jakobdu/data/projects/ccfd/ueckerdt_folie/figures/'
+        fig.write_image(dir_path + base_name + '.png')

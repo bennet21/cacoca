@@ -96,7 +96,11 @@ def add_variance(prices: pd.DataFrame, mode: str):
         prices.insert(loc=len(prices.columns),
                       column='Price_variance', value=0.)
 
-        for component in ['Hydrogen', 'CO2']:
+        for component in ['Hydrogen']:
+            h2rows = prices["Component"] == component
+            prices.loc[h2rows, 'Price_variance'] \
+                = (0.2 * prices.loc[h2rows, 'Price'])**2
+        for component in ['CO2']:
             h2rows = prices["Component"] == component
             prices.loc[h2rows, 'Price_variance'] \
                 = (0.2 * prices.loc[h2rows, 'Price'])**2

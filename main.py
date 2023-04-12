@@ -8,7 +8,9 @@ from src.calc_costs.calc_cost_and_emissions import calc_cost_and_emissions
 from src.calc_costs.calc_ccfd import calc_ccfd, calc_strike_price
 from src.output.plot_project_cost_time_curves import plot_project_cost_time_curves
 from src.output.plot_stacked_bars import plot_stacked_bars
+from src.output.plot_price_scenarios import plot_price_scenarios
 import src.tools.gaussian as gs
+from config.project_list_ALL import project_names
 
 
 # import sys
@@ -68,15 +70,16 @@ cost_and_em_actual = gs.get_bounds(cost_and_em_actual)
 
 # glass_and_ceramics, other_industries, cement, steel_dri, basic_chemicals
 sector = 'steel_dri'
-# project_names = ['Lhoist', 'Holcim']
-project_names = ['Salzgitter_IPCEI']
-# project_names = None
 
-if True:
-    plot_project_cost_time_curves(cost_and_em_actual, sector=sector, project_names=project_names)
 
-if False:
-    plot_stacked_bars(cost_and_em_actual, project_name='Salzgitter_IPCEI')
+plot_project_cost_time_curves(cost_and_em_actual, sector=sector, project_names=project_names,
+                              print_name='steel_IPCEI')
+
+for project_name in project_names:
+    plot_stacked_bars(cost_and_em_actual, project_name=project_name)
+
+plot_price_scenarios(config, projects, project_names)
+
 
 print()
 
