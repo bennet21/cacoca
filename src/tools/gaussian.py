@@ -111,3 +111,21 @@ def get_bounds(df_in: pd.DataFrame):
                 vname + '_upper': lambda df: df[vname] + 2. * np.sqrt(df[vns])}
             df_in = df_in.assign(**assign_dict)
     return df_in
+
+
+def add_variance(prices: pd.DataFrame,
+                 relative_standard_deviation: dict = None,
+                 absolute_standard_deviation: dict = None):
+
+    # prices.insert(loc=len(prices.columns),
+    #               column='Price_variance', value=0.)
+    if relative_standard_deviation:
+        for component, factor in relative_standard_deviation.items():
+            h2rows = prices["Component"] == component
+            prices.loc[h2rows, 'Price_variance'] \
+                = (factor * prices.loc[h2rows, 'Price'])**2
+
+    if absolute_standard_deviation:
+        for component, std in absolute_standard_deviation.items():
+            h2rows = prices["Component"] == component
+            prices.loc[h2rows, 'Price_variance'] = std**2

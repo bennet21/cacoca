@@ -1,9 +1,9 @@
-# %%
 import plotly as pl
 import pandas as pd
 from src.input.read_scenario_data import read_all_scenario_data, years_to_rows, add_variance
 from src.output.plot_project_cost_time_curves import plot_project
-from src.output.plot_tools import add_color, show_and_save
+from src.output.plot_tools import add_color, show_and_save, set_yrange_min_zero
+from src.output.plot_tools import display_name as dn
 from src.tools.gaussian import get_bounds
 
 
@@ -25,16 +25,20 @@ def plot_price_scenarios(config: dict, projects: pd.DataFrame, project_names: li
     # Hack to make it fit in price plotting scheme below
     h2share = years_to_rows(h2share, year_name="Period", value_name="Price")
 
+    h2share_scens = []
     for project_name in project_names:
         h2share_scen = projects \
             .query(f"`Project name` == '{project_name}'")["H2 Share Scenario"] \
             .values[0]
-        config["Prices H2 Share " + project_name] = h2share_scen
-        h2share["Component"] = "H2 Share " + project_name
-        h2share["Unit"] = "H2 Share"
-        prices = pd.concat([prices, h2share])
+        h2share_scens.append(h2share_scen)
 
-    add_variance(prices, mode='h2_and_co2_sigma0.2')
+    h2share["Component"] = "H2 Share"
+    h2share["Unit"] = "H2 Share"
+    prices = pd.concat([prices, h2share])
+
+    add_variance(prices,
+                 relative_standard_deviation=config.get('relative_standard_deviation', None),
+                 absolute_standard_deviation=config.get('absolute_standard_deviation', None))
     prices = get_bounds(prices)
 
     for component_name, cdf in prices.groupby('Component'):
@@ -50,15 +54,17 @@ def plot_price_scenarios(config: dict, projects: pd.DataFrame, project_names: li
             color = sdf['color'].values[0]
             legend_name = scenario_name
 
-            if do_emphasize and "Prices " + component_name in config:
-                if config["Prices " + component_name] == scenario_name:
-                    emphasize = 'main'
-                else:
-                    emphasize = 'other'
-                    if not print_other:
-                        continue
+            if not do_emphasize:
+                emphasize = 'all_equal'
             else:
-                emphasize = None
+                if component_name == 'H2 Share':
+                    is_emphasized = scenario_name in h2share_scens
+                else:
+                    is_emphasized = config["Prices " + component_name] == scenario_name
+                emphasize = 'main' if is_emphasized else 'other'
+
+            if emphasize == 'other' and not print_other:
+                continue
 
             plot_project(fig,
                          sdf,
@@ -69,9 +75,10 @@ def plot_price_scenarios(config: dict, projects: pd.DataFrame, project_names: li
                          emphasize=emphasize)
 
         fig.update_layout(legend=dict(title='Szenario'),
-                          title=component_name)
-        fig.update_xaxes(title='Jahr')
-        fig.update_yaxes(title=sdf['Unit'].values[0])
-        show_and_save(fig, 'prices_' + component_name)
+                          title=f"{dn('prices')} {dn(component_name)}")
+        # fig.update_xaxes(title='Jahr')
 
-        # %%
+        set_yrange_min_zero(fig)
+        fig.update_yaxes(title=dn(sdf['Unit'].values[0]))
+
+        show_and_save(fig, 'prices_' + component_name)

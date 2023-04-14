@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+from src.tools.gaussian import add_variance
 
 
 class ScenarioData():
@@ -8,30 +9,40 @@ class ScenarioData():
         self.free_allocations = free_allocations
 
 
-def read_scenario_data(dirpath: str, scenarios_actual: dict,
-                       scenarios_bidding: dict, projects: pd.DataFrame):
+def read_scenario_data(dirpath: str,
+                       projects: pd.DataFrame,
+                       scenarios_actual: dict,
+                       scenarios_bidding: dict = None,
+                       relative_standard_deviation: dict = None,
+                       absolute_standard_deviation: dict = None):
+
     data_all, h2share = read_all_scenario_data(dirpath=dirpath)
     data_actual = choose_by_scenario_dict(data_all, scenarios_actual)
-    data_bidding = choose_by_scenario_dict(data_all, scenarios_bidding)
     h2share = choose_by_projects(h2share, projects)
 
     data_actual.prices = years_to_rows(
         data_actual.prices, year_name="Period", value_name="Price"
     )
-    add_variance(data_actual.prices, mode='h2_and_co2_sigma0.2')
+    add_variance(data_actual.prices,
+                 relative_standard_deviation,
+                 absolute_standard_deviation)
 
     data_actual.free_allocations = years_to_rows(
         data_actual.free_allocations, year_name="Period", value_name="Free Allocations"
     )
 
-    data_bidding.prices = years_to_rows(
-        data_bidding.prices, year_name="Period", value_name="Price"
-    )
-    add_variance(data_bidding.prices, mode='h2_and_co2_sigma0.2')
+    if scenarios_bidding:
+        data_bidding = choose_by_scenario_dict(data_all, scenarios_bidding)
+        data_bidding.prices = years_to_rows(
+            data_bidding.prices, year_name="Period", value_name="Price"
+        )
+        # add_variance(data_bidding.prices, ...)
 
-    data_bidding.free_allocations = years_to_rows(
-        data_bidding.free_allocations, year_name="Period", value_name="Free Allocations"
-    )
+        data_bidding.free_allocations = years_to_rows(
+            data_bidding.free_allocations, year_name="Period", value_name="Free Allocations"
+        )
+    else:
+        data_bidding = None
 
     h2share = years_to_rows(h2share, year_name="Operation Year", value_name="H2 Share") \
         .assign(Period=lambda df: df['Operation Year'] + df['Time of investment'] - 1) \
@@ -89,20 +100,3 @@ def years_to_rows(data: pd.DataFrame, year_name: str, value_name: str):
     )
     data[year_name] = data[year_name].astype(int)
     return data
-
-
-def add_variance(prices: pd.DataFrame, mode: str):
-    if mode == 'h2_and_co2_sigma0.2':
-        prices.insert(loc=len(prices.columns),
-                      column='Price_variance', value=0.)
-
-        for component in ['Hydrogen']:
-            h2rows = prices["Component"] == component
-            prices.loc[h2rows, 'Price_variance'] \
-                = (0.2 * prices.loc[h2rows, 'Price'])**2
-        for component in ['CO2']:
-            h2rows = prices["Component"] == component
-            prices.loc[h2rows, 'Price_variance'] \
-                = (0.2 * prices.loc[h2rows, 'Price'])**2
-    else:
-        raise Exception(f"Invalid mode '{mode}'.")

@@ -7,13 +7,13 @@ import src.tools.gaussian as gs
 
 def calc_cost_and_emissions(projects: pd.DataFrame, techdata: pd.DataFrame,
                             reference_tech: pd.DataFrame, scendata: ScenarioData,
-                            h2share: pd.DataFrame, config: dict):
+                            h2share: pd.DataFrame, config: dict, keep_components: bool = False):
 
     data_old, data_new, data_ref = split_technology_names(projects, techdata, reference_tech)
 
-    data_new = calc_single_opmode(data_new, config, projects, techdata, scendata)
-    data_old = calc_single_opmode(data_old, config, projects, techdata, scendata)
-    data_ref = calc_single_opmode(data_ref, config, projects, techdata, scendata)
+    data_new = calc_single_opmode(data_new, config, projects, techdata, scendata, keep_components)
+    data_old = calc_single_opmode(data_old, config, projects, techdata, scendata, keep_components)
+    data_ref = calc_single_opmode(data_ref, config, projects, techdata, scendata, keep_components)
 
     data_all, variables = merge_operation_modes(data_old, data_new, h2share)
 
@@ -66,7 +66,8 @@ def split_technology_names(projects: pd.DataFrame, techdata: pd.DataFrame,
 
 
 def calc_single_opmode(data_in: pd.DataFrame, config: dict, projects: pd.DataFrame,
-                       techdata: pd.DataFrame, scendata: ScenarioData):
+                       techdata: pd.DataFrame, scendata: ScenarioData,
+                       keep_components: bool = False):
     """
     Calc cost and emissions for one set of specific energy demands
     """
@@ -75,7 +76,7 @@ def calc_single_opmode(data_in: pd.DataFrame, config: dict, projects: pd.DataFra
 
     yearly_data = expand_by_years(data_in, config, projects)
 
-    yearly_data = calc_cost_single_opmode(yearly_data, techdata, scendata)
+    yearly_data = calc_cost_single_opmode(yearly_data, techdata, scendata, keep_components)
 
     yearly_data = calc_emissions_single_opmode(yearly_data, techdata, scendata)
 
@@ -153,7 +154,7 @@ def expand_by_years(data_in: pd.DataFrame, config: dict, projects: pd.DataFrame)
 
 
 def calc_cost_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFrame,
-                            scendata: ScenarioData):
+                            scendata: ScenarioData, keep_components: bool = False):
     """
     Calc yearly cost for one set of specific energy demands
     """
@@ -189,7 +190,6 @@ def calc_cost_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFrame,
         ) \
         .assign(**gs.dict('cost', lambda df: gs.mul(df, 'Material demand', 'Price'))) \
 
-    keep_components = True
     if keep_components:
         component_cost = yearly_data \
             .pivot_table(values='cost', index=['Project name', 'Period'], columns='Component') \

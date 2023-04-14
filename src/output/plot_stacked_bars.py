@@ -2,6 +2,7 @@ import plotly as pl
 import pandas as pd
 import numpy as np
 from src.output.plot_tools import get_color, show_and_save
+from src.output.plot_tools import display_name as dn
 
 
 def plot_stacked_bars(projects: pd.DataFrame, project_name: str):
@@ -44,7 +45,7 @@ def plot_stacked_bars(projects: pd.DataFrame, project_name: str):
 
         component = vn.replace("cost_", "")
         fig.add_bar(
-            name=component,
+            name=dn(component),
             # x=[projects['Period'].to_list(), ['Vorhaben' for _ in years]],
             x=projects['Period'],
             y=projects[vn] / -projects['Emissions_diff'],
@@ -56,7 +57,7 @@ def plot_stacked_bars(projects: pd.DataFrame, project_name: str):
         base += projects[vn] / -projects['Emissions_diff']
 
         fig.add_bar(
-            name=component,
+            name=dn(component),
             # x=[projects['Period'].to_list(), ['Referenz' for _ in years]],
             x=projects['Period'],
             y=projects[vn + '_ref'] / -projects['Emissions_diff'],
@@ -69,7 +70,7 @@ def plot_stacked_bars(projects: pd.DataFrame, project_name: str):
         base_ref += projects[vn + '_ref'] / -projects['Emissions_diff']
 
     fig.add_bar(
-        name="Effective CO2 Price",
+        name=dn("Effective CO2 Price"),
         # x=[projects['Period'].to_list(), ['Referenz' for _ in years]],
         x=projects['Period'],
         y=projects['Effective CO2 Price'],
@@ -81,6 +82,6 @@ def plot_stacked_bars(projects: pd.DataFrame, project_name: str):
 
     fig.update_yaxes(title='€/t CO2')
     fig.update_layout(legend_traceorder="reversed",
-                      title=f"{project_name} ({projects['Industry'].values[0]})")
+                      title=f"Kostenvergleich {dn(project_name)}")
     # fig.update_layout(barmode="relative")
     show_and_save(fig, 'stacked_bars_' + project_name)

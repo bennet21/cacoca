@@ -1,47 +1,42 @@
 import plotly as pl
 import pandas as pd
-from src.output.plot_tools import add_color, show_and_save
+from src.output.plot_tools import add_color, show_and_save, set_yrange_min_zero
+from src.output.plot_tools import display_name as dn
 
 
-def plot_project_cost_time_curves(projects: pd.DataFrame, sector: str = None,
-                                  project_names: list = None, print_name: str = None):
+def plot_project_cost_time_curves(projects: pd.DataFrame,
+                                  color_by: str = 'Project name',
+                                  print_name: str = None,
+                                  one_per_color: bool = False,
+                                  **filter_by: dict):
 
     fig = pl.graph_objs.Figure()
 
-    if sector:
-        color_column = 'Project name'
-        projects = projects.query(f"Industry == '{sector}'")
-        legend_title = 'Projekt'
-    else:
-        color_column = 'Industry'
-        sector = ""
-        legend_title = "Sektor"
+    legend_title = dn(color_by)
 
-    if project_names:
-        query_str = " | ".join([f"`Project name` == '{pn}'" for pn in project_names])
+    for filter_column, filter_values in filter_by.items():
+        query_str = " | ".join([f"`{filter_column}` == '{fv}'" for fv in filter_values])
         projects = projects.query(query_str)
 
     projects = add_color(
         projects=projects,
-        by_column=color_column
+        by_column=color_by
     )
 
     legend_names = set()
     for project_name, pdf in projects.groupby('Project name'):
         color = pdf['color'].values[0]
-        legend_name = pdf[color_column].values[0]
+        legend_name = pdf[color_by].values[0]
         showlegend = legend_name not in legend_names
         legend_names.add(legend_name)
-        # if legend_name != 'steel_dri':
-        #     continue
-        if not showlegend:
+        if one_per_color and not showlegend:
             continue
 
         plot_project(fig,
                      pdf,
                      vname='Abatement_cost',
-                     legend_name=legend_name,
-                     hovername=project_name,
+                     legend_name=dn(legend_name),
+                     hovername=dn(project_name),
                      color=color,
                      showlegend=showlegend)
 
@@ -50,8 +45,8 @@ def plot_project_cost_time_curves(projects: pd.DataFrame, sector: str = None,
     plot_project(fig,
                  p1,
                  vname='Effective CO2 Price',
-                 legend_name='Effective CO2 Price',
-                 hovername='Effective CO2 Price',
+                 legend_name=dn('Effective CO2 Price'),
+                 hovername=dn('Effective CO2 Price'),
                  color="#000000")
 
     # TODO: dotted, no uncertainty, only if different from effective
@@ -63,27 +58,33 @@ def plot_project_cost_time_curves(projects: pd.DataFrame, sector: str = None,
     #              color="#000000")
 
     fig.update_layout(legend=dict(title=legend_title),
-                      title="Vermeidungskosten " + sector)
-    fig.update_xaxes(title='Jahr')
-    fig.update_yaxes(title='€/t CO2')
+                      title=f"{dn('Abatement_cost')} ({dn(print_name)})")
+    # fig.update_xaxes(title='Jahr')
+    set_yrange_min_zero(fig)
+    fig.update_yaxes(title='€ / t CO2')
     show_and_save(fig, 'cost_diff_curve_' + print_name)
 
 
 def plot_project(fig: pl.graph_objs.Figure, df: pd.DataFrame, vname: str, legend_name: str,
-                 hovername: str, color: str, showlegend: bool = True, emphasize=None):
+                 hovername: str, color: str, showlegend: bool = True, emphasize: str = 'all_equal'):
 
     if emphasize == 'main':
+        width = 5
+        dash = 'solid'
+        alpha = 0.4
+        legendrank = 999
+    elif emphasize == 'other':
+        width = 2
+        dash = 'dot'
+        alpha = 0.0
+        legendrank = 1001
+    elif emphasize == 'all_equal':
         width = 3
         dash = 'solid'
         alpha = 0.4
-    elif emphasize == 'other':
-        width = 1
-        dash = 'dot'
-        alpha = 0.1
+        legendrank = 1000
     else:
-        width = 2
-        dash = 'solid'
-        alpha = 0.4
+        raise Exception("Invalid value for 'emphasize'")
 
     fig = fig.add_scatter(
         x=df['Period'],
@@ -93,7 +94,8 @@ def plot_project(fig: pl.graph_objs.Figure, df: pd.DataFrame, vname: str, legend
         name=legend_name,
         showlegend=showlegend,
         hoverinfo='text',
-        hovertext=hovername
+        hovertext=hovername,
+        legendrank=legendrank
     )
     vnl, vnu = vname + '_lower', vname + '_upper'
     if not (vnl in df.columns and vnu in df.columns):
