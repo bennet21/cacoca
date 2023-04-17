@@ -17,11 +17,11 @@ def calc_strike_price(cost_and_em: pd.DataFrame, projects: pd.DataFrame):
         ) \
         .assign(
             **{'cost_NPV': lambda df:
-               (df['CumInterest'] - df['cost_diff']) / df['Project duration [a]']}
+               (df['CumInterest'] * df['cost_diff']) / df['Project duration [a]']}
         ) \
         .assign(
             **{'Emissions_NPV': lambda df:
-               (df['CumInterest'] - df['Emissions_diff']) / df['Project duration [a]']}
+               (df['CumInterest'] * df['Emissions_diff']) / df['Project duration [a]']}
         ) \
         .groupby(['Project name']) \
         .agg({'cost_NPV': 'sum', 'Emissions_NPV': 'sum'})
