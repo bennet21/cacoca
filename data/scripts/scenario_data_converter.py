@@ -2,10 +2,10 @@
 import pandas as pd
 import os
 
-input_file = 'data/scripts/Input_Modellierung_2023-0321_adapted.xlsx'
-output_dir = 'data/scenarios/isi/'
-# input_file = 'data/scripts/Tool_ALL.xlsm'
-# output_dir = 'data/scenarios/isi_all/'
+# input_file = 'data/scripts/Input_Modellierung_2023-0321_adapted.xlsx'
+# output_dir = 'data/scenarios/isi/'
+input_file = 'data/scripts/Tool_ALL.xlsm'
+output_dir = 'data/scenarios/isi_all/'
 
 # ======= CHANGES TO EXCEL FILE: =======
 # - CO2-Price: none

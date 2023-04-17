@@ -3,10 +3,10 @@ import pandas as pd
 import numpy as np
 import os
 # CONFIG -----------------------------------------------------------------
-input_file = 'data/scripts/Input_Modellierung_2023-0321_adapted.xlsx'
-output_dir = 'data/tech/isi/'
-# input_file = 'data/scripts/Tool_ALL.xlsm'
-# output_dir = 'data/tech/isi_all/'
+# input_file = 'data/scripts/Input_Modellierung_2023-0321_adapted.xlsx'
+# output_dir = 'data/tech/isi/'
+input_file = 'data/scripts/Tool_ALL.xlsm'
+output_dir = 'data/tech/isi_all/'
 
 # BEGIN READING TECHNOLOGY PARAMETER SHEET -------------------------------
 # read in technology param inverted sheet
@@ -20,12 +20,12 @@ techparam = techparam.iloc[2:,]
 # rename column names
 techparam.columns = ['Index', 'Industry', 'Technology', 'Datasource', 'Reference Technology',
        'Unit', 'CO2','Natural Gas','Electricity','Hydrogen' ,
-       'Coking Coal','Injection Coal','Iron ore','Scrap Steel',
+       'Coking Coal','Injection Coal','Iron Ore','Scrap Steel',
        'DRI-Pellets','Naphta','Additional OPEX','Steel: DRI- Alternative Tech (Fuel)',
        'Technology Benchmark','Kommentar',
        'Unused_1', 'Technology_2','Energy Intensity', 'Factor',
        'Natural Gas_2', 'Electricity_2', 'Hydrogen_2',
-       'Coking Coal_2', 'Injection Coal_2', 'Iron ore_2', 'Scrap Steel_2',
+       'Coking Coal_2', 'Injection Coal_2', 'Iron Ore_2', 'Scrap Steel_2',
        'DRI-Pellets_2', 'Naphta_2', 'Unnamed: 33', 'Unnamed: 34', 'Hydrogen .1',
        'Coking Coal.1', 'Injection Coal.1', 'Naphta.1']
 
@@ -44,7 +44,7 @@ tech_mapping_filtered.to_csv(os.path.join(output_dir, "technology_reference_mapp
 # the columns for the melted dataframe are all selected here (lots of the original columns are not needed)
 techparam_primary = pd.melt(techparam, id_vars=['Industry', 'Technology', 'Datasource','Kommentar'],
                   value_vars=['CO2','Natural Gas','Electricity','Hydrogen' ,
-       'Coking Coal','Injection Coal','Iron ore','Scrap Steel',
+       'Coking Coal','Injection Coal','Iron Ore','Scrap Steel',
        'DRI-Pellets','Naphta','Additional OPEX'],
         var_name='variable', value_name='value')
 
@@ -54,7 +54,7 @@ techparam_filtered = techparam_primary[~techparam_primary['value'].isnull() & ~t
 # append Units (The units are not stored as a column in the excel file)
 units_dict = {'CO2': 't/t RS', 'Natural Gas': 'MWh/t RS', 'Electricity': 'MWh/t RS',
                'Hydrogen': 'kg/t RS', 'Coking Coal': 't/t RS', 'Injection Coal': 't/t RS',
-               'Iron ore': 't/t RS', 'Scrap Steel': 't/t RS', 'DRI-Pellets': 't/t RS',
+               'Iron Ore': 't/t RS', 'Scrap Steel': 't/t RS', 'DRI-Pellets': 't/t RS',
                'Naphta': 't/t RS', 'Additional OPEX': '€/t RS'}
 
 techparam_filtered = techparam_filtered.assign(unit = techparam_filtered['variable'].map(units_dict))
@@ -62,7 +62,7 @@ techparam_filtered = techparam_filtered.assign(unit = techparam_filtered['variab
 # append Type
 units_dict = {'CO2': 'Emissions', 'Natural Gas': 'Energy demand', 'Electricity': 'Energy demand',
                'Hydrogen': 'Energy demand', 'Coking Coal': 'Energy demand', 'Injection Coal': 'Energy demand',
-               'Iron ore': 'Feedstock demand', 'Scrap Steel': 'Feedstock demand', 'DRI-Pellets': 'Feedstock demand',
+               'Iron Ore': 'Feedstock demand', 'Scrap Steel': 'Feedstock demand', 'DRI-Pellets': 'Feedstock demand',
                'Naphta': 'Feedstock demand', 'Additional OPEX': 'OPEX'}
 
 techparam_filtered = techparam_filtered.assign(type = techparam_filtered['variable'].map(units_dict))
