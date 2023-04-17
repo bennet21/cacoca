@@ -1,19 +1,26 @@
 import pandas as pd
 import numpy as np
 import numpy_financial as npf
+from src.input.setup import Setup
 from src.input.read_scenario_data import ScenarioData
 import src.tools.gaussian as gs
 
 
-def calc_cost_and_emissions(projects: pd.DataFrame, techdata: pd.DataFrame,
-                            reference_tech: pd.DataFrame, scendata: ScenarioData,
-                            h2share: pd.DataFrame, config: dict, keep_components: bool = False):
+def calc_cost_and_emissions(setup: Setup, scendata: ScenarioData, h2share: pd.DataFrame,
+                            projects: pd.DataFrame = None, keep_components: bool = False):
 
-    data_old, data_new, data_ref = split_technology_names(projects, techdata, reference_tech)
+    if not projects:
+        projects = setup.projects_all
 
-    data_new = calc_single_opmode(data_new, config, projects, techdata, scendata, keep_components)
-    data_old = calc_single_opmode(data_old, config, projects, techdata, scendata, keep_components)
-    data_ref = calc_single_opmode(data_ref, config, projects, techdata, scendata, keep_components)
+    data_old, data_new, data_ref = split_technology_names(projects, setup.techdata,
+                                                          setup.reference_tech)
+
+    data_new = calc_single_opmode(data_new, setup.config, projects, setup.techdata, scendata,
+                                  keep_components)
+    data_old = calc_single_opmode(data_old, setup.config, projects, setup.techdata, scendata,
+                                  keep_components)
+    data_ref = calc_single_opmode(data_ref, setup.config, projects, setup.techdata, scendata,
+                                  keep_components)
 
     data_all, variables = merge_operation_modes(data_old, data_new, h2share)
 

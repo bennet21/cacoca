@@ -9,49 +9,7 @@ class ScenarioData():
         self.free_allocations = free_allocations
 
 
-def read_scenario_data(dirpath: str,
-                       projects: pd.DataFrame,
-                       scenarios_actual: dict,
-                       scenarios_bidding: dict = None,
-                       relative_standard_deviation: dict = None,
-                       absolute_standard_deviation: dict = None):
-
-    data_all, h2share = read_all_scenario_data(dirpath=dirpath)
-    data_actual = choose_by_scenario_dict(data_all, scenarios_actual)
-    h2share = choose_by_projects(h2share, projects)
-
-    data_actual.prices = years_to_rows(
-        data_actual.prices, year_name="Period", value_name="Price"
-    )
-    add_variance(data_actual.prices,
-                 relative_standard_deviation,
-                 absolute_standard_deviation)
-
-    data_actual.free_allocations = years_to_rows(
-        data_actual.free_allocations, year_name="Period", value_name="Free Allocations"
-    )
-
-    if scenarios_bidding:
-        data_bidding = choose_by_scenario_dict(data_all, scenarios_bidding)
-        data_bidding.prices = years_to_rows(
-            data_bidding.prices, year_name="Period", value_name="Price"
-        )
-        # add_variance(data_bidding.prices, ...)
-
-        data_bidding.free_allocations = years_to_rows(
-            data_bidding.free_allocations, year_name="Period", value_name="Free Allocations"
-        )
-    else:
-        data_bidding = None
-
-    h2share = years_to_rows(h2share, year_name="Operation Year", value_name="H2 Share") \
-        .assign(Period=lambda df: df['Operation Year'] + df['Time of investment'] - 1) \
-        .drop(columns=['Operation Year', 'Time of investment'])
-
-    return data_actual, data_bidding, h2share
-
-
-def read_all_scenario_data(dirpath: str):
+def read_raw_scenario_data(dirpath: str):
     co2prices = pd.read_csv(os.path.join(dirpath, 'prices_co2.csv'), encoding="utf-16")
     co2prices.insert(0, 'Component', 'CO2', True)
     fuel_prices = pd.read_csv(os.path.join(dirpath, 'prices_fuels.csv'), encoding="utf-16")
@@ -60,6 +18,34 @@ def read_all_scenario_data(dirpath: str):
     free_allocations = pd.read_csv(os.path.join(dirpath, 'free_allocations.csv'), encoding="utf-16")
     # cbam_factor = pd.read_csv(os.path.join(dirpath,'cbam_factor.csv'), encoding="utf-16")
     return ScenarioData(prices, free_allocations), h2share
+
+
+def select_scenario_data(data_raw: ScenarioData,
+                         h2share_raw: pd.DataFrame,
+                         projects: pd.DataFrame,
+                         scenarios: dict,
+                         auction_year: int = None,
+                         relative_standard_deviation: dict = None,
+                         absolute_standard_deviation: dict = None):
+
+    data_scen = choose_by_scenario_dict(data_raw, scenarios)
+    h2share = choose_by_projects(h2share_raw, projects)
+
+    data_scen.prices = years_to_rows(
+        data_scen.prices, year_name="Period", value_name="Price"
+    )
+    add_variance(data_scen.prices,
+                 relative_standard_deviation,
+                 absolute_standard_deviation)
+
+    data_scen.free_allocations = years_to_rows(
+        data_scen.free_allocations, year_name="Period", value_name="Free Allocations"
+    )
+
+    h2share = years_to_rows(h2share, year_name="Operation Year", value_name="H2 Share")
+    h2share = get_h2share_opyear(h2share, projects, auction_year)
+
+    return data_scen, h2share
 
 
 def choose_by_scenario_dict(data_all: ScenarioData, scenarios: dict):
@@ -79,7 +65,7 @@ def choose_by_scenario_dict(data_all: ScenarioData, scenarios: dict):
 
 def choose_by_projects(h2share: pd.DataFrame, projects: pd.DataFrame):
     return projects \
-        .filter(['Project name', 'Time of investment', 'H2 Share Scenario']) \
+        .filter(['Project name', 'H2 Share Scenario']) \
         .merge(
             h2share,
             how='left',
@@ -100,3 +86,21 @@ def years_to_rows(data: pd.DataFrame, year_name: str, value_name: str):
     )
     data[year_name] = data[year_name].astype(int)
     return data
+
+
+def get_h2share_opyear(h2share: pd.DataFrame, projects: pd.DataFrame, auction_year: int = None):
+    if auction_year:
+        h2share = h2share \
+            .assign(Period=lambda df: (df['Operation Year'] - 1) + auction_year + 3) \
+            .drop(columns=['Operation Year'])
+    else:
+        h2share = h2share \
+            .merge(
+                projects.filter(['Project name', 'Time of investment']),
+                how='left',
+                on=['Time of investment']
+            ) \
+            .assign(Period=lambda df: (df['Operation Year'] - 1) + df['Time of investment']) \
+            .drop(columns=['Operation Year', 'Time of investment'])
+
+    return h2share

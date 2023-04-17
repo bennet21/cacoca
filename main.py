@@ -1,8 +1,7 @@
+import pandas as pd
 # import time
-from src.input.read_config import read_config
-from src.input.read_projects import read_projects
-from src.input.read_techdata import read_techdata
-from src.input.read_scenario_data import read_scenario_data
+from src.input.setup import get_setup, Setup
+from src.input.read_scenario_data import select_scenario_data
 from src.calc_costs.calc_cost_and_emissions import calc_cost_and_emissions
 from src.calc_costs.calc_ccfd import calc_ccfd, calc_strike_price
 import src.tools.gaussian as gs
@@ -11,50 +10,38 @@ import src.tools.gaussian as gs
 def run(config_filepath: str = None, config: dict = None):
 
     # st = time.time()
-    if bool(config_filepath) == bool(config):
-        raise Exception('Specify either config_filepath or config dict.')
-    if bool(config_filepath):
-        config = read_config(config_filepath)
 
-    mode = config['mode']
-    if mode not in ['analyze_cost', 'auction']:
-        raise Exception('Invalid mode')
+    setup = get_setup(config_filepath, config)
 
-    projects = read_projects(
-        config['projects_file'],
-        config['default_wacc']
-    )
-
-    techdata, reference_tech = read_techdata(
-        config['techdata_dir'],
-        config['techdata_files']
-    )
-
-    # techdata = expand_by_years(techdata,
-    #                            config['years'])
-
-    scenarios_actual, scenarios_bidding, h2share = read_scenario_data(
-        dirpath=config['scenarios_dir'],
-        projects=projects,
-        scenarios_actual=config['scenarios_actual'],
-        scenarios_bidding=config.get('scenarios_bidding', None),
-        relative_standard_deviation=config.get('relative_standard_deviation', None),
-        absolute_standard_deviation=config.get('absolute_standard_deviation', None)
-    )
-
-    keep_components = mode == 'analyze_cost'
-    cost_and_em_actual = calc_cost_and_emissions(projects, techdata, reference_tech,
-                                                 scenarios_actual, h2share, config,
-                                                 keep_components)
-
-    cost_and_em_actual, total_em_savings_actual = calc_ccfd(cost_and_em_actual, projects, techdata)
-
+    mode = setup.config['mode']
     if mode == 'auction':
-        cost_and_em_bidding = calc_cost_and_emissions(projects, techdata, reference_tech,
-                                                      scenarios_bidding, h2share, config)
-        strike_price = calc_strike_price(cost_and_em_bidding, projects)
-        cost_and_em_bidding, total_em_savings_bidding = calc_ccfd(cost_and_em_bidding, projects,
-                                                                  techdata)
+        run_auction(setup)
+        return
+    elif mode == 'analyze_cost':
+        cost_and_em = run_analyze(setup)
+        return setup.config, setup.projects_all, cost_and_em
+
+
+def run_auction(setup: Setup):
+
+    for config_ar in setup.config['auction_rounds']:
+
+        projects_ar = setup.projects_all.query(f"`Time of investment` - 3 <= {config_ar['year']}")
+
+        scenarios_bidding, h2share = select_scenario_data(
+            data_raw=setup.scendata_raw,
+            h2share_raw=setup.h2share_raw,
+            projects=projects_ar,
+            scenarios=setup.config['scenarios_bidding'],
+            acution_year=config_ar['year']
+        )
+
+        cost_and_em_bidding = calc_cost_and_emissions(projects_ar, setup.techdata,
+                                                      setup.reference_tech, scenarios_bidding,
+                                                      h2share, setup.config)
+        strike_price = calc_strike_price(cost_and_em_bidding, projects_ar)
+        cost_and_em_bidding, total_em_savings_bidding = calc_ccfd(cost_and_em_bidding, projects_ar,
+                                                                  setup.techdata)
 
     # TODO:
     # calc_lcop() # sum(opex)/duration + capex / auslastungsfaktor
@@ -64,21 +51,32 @@ def run(config_filepath: str = None, config: dict = None):
     # calc_total_emission_saving()
     # calc_cap()
 
-    if mode == 'analyze_cost':
-        cost_and_em_actual = gs.get_bounds(cost_and_em_actual)
+    return strike_price, total_em_savings_bidding  # linter only
 
-    # et = time.time()
-    # print(et-st)
-    if mode == 'analyze_cost':
-        return config, projects, cost_and_em_actual
-    elif mode == 'auction':
-        # prvent linter errors by printing
-        print(cost_and_em_actual, cost_and_em_bidding,
-              total_em_savings_actual, total_em_savings_bidding,
-              strike_price)
-        return
+
+def run_analyze(setup: Setup):
+
+    scenarios, h2share = select_scenario_data(
+        data_raw=setup.scendata_raw,
+        h2share_raw=setup.h2share_raw,
+        projects=setup.projects_all,
+        scenarios=setup.config['scenarios_actual'],
+        relative_standard_deviation=setup.config.get('relative_standard_deviation', None),
+        absolute_standard_deviation=setup.config.get('absolute_standard_deviation', None)
+    )
+
+    cost_and_em = calc_cost_and_emissions(setup, scenarios, h2share, keep_components=True)
+    strike_price = calc_strike_price(cost_and_em, setup.projects_all)
+    cost_and_em, total_em_savings = calc_ccfd(cost_and_em, projects_all, techdata)
+
+    cost_and_em = gs.get_bounds(cost_and_em)
+
+    print(strike_price, total_em_savings)
+
+    return cost_and_em
 
 
 if __name__ == '__main__':
     config_filepath = 'config/config_all.yml'
-    config, projects, cost_and_em_actual = run(config_filepath)
+    strike_price = run(config_filepath)
+    print(strike_price)
