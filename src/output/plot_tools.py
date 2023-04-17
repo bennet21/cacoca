@@ -34,7 +34,7 @@ def set_yrange_min_zero(fig: pl.graph_objs.Figure):
 def show_and_save(fig: pl.graph_objs.Figure, base_name: str = None):
     fig.show()
     if base_name:
-        dir_path = 'output/'
+        dir_path = '/mnt/c/Users/jakobdu/data/projects/ccfd/ueckerdt_folie/figures/'
         # fig.update_xaxes(title='', visible=False, showticklabels=True)
         fig.update_layout(margin=dict(l=10, r=10, t=10, b=10), title='',
                           width=1000, height=600, font=dict(size=18))
@@ -44,8 +44,8 @@ def show_and_save(fig: pl.graph_objs.Figure, base_name: str = None):
 display_names = {
     'steel_dri': 'Stahl DRI',
     'cement': 'Zement',
-    'other industries': 'Andere',
-    'glass_and_cermaics': 'Glass',
+    'other_industries': 'Andere',
+    'glass_and_ceramics': 'Glass',
     'basic_chemicals': 'Grundstoff-Chemie',
     'Effective CO2 Price': 'CO2-Preis (effektiv)',
     'Industry': 'Sektor',
@@ -75,6 +75,9 @@ display_names = {
     'Scrap Steel': 'Stahlschrott',
     'Coking Coal': 'Kokskohle',
     'H2 Share': 'Anteil Wasserstoff',
+    'all_projects': 'Alle Projekte',
+    'P2H_0.05MT_2026': 'Elektrodenkessel',
+    'Glass_0.17MT_2028a)': 'Flachglas',
     '': '',
     '': ''
 }
