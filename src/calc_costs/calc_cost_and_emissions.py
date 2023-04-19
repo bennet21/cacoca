@@ -6,8 +6,8 @@ from src.setup.select_scenario_data import ScenarioData
 import src.tools.gaussian as gs
 
 
-def calc_cost_and_emissions(setup: Setup, scendata: ScenarioData, h2share: pd.DataFrame,
-                            projects: pd.DataFrame = None, keep_components: bool = False):
+def calc_cost_and_emissions(setup: Setup, projects: pd.DataFrame = None,
+                            keep_components: bool = False):
 
     if projects is None:
         projects = setup.projects_all
@@ -15,18 +15,15 @@ def calc_cost_and_emissions(setup: Setup, scendata: ScenarioData, h2share: pd.Da
     data_old, data_new, data_ref = split_technology_names(projects, setup.techdata,
                                                           setup.reference_tech)
 
-    data_new = calc_single_opmode(data_new, setup.config, projects, setup.techdata, scendata,
-                                  keep_components)
-    data_old = calc_single_opmode(data_old, setup.config, projects, setup.techdata, scendata,
-                                  keep_components)
-    data_ref = calc_single_opmode(data_ref, setup.config, projects, setup.techdata, scendata,
-                                  keep_components)
+    data_new = calc_single_opmode(data_new, setup, projects, keep_components)
+    data_old = calc_single_opmode(data_old, setup, projects, keep_components)
+    data_ref = calc_single_opmode(data_ref, setup, projects, keep_components)
 
-    data_all, variables = merge_operation_modes(data_old, data_new, h2share)
+    data_all, variables = merge_operation_modes(data_old, data_new, setup.h2share)
 
     data_all = merge_with_reference(data_all, data_ref, variables)
 
-    data_all = add_co2_price(data_all, scendata)
+    data_all = add_co2_price(data_all, setup.scendata)
 
     return data_all
 
@@ -72,20 +69,19 @@ def split_technology_names(projects: pd.DataFrame, techdata: pd.DataFrame,
     return data_old, data_new, data_ref
 
 
-def calc_single_opmode(data_in: pd.DataFrame, config: dict, projects: pd.DataFrame,
-                       techdata: pd.DataFrame, scendata: ScenarioData,
+def calc_single_opmode(data_in: pd.DataFrame, setup: Setup, projects: pd.DataFrame,
                        keep_components: bool = False):
     """
     Calc cost and emissions for one set of specific energy demands
     """
 
-    data_in = calc_capex(data_in, projects, techdata)
+    data_in = calc_capex(data_in, projects, setup.techdata)
 
-    yearly_data = expand_by_years(data_in, config, projects)
+    yearly_data = expand_by_years(data_in, setup.config, projects)
 
-    yearly_data = calc_cost_single_opmode(yearly_data, techdata, scendata, keep_components)
+    yearly_data = calc_cost_single_opmode(yearly_data, setup, keep_components)
 
-    yearly_data = calc_emissions_single_opmode(yearly_data, techdata, scendata)
+    yearly_data = calc_emissions_single_opmode(yearly_data, setup)
 
     return yearly_data
 
@@ -160,8 +156,7 @@ def expand_by_years(data_in: pd.DataFrame, config: dict, projects: pd.DataFrame)
     return yearly_data
 
 
-def calc_cost_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFrame,
-                            scendata: ScenarioData, keep_components: bool = False):
+def calc_cost_single_opmode(yearly_data: pd.DataFrame, setup: Setup, keep_components: bool = False):
     """
     Calc yearly cost for one set of specific energy demands
     """
@@ -169,7 +164,7 @@ def calc_cost_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFrame,
     columns_keep = np.setdiff1d(yearly_data.columns, ['Project name', 'Period'])
 
     # expand by unique list of all occuring components of energy demand
-    materials_in = techdata \
+    materials_in = setup.techdata \
         .query("Type=='Energy demand' | Type=='Feedstock demand'") \
         .filter(["Component"]) \
         .drop_duplicates()
@@ -179,7 +174,7 @@ def calc_cost_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFrame,
     # This is done after expanding by year to later enable time-dependent eneryg demands
     yearly_data = yearly_data \
         .merge(
-            techdata
+            setup.techdata
             .query("Type=='Energy demand' | Type=='Feedstock demand'")
             .filter(["Technology", "Component", "Value"]),
             how='left',
@@ -191,7 +186,7 @@ def calc_cost_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFrame,
     # add prices to df and calculate cost = en.demand * price
     yearly_data = yearly_data \
         .merge(
-            scendata.prices.drop(columns=["Source Reference", "Unit"]),
+            setup.scendata.prices.drop(columns=["Source Reference", "Unit"]),
             how='left',
             on=['Component', 'Period']
         ) \
@@ -219,7 +214,7 @@ def calc_cost_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFrame,
     # add additional OPEX
     yearly_data = yearly_data \
         .merge(
-            techdata
+            setup.techdata
             .query("Type=='OPEX'")
             .filter(["Technology", "Value"]),
             how='left',
@@ -238,8 +233,7 @@ def calc_cost_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFrame,
     return yearly_data
 
 
-def calc_emissions_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFrame,
-                                 scendata: ScenarioData):
+def calc_emissions_single_opmode(yearly_data: pd.DataFrame, setup: Setup):
     """
     Calc emission prices for one set of specific energy demands
     """
@@ -247,7 +241,7 @@ def calc_emissions_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFra
     # Add emissions to df
     yearly_data = yearly_data \
         .merge(
-            techdata
+            setup.techdata
             .query("Type=='Emissions' & Component == 'CO2'")
             .filter(["Technology", "Value"]),
             how='left',
@@ -258,7 +252,7 @@ def calc_emissions_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFra
     # add free allocations to df
     yearly_data = yearly_data \
         .merge(
-            scendata.free_allocations
+            setup.scendata.free_allocations
             .filter(["Technology", "Period", "Free Allocations"]),
             how='left',
             on=['Technology', 'Period']

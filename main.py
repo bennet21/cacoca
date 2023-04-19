@@ -1,6 +1,5 @@
 # import time
 from src.setup.setup import Setup
-from src.setup.select_scenario_data import select_scenario_data, select_h2share
 from src.calc_costs.calc_cost_and_emissions import calc_cost_and_emissions
 from src.calc_costs.calc_ccfd import calc_ccfd, calc_strike_price
 import src.tools.gaussian as gs
@@ -30,18 +29,11 @@ def run_auction(setup: Setup):
 
         projects_ar = setup.projects_all.query(f"`Time of investment` - 3 <= {config_ar['year']}")
 
-        scenarios_bidding = select_scenario_data(
-            data_raw=setup.scendata_raw,
-            scenarios=setup.config['scenarios_bidding']
-        )
-        h2share = select_h2share(
-            h2share_raw=setup.h2share_raw,
-            projects=projects_ar,
-            auction_year=config_ar['year']
-        )
+        setup.select_scenario_data('scenarios_bidding')
+        setup.select_h2share(projects=projects_ar,
+                             auction_year=config_ar['year'])
 
-        cost_and_em_bidding = calc_cost_and_emissions(setup, scenarios_bidding, h2share,
-                                                      projects_ar)
+        cost_and_em_bidding = calc_cost_and_emissions(setup, projects_ar)
         strike_price = calc_strike_price(cost_and_em_bidding, projects_ar)
         cost_and_em_bidding, total_em_savings_bidding = calc_ccfd(cost_and_em_bidding, projects_ar,
                                                                   setup.techdata)
@@ -59,18 +51,14 @@ def run_auction(setup: Setup):
 
 def run_analyze(setup: Setup):
 
-    scenarios = select_scenario_data(
-        data_raw=setup.scendata_raw,
-        scenarios=setup.config['scenarios_actual'],
+    setup.select_scenario_data(
+        scenarios='scenarios_actual',
         relative_standard_deviation=setup.config.get('relative_standard_deviation', None),
         absolute_standard_deviation=setup.config.get('absolute_standard_deviation', None)
     )
-    h2share = select_h2share(
-        h2share_raw=setup.h2share_raw,
-        projects=setup.projects_all
-    )
+    setup.select_h2share()
 
-    cost_and_em = calc_cost_and_emissions(setup, scenarios, h2share, keep_components=True)
+    cost_and_em = calc_cost_and_emissions(setup, keep_components=True)
     strike_price = calc_strike_price(cost_and_em, setup.projects_all)
     cost_and_em, total_em_savings = calc_ccfd(cost_and_em, setup.projects_all, setup.techdata)
 

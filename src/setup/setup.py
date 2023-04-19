@@ -1,4 +1,6 @@
+import pandas as pd
 from src.setup.read_input import read_config, read_projects, read_techdata, read_raw_scenario_data
+from src.setup.select_scenario_data import select_scenario_data, select_h2share
 
 
 class Setup():
@@ -29,3 +31,25 @@ class Setup():
             dirpath=self.config['scenarios_dir'])
 
         return
+
+    def select_scenario_data(self,
+                             scenarios: dict,
+                             relative_standard_deviation: dict = None,
+                             absolute_standard_deviation: dict = None):
+        if isinstance(scenarios, str):
+            scenarios = self.config[scenarios]
+        self.scendata = select_scenario_data(
+            self.scendata_raw,
+            scenarios,
+            relative_standard_deviation,
+            absolute_standard_deviation)
+
+    def select_h2share(self,
+                       projects: pd.DataFrame = None,
+                       auction_year: int = None):
+        if projects is None:
+            projects = self.projects_all
+        self.h2share = select_h2share(
+            self.h2share_raw,
+            projects,
+            auction_year)
