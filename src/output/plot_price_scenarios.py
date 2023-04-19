@@ -1,6 +1,7 @@
 import plotly as pl
 import pandas as pd
-from src.input.read_scenario_data import read_raw_scenario_data, years_to_rows, add_variance
+from src.setup.read_input import read_raw_scenario_data
+from src.setup.select_scenario_data import years_to_rows, add_variance
 from src.output.plot_project_cost_time_curves import plot_project
 from src.output.plot_tools import add_color, show_and_save, set_yrange_min_zero
 from src.output.plot_tools import display_name as dn
@@ -15,7 +16,7 @@ def plot_price_scenarios(config: dict, projects: pd.DataFrame, project_names: li
     scen_dir_path = config['scenarios_dir']
     config = config["scenarios_actual"]
 
-    data_all, h2share = read_raw_scenario_data(dirpath=scen_dir_path)
+    data_all, h2share_raw = read_raw_scenario_data(dirpath=scen_dir_path)
 
     prices = years_to_rows(
         data_all.prices, year_name="Period", value_name="Price"
@@ -23,7 +24,7 @@ def plot_price_scenarios(config: dict, projects: pd.DataFrame, project_names: li
     prices = prices.drop(columns='Source Reference')
 
     # Hack to make it fit in price plotting scheme below
-    h2share = years_to_rows(h2share, year_name="Period", value_name="Price")
+    h2share = years_to_rows(h2share_raw, year_name="Period", value_name="Price")
 
     h2share_scens = []
     for project_name in project_names:

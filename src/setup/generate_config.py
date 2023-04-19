@@ -1,4 +1,4 @@
-from read_scenario_data import read_all_scenario_data
+from src.setup.select_scenario_data import read_all_scenario_data
 import pandas as pd
 import os
 import yaml
@@ -43,7 +43,7 @@ def generate_config(scenario_dir: str, yaml_dir:str):
                     selected_scenario = value_
                 else:
                     selected_scenario = read_all_component_scenarios(key_, scenario_dir)["Scenario"].iloc[0]
-                
+
                 stream.write("    '"+selected_scenario+"'\n")
                 for scenario in read_all_component_scenarios(key_, scenario_dir)["Scenario"].values:
                     if scenario != selected_scenario:
@@ -53,17 +53,17 @@ def generate_config(scenario_dir: str, yaml_dir:str):
 
 def read_all_component_scenarios(component:str, scenario_dir: str):
     all_scenarios, h2share = read_all_scenario_data(dirpath=scenario_dir)
-    
+
     if component.startswith('Prices '):
         return (all_scenarios.prices.query(f"Component=='{component.replace('Prices ', '')}'")
               .filter(items=['Scenario'])
               .drop_duplicates())
     else:
         return all_scenarios.free_allocations.filter(items=['Scenario']).drop_duplicates()
-    
+
 def read_all_scenarios(scenario_dir: str):
     all_scenarios, h2share = read_all_scenario_data(dirpath=scenario_dir)
-    
+
     prices = pd.concat([
             all_scenarios.prices.query(f"Component=='{component.replace('Prices ', '')}'")
             .filter(items=['Component','Scenario'])

@@ -1,15 +1,15 @@
 import pandas as pd
 import numpy as np
 import numpy_financial as npf
-from src.input.setup import Setup
-from src.input.read_scenario_data import ScenarioData
+from src.setup.setup import Setup
+from src.setup.select_scenario_data import ScenarioData
 import src.tools.gaussian as gs
 
 
 def calc_cost_and_emissions(setup: Setup, scendata: ScenarioData, h2share: pd.DataFrame,
                             projects: pd.DataFrame = None, keep_components: bool = False):
 
-    if not projects:
+    if projects is None:
         projects = setup.projects_all
 
     data_old, data_new, data_ref = split_technology_names(projects, setup.techdata,

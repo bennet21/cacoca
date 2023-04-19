@@ -71,7 +71,7 @@ plot_project_cost_time_curves(cost_and_em_actual, print_name='h2share_influence'
 
 import copy
 from main import run
-from src.input.read_config import read_config
+from src.setup.read_config import read_config
 from src.output.plot_project_cost_time_curves import plot_project_cost_time_curves
 
 

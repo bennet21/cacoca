@@ -1,17 +1,17 @@
-import pandas as pd
 # import time
-from src.input.setup import get_setup, Setup
-from src.input.read_scenario_data import select_scenario_data
+from src.setup.setup import Setup
+from src.setup.select_scenario_data import select_scenario_data, select_h2share
 from src.calc_costs.calc_cost_and_emissions import calc_cost_and_emissions
 from src.calc_costs.calc_ccfd import calc_ccfd, calc_strike_price
 import src.tools.gaussian as gs
+from src.tools.tools import log
 
 
 def run(config_filepath: str = None, config: dict = None):
 
     # st = time.time()
 
-    setup = get_setup(config_filepath, config)
+    setup = Setup(config_filepath, config)
 
     mode = setup.config['mode']
     if mode == 'auction':
@@ -26,19 +26,22 @@ def run_auction(setup: Setup):
 
     for config_ar in setup.config['auction_rounds']:
 
+        log(f"Enter auction round {config_ar['name']}...")
+
         projects_ar = setup.projects_all.query(f"`Time of investment` - 3 <= {config_ar['year']}")
 
-        scenarios_bidding, h2share = select_scenario_data(
+        scenarios_bidding = select_scenario_data(
             data_raw=setup.scendata_raw,
+            scenarios=setup.config['scenarios_bidding']
+        )
+        h2share = select_h2share(
             h2share_raw=setup.h2share_raw,
             projects=projects_ar,
-            scenarios=setup.config['scenarios_bidding'],
-            acution_year=config_ar['year']
+            auction_year=config_ar['year']
         )
 
-        cost_and_em_bidding = calc_cost_and_emissions(projects_ar, setup.techdata,
-                                                      setup.reference_tech, scenarios_bidding,
-                                                      h2share, setup.config)
+        cost_and_em_bidding = calc_cost_and_emissions(setup, scenarios_bidding, h2share,
+                                                      projects_ar)
         strike_price = calc_strike_price(cost_and_em_bidding, projects_ar)
         cost_and_em_bidding, total_em_savings_bidding = calc_ccfd(cost_and_em_bidding, projects_ar,
                                                                   setup.techdata)
@@ -56,22 +59,25 @@ def run_auction(setup: Setup):
 
 def run_analyze(setup: Setup):
 
-    scenarios, h2share = select_scenario_data(
+    scenarios = select_scenario_data(
         data_raw=setup.scendata_raw,
-        h2share_raw=setup.h2share_raw,
-        projects=setup.projects_all,
         scenarios=setup.config['scenarios_actual'],
         relative_standard_deviation=setup.config.get('relative_standard_deviation', None),
         absolute_standard_deviation=setup.config.get('absolute_standard_deviation', None)
     )
+    h2share = select_h2share(
+        h2share_raw=setup.h2share_raw,
+        projects=setup.projects_all
+    )
 
     cost_and_em = calc_cost_and_emissions(setup, scenarios, h2share, keep_components=True)
     strike_price = calc_strike_price(cost_and_em, setup.projects_all)
-    cost_and_em, total_em_savings = calc_ccfd(cost_and_em, projects_all, techdata)
+    cost_and_em, total_em_savings = calc_ccfd(cost_and_em, setup.projects_all, setup.techdata)
 
     cost_and_em = gs.get_bounds(cost_and_em)
 
-    print(strike_price, total_em_savings)
+    if False:
+        print(strike_price, total_em_savings)
 
     return cost_and_em
 
