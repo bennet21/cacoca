@@ -69,7 +69,7 @@ def plot_project(fig: pl.graph_objs.Figure, df: pd.DataFrame, vname: str, legend
                  hovername: str, color: str, showlegend: bool = True, emphasize: str = 'all_equal'):
 
     if emphasize == 'main':
-        width = 5
+        width = 8
         dash = 'solid'
         alpha = 0.4
         legendrank = 999

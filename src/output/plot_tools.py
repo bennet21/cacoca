@@ -44,8 +44,8 @@ def show_and_save(fig: pl.graph_objs.Figure, base_name: str = None):
 display_names = {
     'steel_dri': 'Stahl DRI',
     'cement': 'Zement',
-    'other industries': 'Andere',
-    'glass_and_cermaics': 'Glass',
+    'other_industries': 'Andere',
+    'glass_and_ceramics': 'Glass',
     'basic_chemicals': 'Grundstoff-Chemie',
     'Effective CO2 Price': 'CO2-Preis (effektiv)',
     'Industry': 'Sektor',
@@ -75,6 +75,10 @@ display_names = {
     'Scrap Steel': 'Stahlschrott',
     'Coking Coal': 'Kokskohle',
     'H2 Share': 'Anteil Wasserstoff',
+    'all_projects': 'Alle Projekte',
+    'P2H_0.05MT_2026': 'Elektrodenkessel',
+    'Glass_0.17MT_2028a)': 'Flachglas',
+    'CO2 Cost': 'Emissionskosten (ETS)',
     '': '',
     '': ''
 }
