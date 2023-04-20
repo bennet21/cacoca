@@ -23,11 +23,15 @@ def run(config_filepath: str = None, config: dict = None):
 
 def run_auction(setup: Setup):
 
+    all_chosen_projects = {}
+
     for config_ar in setup.config['auction_rounds']:
 
         log(f"Enter auction round {config_ar['name']}...")
 
-        projects_ar = setup.projects_all.query(f"`Time of investment` - 3 <= {config_ar['year']}")
+        projects_ar = setup.projects_all[
+            ~setup.projects_all['Project name'].isin(all_chosen_projects)] \
+            .query(f"`Time of investment` - 3 <= {config_ar['year']}")
 
         setup.select_scenario_data('scenarios_bidding')
         setup.select_h2share(projects=projects_ar,
@@ -35,27 +39,22 @@ def run_auction(setup: Setup):
 
         cost_and_em_bidding = calc_cost_and_emissions(setup, projects_ar)
         strike_price = calc_strike_price(cost_and_em_bidding, projects_ar)
-        cost_and_em_bidding, total_em_savings_bidding = calc_ccfd(cost_and_em_bidding, projects_ar,
-                                                                  setup.techdata)
+        cost_and_em_bidding, total_em_savings_bidding = \
+            calc_ccfd(cost_and_em_bidding, projects_ar, setup.techdata)
 
-    # TODO:
-    # calc_lcop() # sum(opex)/duration + capex / auslastungsfaktor
-    # calc_abatement_cost() # npv( lcop_t - lcop_ref ) / npv( e_t - e_ref ), all per t of product
-    # calc_strike_price()
-    # calc_eff_co2_price()
-    # calc_total_emission_saving()
-    # calc_cap()
+        # TODO:
+        # calc_cap()
+        # chosen_projects = auction() # chosen_projects includes column with auction round name
+        # calc_payout(chosen_projects)
+        # all_chosen_projects += chosen projects
+        # return all_chosen_projects
 
     return strike_price, total_em_savings_bidding  # linter only
 
 
 def run_analyze(setup: Setup):
 
-    setup.select_scenario_data(
-        scenarios='scenarios_actual',
-        relative_standard_deviation=setup.config.get('relative_standard_deviation', None),
-        absolute_standard_deviation=setup.config.get('absolute_standard_deviation', None)
-    )
+    setup.select_scenario_data(scenarios='scenarios_actual')
     setup.select_h2share()
 
     cost_and_em = calc_cost_and_emissions(setup, keep_components=True)

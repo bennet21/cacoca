@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import numpy_financial as npf
 from src.setup.setup import Setup
-from src.setup.select_scenario_data import ScenarioData
 import src.tools.gaussian as gs
 
 
@@ -23,7 +22,7 @@ def calc_cost_and_emissions(setup: Setup, projects: pd.DataFrame = None,
 
     data_all = merge_with_reference(data_all, data_ref, variables)
 
-    data_all = add_co2_price(data_all, setup.scendata)
+    data_all = add_co2_price(data_all, setup.prices)
 
     return data_all
 
@@ -186,7 +185,7 @@ def calc_cost_single_opmode(yearly_data: pd.DataFrame, setup: Setup, keep_compon
     # add prices to df and calculate cost = en.demand * price
     yearly_data = yearly_data \
         .merge(
-            setup.scendata.prices.drop(columns=["Source Reference", "Unit"]),
+            setup.prices.drop(columns=["Source Reference", "Unit"]),
             how='left',
             on=['Component', 'Period']
         ) \
@@ -252,7 +251,7 @@ def calc_emissions_single_opmode(yearly_data: pd.DataFrame, setup: Setup):
     # add free allocations to df
     yearly_data = yearly_data \
         .merge(
-            setup.scendata.free_allocations
+            setup.free_allocations
             .filter(["Technology", "Period", "Free Allocations"]),
             how='left',
             on=['Technology', 'Period']
@@ -347,8 +346,8 @@ def merge_with_reference(data_all: pd.DataFrame, data_ref: pd.DataFrame, variabl
     return data_all
 
 
-def add_co2_price(yearly_data: pd.DataFrame, scendata: ScenarioData):
-    co2prices = scendata.prices \
+def add_co2_price(yearly_data: pd.DataFrame, prices: pd.DataFrame):
+    co2prices = prices \
         .query("Component == 'CO2'") \
         .filter(["Period", "Price", "Price_variance"]) \
         .rename(columns={"Price": "CO2 Price", "Price_variance": "CO2 Price_variance"},

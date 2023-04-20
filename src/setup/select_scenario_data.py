@@ -1,32 +1,21 @@
 import pandas as pd
-from src.tools.gaussian import add_variance
 
 
-class ScenarioData():
-    def __init__(self, prices: pd.DataFrame, free_allocations: pd.DataFrame):
-        self.prices = prices
-        self.free_allocations = free_allocations
+def select_prices(prices: pd.DataFrame, scenarios: dict):
+
+    prices = choose_by_scenario_dict(prices, scenarios['prices'])
+    prices = years_to_rows(prices, year_name="Period", value_name="Price")
+
+    return prices
 
 
-def select_scenario_data(data_raw: ScenarioData,
-                         scenarios: dict,
-                         relative_standard_deviation: dict = None,
-                         absolute_standard_deviation: dict = None):
+def select_free_allocations(free_allocations: pd.DataFrame, scenarios: dict):
 
-    data_scen = choose_by_scenario_dict(data_raw, scenarios)
+    free_allocations = choose_by_scenario(free_allocations, scenarios["free_allocations"])
+    free_allocations = years_to_rows(free_allocations, year_name="Period",
+                                     value_name="Free Allocations")
 
-    data_scen.prices = years_to_rows(
-        data_scen.prices, year_name="Period", value_name="Price"
-    )
-    add_variance(data_scen.prices,
-                 relative_standard_deviation,
-                 absolute_standard_deviation)
-
-    data_scen.free_allocations = years_to_rows(
-        data_scen.free_allocations, year_name="Period", value_name="Free Allocations"
-    )
-
-    return data_scen
+    return free_allocations
 
 
 def select_h2share(h2share_raw: pd.DataFrame,
@@ -40,19 +29,20 @@ def select_h2share(h2share_raw: pd.DataFrame,
     return h2share
 
 
-def choose_by_scenario_dict(data_all: ScenarioData, scenarios: dict):
-    prices = pd.concat([
-        data_all.prices.query(f"Component=='{component.replace('Prices ', '')}'")
+def choose_by_scenario_dict(data_all: pd.DataFrame, scenarios: dict):
+    return pd.concat([
+        data_all
+        .query(f"Component=='{component}'")
         .query(f"Scenario=='{scenario}'")
         .drop(columns=["Scenario"])
-        for component, scenario in scenarios.items() if component.startswith("Prices ")
+        for component, scenario in scenarios.items()
     ])
 
-    free_allocations = data_all.free_allocations \
-        .query(f"Scenario=='{scenarios['Free Allocations']}'") \
-        .drop(columns=["Scenario"])
 
-    return ScenarioData(prices, free_allocations)
+def choose_by_scenario(data_all: pd.DataFrame, scenario: str):
+    return data_all \
+        .query(f"Scenario=='{scenario}'") \
+        .drop(columns=["Scenario"])
 
 
 def choose_by_projects(h2share: pd.DataFrame, projects: pd.DataFrame):

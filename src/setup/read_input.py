@@ -2,7 +2,6 @@ import yaml
 import os
 import numpy as np
 import pandas as pd
-from src.setup.select_scenario_data import ScenarioData
 
 
 def read_config(filepath: str):
@@ -46,4 +45,4 @@ def read_raw_scenario_data(dirpath: str):
     h2share = pd.read_csv(os.path.join(dirpath, 'h2share.csv'), encoding="utf-16")
     free_allocations = pd.read_csv(os.path.join(dirpath, 'free_allocations.csv'), encoding="utf-16")
     # cbam_factor = pd.read_csv(os.path.join(dirpath,'cbam_factor.csv'), encoding="utf-16")
-    return ScenarioData(prices, free_allocations), h2share
+    return prices, free_allocations, h2share
