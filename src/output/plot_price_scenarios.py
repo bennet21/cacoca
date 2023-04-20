@@ -5,7 +5,7 @@ from src.setup.select_scenario_data import years_to_rows
 from src.output.plot_project_cost_time_curves import plot_project
 from src.output.plot_tools import add_color, show_and_save, set_yrange_min_zero
 from src.output.plot_tools import display_name as dn
-from src.tools.gaussian import get_bounds
+# from src.tools.sensitivities import sensitivity_to_bounds
 
 
 def plot_price_scenarios(config: dict, projects: pd.DataFrame, project_names: list,
@@ -38,7 +38,7 @@ def plot_price_scenarios(config: dict, projects: pd.DataFrame, project_names: li
     # add_variance(prices,
     #              relative_standard_deviation=config.get('relative_standard_deviation', None),
     #              absolute_standard_deviation=config.get('absolute_standard_deviation', None))
-    prices = get_bounds(prices)
+    # prices = get_bounds(prices)
 
     for component_name, cdf in prices.groupby('Component'):
 

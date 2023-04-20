@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import numpy_financial as npf
 from src.setup.setup import Setup
-import src.tools.gaussian as gs
 
 
 def calc_cost_and_emissions(setup: Setup, projects: pd.DataFrame = None,
@@ -189,7 +188,7 @@ def calc_cost_single_opmode(yearly_data: pd.DataFrame, setup: Setup, keep_compon
             how='left',
             on=['Component', 'Period']
         ) \
-        .assign(**gs.dict('cost', lambda df: gs.mul(df, 'Material demand', 'Price'))) \
+        .assign(**{'cost': lambda df: df['Material demand'] * df['Price']})
 
     if keep_components:
         component_cost = yearly_data \
@@ -199,8 +198,7 @@ def calc_cost_single_opmode(yearly_data: pd.DataFrame, setup: Setup, keep_compon
 
     yearly_data = yearly_data \
         .groupby(['Project name', 'Period'], as_index=False) \
-        .agg({'cost': 'sum', 'cost_variance': 'sum'} |
-             {cname: 'first' for cname in columns_keep})
+        .agg({'cost': 'sum'} | {cname: 'first' for cname in columns_keep})
 
     if keep_components:
         yearly_data = yearly_data \
@@ -210,7 +208,7 @@ def calc_cost_single_opmode(yearly_data: pd.DataFrame, setup: Setup, keep_compon
                 on=['Project name', 'Period']
             )
 
-    # add additional OPEX
+    # add additional OPEX and CAPEX
     yearly_data = yearly_data \
         .merge(
             setup.techdata
@@ -222,12 +220,7 @@ def calc_cost_single_opmode(yearly_data: pd.DataFrame, setup: Setup, keep_compon
         .rename(columns={"Value": "Additional OPEX"})
     yearly_data["Additional OPEX"].fillna(0., inplace=True)
     yearly_data = yearly_data \
-        .assign(**gs.dict('cost', lambda df: gs.add(df, 'cost', 'Additional OPEX')))
-    # .drop(columns=['Additional OPEX', 'Additional OPEX_variance'], errors='ignore')
-
-    yearly_data = yearly_data \
-        .assign(**gs.dict('cost', lambda df: gs.add(df, 'cost', 'CAPEX annuity')))
-    # .drop(columns=['CAPEX annuity'], errors='ignore')
+        .assign(**{'cost': lambda df: df['cost'] + df['Additional OPEX'] + df['CAPEX annuity']})
 
     return yearly_data
 
@@ -267,7 +260,6 @@ def merge_operation_modes(data_old: pd.DataFrame, data_new: pd.DataFrame, h2shar
         np.intersect1d(data_old.columns, data_new.columns),
         ['Project name', 'Period', 'Technology']
     )
-    variables = [v for v in variables if not str(v).endswith("_variance")]
 
     # merge old and new dataframes
     data_all = data_old \
@@ -285,34 +277,10 @@ def merge_operation_modes(data_old: pd.DataFrame, data_new: pd.DataFrame, h2shar
     # blend cost and emissions of old and new operation mode to overall cost
     for vname in variables:
         data_all = data_all \
-            .rename(columns={vname + '_variance_x': vname + '_x_variance',
-                             vname + '_variance_y': vname + '_y_variance'},
-                    errors='ignore')
-        data_all = data_all \
-            .assign(
-                **gs.dict(
-                    vname,
-                    lambda df: gs.add(
-                        df,
-                        gs.mul(
-                            df,
-                            1. - df['H2 Share'],
-                            vname + '_x'
-                        ),
-                        gs.mul(
-                            df,
-                            df['H2 Share'],
-                            vname + '_y'
-                        )
-                    ))
-            )
-        data_all = data_all \
-            .drop(
-                columns=[vname + '_x',
-                         vname + '_y',
-                         vname + '_x_variance',
-                         vname + '_y_variance'],
-                errors='ignore')
+            .assign(**{vname: lambda df:
+                       (1. - df['H2 Share']) * df[vname + '_x']
+                       + df['H2 Share'] * df[vname + '_y']})
+        data_all = data_all.drop(columns=[vname + '_x', vname + '_y'])
 
     data_all = data_all \
         .drop(columns=['H2 Share'])
@@ -324,11 +292,7 @@ def merge_with_reference(data_all: pd.DataFrame, data_ref: pd.DataFrame, variabl
 
     # add '_ref' to reference varable names
     data_ref = data_ref \
-        .rename(
-            columns={v + suffix: v + '_ref' + suffix
-                     for v in variables for suffix in ['', '_variance']},
-            errors='ignore'
-        ) \
+        .rename(columns={v: v + '_ref' for v in variables}) \
         .drop(columns=['Technology'])
     # merge and calculate difference for all variables in input list
     data_all = data_all \
@@ -339,9 +303,7 @@ def merge_with_reference(data_all: pd.DataFrame, data_ref: pd.DataFrame, variabl
         )
     for vname in variables:
         data_all = data_all \
-            .assign(
-                **gs.dict(vname + '_diff', lambda df: gs.sub(df, vname, vname + '_ref'))
-            )
+            .assign(**{vname + '_diff': lambda df: df[vname] - df[vname + '_ref']})
 
     return data_all
 
@@ -349,9 +311,8 @@ def merge_with_reference(data_all: pd.DataFrame, data_ref: pd.DataFrame, variabl
 def add_co2_price(yearly_data: pd.DataFrame, prices: pd.DataFrame):
     co2prices = prices \
         .query("Component == 'CO2'") \
-        .filter(["Period", "Price", "Price_variance"]) \
-        .rename(columns={"Price": "CO2 Price", "Price_variance": "CO2 Price_variance"},
-                errors='ignore')
+        .filter(["Period", "Price"]) \
+        .rename(columns={"Price": "CO2 Price"})
     yearly_data = yearly_data \
         .merge(
             co2prices,

@@ -1,5 +1,6 @@
 import pandas as pd
-import src.tools.gaussian as gs
+# from src.setup.select_scenario_data import select_prices
+# from src.setup.setup import Setup
 
 
 def calc_strike_price(cost_and_em: pd.DataFrame, projects: pd.DataFrame):
@@ -48,15 +49,9 @@ def calc_ccfd(cost_and_em: pd.DataFrame, projects: pd.DataFrame, techdata: pd.Da
         .filter(['Project name', 'Size'])
 
     cost_and_em = cost_and_em \
-        .assign(
-            **gs.dict("Effective CO2 Price",
-                      lambda df: gs.mul(
-                          df,
-                          "CO2 Price",
-                          (df["Emissions_diff"] - df["Free Allocations_diff"]) /
-                          df["Emissions_diff"]
-                      ))
-        )
+        .assign(**{"Effective CO2 Price": lambda df:
+                   df["CO2 Price"] *
+                   (df["Emissions_diff"] - df["Free Allocations_diff"]) / df["Emissions_diff"]})
 
     cost_and_em = cost_and_em \
         .merge(
@@ -64,9 +59,7 @@ def calc_ccfd(cost_and_em: pd.DataFrame, projects: pd.DataFrame, techdata: pd.Da
             how='left',
             on=['Technology']
         ) \
-        .assign(
-            **gs.dict('Abatement_cost', lambda df: gs.div(df, "cost_diff", -df['Emissions_diff']))
-        )
+        .assign(**{'Abatement_cost': lambda df: df["cost_diff"] / -df['Emissions_diff']})
 
     total_em_savings = cost_and_em \
         .groupby(['Project name']) \
@@ -101,3 +94,9 @@ def calc_ccfd(cost_and_em: pd.DataFrame, projects: pd.DataFrame, techdata: pd.Da
         )
 
     return cost_and_em, total_em_savings
+
+
+# def calc_cap(cost_and_em_bidding: pd.DataFrame, strike_price: pd.DataFrame, setup: Setup):
+#     scendict = {'CO2': setup.config['budget_cap']['price_scenario_co2']}
+#     prices_co2 = select_prices(setup.prices_raw, scendict)
+#     return None
