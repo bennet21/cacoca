@@ -174,7 +174,7 @@ def calc_cost_single_opmode(yearly_data: pd.DataFrame, setup: Setup, keep_compon
         .merge(
             setup.techdata
             .query("Type=='Energy demand' | Type=='Feedstock demand'")
-            .filter(["Technology", "Component", "Value"]),
+            .filter(["Technology", "Type", "Component", "Value"]),
             how='left',
             on=['Technology', 'Component']
         ) \
@@ -197,8 +197,18 @@ def calc_cost_single_opmode(yearly_data: pd.DataFrame, setup: Setup, keep_compon
             .reset_index()
 
     yearly_data = yearly_data \
-        .groupby(['Project name', 'Period'], as_index=False) \
+        .groupby(['Project name', 'Period', 'Type'], as_index=False) \
         .agg({'cost': 'sum'} | {cname: 'first' for cname in columns_keep})
+
+    energy_cost = yearly_data \
+        .query("Type=='Energy demand'") \
+        .filter(['Project name', 'Period', 'cost']) \
+        .rename(columns={'cost': 'Energy cost'})
+
+    yearly_data = yearly_data \
+        .groupby(['Project name', 'Period'], as_index=False) \
+        .agg({'cost': 'sum'} | {cname: 'first' for cname in columns_keep}) \
+        .merge(energy_cost, how='left', on=['Project name', 'Period'])
 
     if keep_components:
         yearly_data = yearly_data \

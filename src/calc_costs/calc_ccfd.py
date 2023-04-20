@@ -1,6 +1,6 @@
 import pandas as pd
-# from src.setup.select_scenario_data import select_prices
-# from src.setup.setup import Setup
+from src.setup.select_scenario_data import select_prices
+from src.setup.setup import Setup
 
 
 def calc_strike_price(cost_and_em: pd.DataFrame, projects: pd.DataFrame):
@@ -96,7 +96,27 @@ def calc_ccfd(cost_and_em: pd.DataFrame, projects: pd.DataFrame, techdata: pd.Da
     return cost_and_em, total_em_savings
 
 
-# def calc_cap(cost_and_em_bidding: pd.DataFrame, strike_price: pd.DataFrame, setup: Setup):
-#     scendict = {'CO2': setup.config['budget_cap']['price_scenario_co2']}
-#     prices_co2 = select_prices(setup.prices_raw, scendict)
-#     return None
+def calc_budget_cap(cost_and_em: pd.DataFrame, strike_price: pd.DataFrame, setup: Setup):
+    config = setup.config['budget_cap']
+    alpha = config['alpha']
+    scendict = {'prices': {'CO2': config['price_scenario_co2']}}
+    prices_co2 = select_prices(setup.prices_raw, scendict)
+    prices_co2 = prices_co2 \
+        .rename(columns={'Price': 'min_co2_price'}) \
+        .filter(['Period', 'min_co2_price'])
+
+    cost_and_em = cost_and_em \
+        .merge(strike_price, how='left', on=['Project name']) \
+        .merge(prices_co2, how='left', on=['Period'])
+
+    cost_and_em['delta_k'] = alpha / cost_and_em['Emissions_diff'] \
+        * (cost_and_em['Energy cost'] + cost_and_em['Energy cost_ref'] / (1. + alpha))
+    cost_and_em['budget_cap'] \
+        = (cost_and_em['Strike Price'] + cost_and_em['delta_k'] - cost_and_em['min_co2_price']) \
+        * cost_and_em['Emissions_diff'] * cost_and_em['Size']
+
+    cap_aggregate = cost_and_em \
+        .groupby(['Project name']) \
+        .agg({'budget_cap': 'sum'})
+
+    return cost_and_em, cap_aggregate

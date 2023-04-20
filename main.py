@@ -1,6 +1,6 @@
 from src.setup.setup import Setup
 from src.calc_costs.calc_cost_and_emissions import calc_cost_and_emissions
-from src.calc_costs.calc_ccfd import calc_ccfd, calc_strike_price
+from src.calc_costs.calc_ccfd import calc_ccfd, calc_strike_price, calc_budget_cap
 # from tools.sensitivities import
 from src.tools.tools import log
 
@@ -39,7 +39,7 @@ def run_auction(setup: Setup):
         cost_and_em_bidding, total_em_savings_bidding = \
             calc_ccfd(cost_and_em_bidding, projects_ar, setup.techdata)
 
-        # cap_yearly, cap_sum = calc_cap(cost_and_em_bidding, strike_price, setup)
+        cost_and_em_bidding, cap_sum = calc_budget_cap(cost_and_em_bidding, strike_price, setup)
 
         # TODO:
         # calc_cap()
