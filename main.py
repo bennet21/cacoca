@@ -1,6 +1,7 @@
 from src.setup.setup import Setup
 from src.calc_costs.calc_cost_and_emissions import calc_cost_and_emissions
-from src.calc_costs.calc_ccfd import calc_ccfd, calc_strike_price, calc_budget_cap
+from src.calc_costs.calc_ccfd import calc_ccfd, calc_strike_price, calc_budget_cap, \
+    calc_relative_emission_reduction
 # from tools.sensitivities import
 from src.tools.tools import log
 
@@ -22,7 +23,9 @@ def run_auction(setup: Setup):
 
     all_chosen_projects = {}
 
-    for config_ar in setup.config['auction_rounds']:
+    for config_ar_specific in setup.config['auction_rounds']:
+
+        config_ar = {**setup.config['auction_round_default'], **config_ar_specific}
 
         log(f"Enter auction round {config_ar['name']}...")
 
@@ -39,16 +42,18 @@ def run_auction(setup: Setup):
         cost_and_em_bidding, total_em_savings_bidding = \
             calc_ccfd(cost_and_em_bidding, projects_ar, setup.techdata)
 
-        cost_and_em_bidding, cap_sum = calc_budget_cap(cost_and_em_bidding, strike_price, setup)
+        cost_and_em_bidding, cap_sum = calc_budget_cap(cost_and_em_bidding, strike_price,
+                                                       setup.prices_raw, config_ar)
+        rel_em_red = calc_relative_emission_reduction(cost_and_em_bidding, config_ar)
 
         # TODO:
-        # calc_cap()
+        # TEST! cap_sum and rel_em_red
         # chosen_projects = auction() # chosen_projects includes column with auction round name
         # calc_payout(chosen_projects)
         # all_chosen_projects += chosen projects
         # return all_chosen_projects
 
-    return strike_price, total_em_savings_bidding  # linter only
+    return strike_price, total_em_savings_bidding, rel_em_red, cap_sum  # linter only
 
 
 def run_analyze(setup: Setup):

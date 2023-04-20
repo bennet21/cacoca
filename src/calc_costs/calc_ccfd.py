@@ -1,6 +1,5 @@
 import pandas as pd
 from src.setup.select_scenario_data import select_prices
-from src.setup.setup import Setup
 
 
 def calc_strike_price(cost_and_em: pd.DataFrame, projects: pd.DataFrame):
@@ -96,11 +95,11 @@ def calc_ccfd(cost_and_em: pd.DataFrame, projects: pd.DataFrame, techdata: pd.Da
     return cost_and_em, total_em_savings
 
 
-def calc_budget_cap(cost_and_em: pd.DataFrame, strike_price: pd.DataFrame, setup: Setup):
-    config = setup.config['budget_cap']
-    alpha = config['alpha']
-    scendict = {'prices': {'CO2': config['price_scenario_co2']}}
-    prices_co2 = select_prices(setup.prices_raw, scendict)
+def calc_budget_cap(cost_and_em: pd.DataFrame, strike_price: pd.DataFrame, prices_raw: pd.DataFrame,
+                    config_ar: dict):
+    alpha = config_ar['budget_cap_alpha']
+    scendict = {'prices': {'CO2': config_ar['budget_cap_co2_price_scen']}}
+    prices_co2 = select_prices(prices_raw, scendict)
     prices_co2 = prices_co2 \
         .rename(columns={'Price': 'min_co2_price'}) \
         .filter(['Period', 'min_co2_price'])
@@ -120,3 +119,16 @@ def calc_budget_cap(cost_and_em: pd.DataFrame, strike_price: pd.DataFrame, setup
         .agg({'budget_cap': 'sum'})
 
     return cost_and_em, cap_aggregate
+
+
+def calc_relative_emission_reduction(cost_and_em: pd.DataFrame, auction_config: dict):
+    auction_year = auction_config['year']
+    s = auction_config['rel_em_red_s']
+    rr = auction_config['rel_em_red_rr']
+    rel_em_red = cost_and_em \
+        .query(f"Period >= {auction_year+3} & Period <= {auction_year+7}") \
+        .assign(**{'rel_em_red': lambda df: -df['Emissions_diff'] / df['Emissions_ref']}) \
+        .groupby(['Project name']) \
+        .agg({'rel_em_red': 'mean'})
+    rel_em_red['rel_em_red_fr'] = 1. + s * (rel_em_red['rel_em_red'] - rr)
+    return rel_em_red
