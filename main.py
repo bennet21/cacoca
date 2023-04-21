@@ -32,6 +32,7 @@ def run_auction(setup: Setup):
         projects_ar = setup.projects_all[
             ~setup.projects_all['Project name'].isin(all_chosen_projects)] \
             .query(f"`Time of investment` - 3 <= {config_ar['year']}")
+        projects_ar['Time of investment'] = config_ar['year'] + 3
 
         setup.select_scenario_data('scenarios_bidding')
         setup.select_h2share(projects=projects_ar,

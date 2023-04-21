@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from src.setup.select_scenario_data import select_prices
 
 
@@ -54,7 +55,7 @@ def calc_ccfd(cost_and_em: pd.DataFrame, projects: pd.DataFrame, techdata: pd.Da
 
     cost_and_em = cost_and_em \
         .merge(
-            techdata.filter(['Technology', 'Industry']),
+            techdata.filter(['Technology', 'Industry']).drop_duplicates(),
             how='left',
             on=['Technology']
         ) \
@@ -108,11 +109,11 @@ def calc_budget_cap(cost_and_em: pd.DataFrame, strike_price: pd.DataFrame, price
         .merge(strike_price, how='left', on=['Project name']) \
         .merge(prices_co2, how='left', on=['Period'])
 
-    cost_and_em['delta_k'] = alpha / cost_and_em['Emissions_diff'] \
+    cost_and_em['delta_k'] = alpha / -cost_and_em['Emissions_diff'] \
         * (cost_and_em['Energy cost'] + cost_and_em['Energy cost_ref'] / (1. + alpha))
     cost_and_em['budget_cap'] \
         = (cost_and_em['Strike Price'] + cost_and_em['delta_k'] - cost_and_em['min_co2_price']) \
-        * cost_and_em['Emissions_diff'] * cost_and_em['Size']
+        * -cost_and_em['Emissions_diff'] * cost_and_em['Size']
 
     cap_aggregate = cost_and_em \
         .groupby(['Project name']) \
@@ -131,4 +132,6 @@ def calc_relative_emission_reduction(cost_and_em: pd.DataFrame, auction_config: 
         .groupby(['Project name']) \
         .agg({'rel_em_red': 'mean'})
     rel_em_red['rel_em_red_fr'] = 1. + s * (rel_em_red['rel_em_red'] - rr)
+    rel_em_red['rel_em_red_fr'] = np.maximum(np.minimum(rel_em_red['rel_em_red_fr'], 1.2), 0.8)
+
     return rel_em_red
