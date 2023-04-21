@@ -78,6 +78,7 @@ display_names = {
     'all_projects': 'Alle Projekte',
     'P2H_0.05MT_2026': 'Elektrodenkessel',
     'Glass_0.17MT_2028a)': 'Flachglas',
+    'CO2 Cost': 'Emissionskosten (ETS)',
     '': '',
     '': ''
 }
