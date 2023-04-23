@@ -4,18 +4,13 @@ import numpy_financial as npf
 from src.setup.setup import Setup
 
 
-def calc_cost_and_emissions(setup: Setup, projects: pd.DataFrame = None,
-                            keep_components: bool = False):
+def calc_cost_and_emissions(setup: Setup, keep_components: bool = False):
 
-    if projects is None:
-        projects = setup.projects_all
+    data_old, data_new, data_ref = split_technology_names(setup)
 
-    data_old, data_new, data_ref = split_technology_names(projects, setup.techdata,
-                                                          setup.reference_tech)
-
-    data_new = calc_single_opmode(data_new, setup, projects, keep_components)
-    data_old = calc_single_opmode(data_old, setup, projects, keep_components)
-    data_ref = calc_single_opmode(data_ref, setup, projects, keep_components)
+    data_new = calc_single_opmode(data_new, setup, keep_components)
+    data_old = calc_single_opmode(data_old, setup, keep_components)
+    data_ref = calc_single_opmode(data_ref, setup, keep_components)
 
     data_all, variables = merge_operation_modes(data_old, data_new, setup.h2share)
 
@@ -26,17 +21,16 @@ def calc_cost_and_emissions(setup: Setup, projects: pd.DataFrame = None,
     return data_all
 
 
-def split_technology_names(projects: pd.DataFrame, techdata: pd.DataFrame,
-                           reference_tech: pd.DataFrame):
+def split_technology_names(setup: Setup):
 
-    industries = techdata \
+    industries = setup.techdata \
         .filter(["Technology", "Industry"]) \
         .drop_duplicates()
 
-    data_all = projects \
+    data_all = setup.projects_current \
         .filter(['Project name', 'Technology']) \
         .merge(
-            reference_tech,
+            setup.reference_tech,
             how='left',
             on="Technology"
         ) \
@@ -67,15 +61,14 @@ def split_technology_names(projects: pd.DataFrame, techdata: pd.DataFrame,
     return data_old, data_new, data_ref
 
 
-def calc_single_opmode(data_in: pd.DataFrame, setup: Setup, projects: pd.DataFrame,
-                       keep_components: bool = False):
+def calc_single_opmode(data_in: pd.DataFrame, setup: Setup, keep_components: bool = False):
     """
     Calc cost and emissions for one set of specific energy demands
     """
 
-    data_in = calc_capex(data_in, projects, setup.techdata)
+    data_in = calc_capex(data_in, setup)
 
-    yearly_data = expand_by_years(data_in, setup.config, projects)
+    yearly_data = expand_by_years(data_in, setup)
 
     yearly_data = calc_cost_single_opmode(yearly_data, setup, keep_components)
 
@@ -84,7 +77,7 @@ def calc_single_opmode(data_in: pd.DataFrame, setup: Setup, projects: pd.DataFra
     return yearly_data
 
 
-def calc_capex(data_in: pd.DataFrame, projects: pd.DataFrame, techdata: pd.DataFrame):
+def calc_capex(data_in: pd.DataFrame, setup: Setup):
 
     needed_project_info = [
         'Share of high CAPEX',
@@ -96,13 +89,13 @@ def calc_capex(data_in: pd.DataFrame, projects: pd.DataFrame, techdata: pd.DataF
 
     data_in = data_in \
         .merge(
-            projects.filter(['Project name'] + needed_project_info),
+            setup.projects_current.filter(['Project name'] + needed_project_info),
             how='left',
             on=['Project name']
         )
 
     def single_tech_param(name: str):
-        return techdata.query(f"Type=='{name}'") \
+        return setup.techdata.query(f"Type=='{name}'") \
             .filter(["Technology", "Value"]) \
             .rename(columns={"Value": name})
 
@@ -135,17 +128,17 @@ def calc_capex(data_in: pd.DataFrame, projects: pd.DataFrame, techdata: pd.DataF
     return data_in
 
 
-def expand_by_years(data_in: pd.DataFrame, config: dict, projects: pd.DataFrame):
+def expand_by_years(data_in: pd.DataFrame, setup: Setup):
 
     # expand projects by calendar years of operation
     data_in = data_in \
         .merge(
-            projects.filter(['Project name', 'Time of investment']),
+            setup.projects_current.filter(['Project name', 'Time of investment']),
             how='left',
             on=['Project name']
         ) \
         .merge(
-            pd.DataFrame.from_dict({'Period': config['years']}),
+            pd.DataFrame.from_dict({'Period': setup.config['years']}),
             how='cross'
         )
     yearly_data = data_in \

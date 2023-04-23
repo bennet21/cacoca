@@ -1,7 +1,8 @@
 from src.setup.setup import Setup
-from src.calc_costs.calc_cost_and_emissions import calc_cost_and_emissions
-from src.calc_costs.calc_ccfd import calc_ccfd, calc_strike_price, calc_budget_cap, \
-    calc_relative_emission_reduction
+from src.calc.calc_cost_and_emissions import calc_cost_and_emissions
+from src.calc.calc_derived_quantities import calc_derived_quantities
+from src.calc.calc_auction_quantities import calc_auction_quantities
+from src.calc.auction import set_projects_current, calc_score, auction
 # from tools.sensitivities import
 from src.tools.tools import log
 
@@ -29,32 +30,26 @@ def run_auction(setup: Setup):
 
         log(f"Enter auction round {config_ar['name']}...")
 
-        projects_ar = setup.projects_all[
-            ~setup.projects_all['Project name'].isin(all_chosen_projects)] \
-            .query(f"`Time of investment` - 3 <= {config_ar['year']}")
-        projects_ar['Time of investment'] = config_ar['year'] + 3
+        set_projects_current(setup, all_chosen_projects, config_ar)
 
         setup.select_scenario_data('scenarios_bidding')
-        setup.select_h2share(projects=projects_ar,
-                             auction_year=config_ar['year'])
+        setup.select_h2share(auction_year=config_ar['year'])
 
-        cost_and_em_bidding = calc_cost_and_emissions(setup, projects_ar)
-        strike_price = calc_strike_price(cost_and_em_bidding, projects_ar)
-        cost_and_em_bidding, total_em_savings_bidding = \
-            calc_ccfd(cost_and_em_bidding, projects_ar, setup.techdata)
-
-        cost_and_em_bidding, cap_sum = calc_budget_cap(cost_and_em_bidding, strike_price,
-                                                       setup.prices_raw, config_ar)
-        rel_em_red = calc_relative_emission_reduction(cost_and_em_bidding, config_ar)
+        cost_and_em_bidding = calc_cost_and_emissions(setup)
+        yearly = calc_derived_quantities(cost_and_em_bidding, setup)
+        yearly, aggregate = calc_auction_quantities(yearly, setup, config_ar)
 
         # TODO:
-        # TEST! cap_sum and rel_em_red
+        # adjust size by Auslastungsfaktor where necessary
+        # refactor calc_ccfd: all in one routine, two DF yearly and aggregate
+        calc_score()
         # chosen_projects = auction() # chosen_projects includes column with auction round name
+        auction()
         # calc_payout(chosen_projects)
         # all_chosen_projects += chosen projects
         # return all_chosen_projects
 
-    return strike_price, total_em_savings_bidding, rel_em_red, cap_sum  # linter only
+    return yearly, aggregate
 
 
 def run_analyze(setup: Setup):
@@ -63,13 +58,9 @@ def run_analyze(setup: Setup):
     setup.select_h2share()
 
     cost_and_em = calc_cost_and_emissions(setup, keep_components=True)
-    strike_price = calc_strike_price(cost_and_em, setup.projects_all)
-    cost_and_em, total_em_savings = calc_ccfd(cost_and_em, setup.projects_all, setup.techdata)
+    yearly = calc_derived_quantities(cost_and_em, setup)
 
-    if False:
-        print(strike_price, total_em_savings)
-
-    return cost_and_em
+    return yearly
 
 
 if __name__ == '__main__':

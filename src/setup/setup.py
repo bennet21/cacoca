@@ -1,4 +1,3 @@
-import pandas as pd
 from src.setup.read_input import read_config, read_projects, read_techdata, read_raw_scenario_data
 from src.setup.select_scenario_data import select_prices, select_free_allocations, select_h2share
 
@@ -21,6 +20,7 @@ class Setup():
             self.config['projects_file'],
             self.config['default_wacc']
         )
+        self.projects_current = self.projects_all
 
         self.techdata, self.reference_tech = read_techdata(
             self.config['techdata_dir'],
@@ -38,7 +38,5 @@ class Setup():
         self.prices = select_prices(self.prices_raw, scenarios)
         self.free_allocations = select_free_allocations(self.free_allocations_raw, scenarios)
 
-    def select_h2share(self, projects: pd.DataFrame = None, auction_year: int = None):
-        if projects is None:
-            projects = self.projects_all
-        self.h2share = select_h2share(self.h2share_raw, projects, auction_year)
+    def select_h2share(self, auction_year: int = None):
+        self.h2share = select_h2share(self.h2share_raw, self.projects_current, auction_year)
