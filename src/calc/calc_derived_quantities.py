@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from src.setup.setup import Setup
 from src.tools.common_merges import merge_project_dfs
 
@@ -38,6 +39,25 @@ def add_abatement_cost(cost_and_em: pd.DataFrame, setup: Setup):
     return cost_and_em
 
 
+def calc_payout(cost_and_em: pd.DataFrame, setup: Setup):
+    # caution: payout is still yearly.
+    payout_yearly = cost_and_em \
+        .assign(
+            **{"Difference Price": lambda df:
+                df["cost_diff"] / -df["Emissions_diff"] - df["Effective CO2 Price"]}
+        )
+    payout_yearly = payout_yearly \
+        .assign(
+            **{"Payout": lambda df:
+                df["Difference Price"] * -df["Emissions_diff"] * df["Size"]}
+        )
+    payout_aggregate = payout_yearly \
+        .groupby('Project name') \
+        .agg({'Payout': 'sum'})
+    payout_sum = np.sum(payout_yearly['Payout'].values)
+    return payout_yearly, payout_aggregate, payout_sum
+
+
 # total_em_savings = cost_and_em \
 #     .groupby(['Project name']) \
 #     .agg({'Emissions_diff': 'sum'}) \
@@ -51,21 +71,3 @@ def add_abatement_cost(cost_and_em: pd.DataFrame, setup: Setup):
 #             df["Emissions_diff"] * df['Size']}
 #     ) \
 #     .filter(['Project name', "Total Emissions savings"])
-
-# cost_and_em = cost_and_em \
-#     .assign(
-#         **{"Difference Price": lambda df:
-#             (df["cost_diff"] / -df["Emissions_diff"]) -
-#             df["Effective CO2 Price"]}
-#     )
-
-# cost_and_em = cost_and_em \
-#     .merge(
-#         pr_size,
-#         how='left',
-#         on=['Project name']
-#     ) \
-#     .assign(
-#         **{"Payout": lambda df:
-#             df["Difference Price"] * -df["Emissions_diff"] * df["Size"]}
-#     )

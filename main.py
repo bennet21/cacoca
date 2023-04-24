@@ -1,8 +1,8 @@
 from src.setup.setup import Setup
 from src.calc.calc_cost_and_emissions import calc_cost_and_emissions
-from src.calc.calc_derived_quantities import calc_derived_quantities
+from src.calc.calc_derived_quantities import calc_derived_quantities, calc_payout
 from src.calc.calc_auction_quantities import calc_auction_quantities
-from src.calc.auction import set_projects_ar, auction
+from src.calc.auction import prepare_setup_for_bidding, auction, prepare_setup_for_payout
 # from tools.sensitivities import
 from src.tools.tools import log
 
@@ -30,10 +30,7 @@ def run_auction(setup: Setup):
 
         log(f"Enter auction round {config_ar['name']}...")
 
-        set_projects_ar(setup, all_chosen_projects, config_ar)
-
-        setup.select_scenario_data('scenarios_bidding')
-        setup.select_h2share(auction_year=config_ar['year'])
+        prepare_setup_for_bidding(setup, all_chosen_projects, config_ar)
 
         cost_and_em_bidding = calc_cost_and_emissions(setup)
         yearly = calc_derived_quantities(cost_and_em_bidding, setup)
@@ -42,9 +39,15 @@ def run_auction(setup: Setup):
         chosen_projects = auction(aggregate, setup, config_ar)
         all_chosen_projects += chosen_projects
 
+        prepare_setup_for_payout(setup, chosen_projects, config_ar)
+        cost_and_em_actual = calc_cost_and_emissions(setup)
+        cost_and_em_actual = calc_derived_quantities(cost_and_em_actual, setup)
+        p_yearly, p_aggregate, payout_ar = calc_payout(cost_and_em_actual, setup)
+        log(f"  Payout: {payout_ar/1000.:0.3f} Bn €")
+        log("")
+
         # TODO:
         # adjust size by Auslastungsfaktor where necessary
-        # calc_payout(chosen_projects)
 
     return all_chosen_projects
 

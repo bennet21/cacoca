@@ -20,6 +20,22 @@ def auction(aggregate: pd.DataFrame, setup: Setup, config_ar: dict):
     return chosen_proj_list
 
 
+def prepare_setup_for_bidding(setup: Setup, all_chosen_projects: list, config_ar: dict):
+    set_projects_ar(setup, all_chosen_projects, config_ar)
+    setup.select_scenario_data('scenarios_bidding')
+    setup.select_h2share(auction_year=config_ar['year'])
+    return
+
+
+def prepare_setup_for_payout(setup: Setup, chosen_projects: list, config_ar: dict):
+    setup.projects_current \
+        = setup.projects_all[setup.projects_all['Project name'].isin(chosen_projects)].copy()
+    setup.projects_current['Time of investment'] = config_ar['year'] + 3
+    setup.select_scenario_data(scenarios='scenarios_actual')
+    setup.select_h2share(auction_year=config_ar['year'])
+    return
+
+
 def set_projects_ar(setup: Setup, all_chosen_projects: list, config_ar: dict):
     setup.projects_current = setup.projects_all[
         ~setup.projects_all['Project name'].isin(all_chosen_projects)] \
