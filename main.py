@@ -3,7 +3,7 @@ from src.calc.calc_cost_and_emissions import calc_cost_and_emissions
 from src.calc.calc_derived_quantities import calc_derived_quantities, calc_payout
 from src.calc.calc_auction_quantities import calc_auction_quantities
 from src.calc.auction import prepare_setup_for_bidding, auction, prepare_setup_for_payout
-# from tools.sensitivities import
+from src.tools.sensitivities import with_sensitivities
 from src.tools.tools import log
 
 
@@ -13,8 +13,8 @@ def run(config_filepath: str = None, config: dict = None):
 
     mode = setup.config['mode']
     if mode == 'auction':
-        run_auction(setup)
-        return
+        all_chosen_projects = run_auction(setup)
+        return all_chosen_projects
     elif mode == 'analyze_cost':
         cost_and_em = run_analyze(setup)
         return setup.config, setup.projects_all, cost_and_em
@@ -48,6 +48,7 @@ def run_auction(setup: Setup):
 
         # TODO:
         # adjust size by Auslastungsfaktor where necessary
+        # add plotting for payout, exclude negative payout projects
 
     return all_chosen_projects
 
@@ -57,9 +58,15 @@ def run_analyze(setup: Setup):
     setup.select_scenario_data(scenarios='scenarios_actual')
     setup.select_h2share()
 
+    yearly = calc_analyze(setup)
+
+    return yearly
+
+
+@with_sensitivities
+def calc_analyze(setup: Setup):
     cost_and_em = calc_cost_and_emissions(setup, keep_components=True)
     yearly = calc_derived_quantities(cost_and_em, setup)
-
     return yearly
 
 
