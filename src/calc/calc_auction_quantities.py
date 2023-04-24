@@ -2,14 +2,15 @@ import pandas as pd
 import numpy as np
 from src.setup.setup import Setup
 from src.setup.select_scenario_data import select_prices
-from src.tools.tools import merge_dfs
+from src.tools.common_merges import merge_project_dfs, add_tech_and_industry
 
 
 def calc_auction_quantities(yearly: pd.DataFrame, setup: Setup, auction_config: dict):
     strike_price = calc_strike_price(yearly, setup)
     yearly, cap_aggregate = calc_budget_cap(yearly, strike_price, setup.prices_raw, auction_config)
     rel_em_red = calc_relative_emission_reduction(yearly, auction_config)
-    aggregate = merge_dfs(strike_price, cap_aggregate, rel_em_red)
+    aggregate = merge_project_dfs(strike_price, cap_aggregate, rel_em_red)
+    aggregate = calc_score(aggregate, setup, auction_config)
     return yearly, aggregate
 
 
@@ -78,14 +79,33 @@ def calc_budget_cap(yearly: pd.DataFrame, strike_price: pd.DataFrame, prices_raw
 
 def calc_relative_emission_reduction(yearly: pd.DataFrame, auction_config: dict):
     auction_year = auction_config['year']
-    s = auction_config['rel_em_red_s']
-    rr = auction_config['rel_em_red_rr']
     rel_em_red = yearly \
-        .query(f"Period >= {auction_year+3} & Period <= {auction_year+7}") \
+        .query(f"Period >= {auction_year + 3} & Period <= {auction_year + 7}") \
         .assign(**{'rel_em_red': lambda df: -df['Emissions_diff'] / df['Emissions_ref']}) \
         .groupby(['Project name']) \
         .agg({'rel_em_red': 'mean'})
-    rel_em_red['rel_em_red_fr'] = 1. + s * (rel_em_red['rel_em_red'] - rr)
-    rel_em_red['rel_em_red_fr'] = np.maximum(np.minimum(rel_em_red['rel_em_red_fr'], 1.2), 0.8)
-
     return rel_em_red
+
+
+def calc_score(aggregate: pd.DataFrame, setup: Setup, auction_config: dict):
+
+    s = auction_config['rel_em_red_s']
+    rr = auction_config['rel_em_red_rr']
+    aggregate['rel_em_red_fr'] = 1. + s * (aggregate['rel_em_red'] - rr)
+    aggregate['rel_em_red_fr'] = np.maximum(np.minimum(aggregate['rel_em_red_fr'], 1.2), 0.8)
+
+    aggregate = add_tech_and_industry(aggregate, setup) \
+        .drop(columns=["Technology"])
+    sp_hi = aggregate \
+        .groupby('Industry') \
+        .agg({'Strike Price': 'max'}) \
+        .rename(columns={'Strike Price': 'sp_hi'})
+    aggregate = aggregate.merge(sp_hi, how='left', on='Industry')
+    sp_hmax = np.max(sp_hi['sp_hi'].values)
+    sp_a = auction_config['strike_price_a']
+    aggregate['strike_price_pf'] = sp_a * (1. - aggregate['Strike Price'] / aggregate['sp_hi']) \
+        + (1. - sp_a) * (1. - aggregate['Strike Price'] / sp_hmax)
+
+    aggregate['score'] = aggregate['strike_price_pf'] * aggregate['rel_em_red_fr']
+
+    return aggregate

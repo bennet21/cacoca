@@ -1,6 +1,6 @@
 import pandas as pd
 from src.setup.setup import Setup
-from src.tools.tools import merge_dfs
+from src.tools.common_merges import merge_project_dfs
 
 
 def calc_derived_quantities(cost_and_em: pd.DataFrame, setup: Setup):
@@ -16,7 +16,7 @@ def add_size(cost_and_em: pd.DataFrame, setup: Setup):
             'Planned production volume p.a.': 'Size'
         }) \
         .filter(['Project name', 'Size'])
-    return merge_dfs(cost_and_em, pr_size)
+    return merge_project_dfs(cost_and_em, pr_size)
 
 
 def add_effective_co2_price(cost_and_em: pd.DataFrame):

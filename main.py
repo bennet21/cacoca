@@ -2,7 +2,7 @@ from src.setup.setup import Setup
 from src.calc.calc_cost_and_emissions import calc_cost_and_emissions
 from src.calc.calc_derived_quantities import calc_derived_quantities
 from src.calc.calc_auction_quantities import calc_auction_quantities
-from src.calc.auction import set_projects_current, calc_score, auction
+from src.calc.auction import set_projects_ar, auction
 # from tools.sensitivities import
 from src.tools.tools import log
 
@@ -22,15 +22,15 @@ def run(config_filepath: str = None, config: dict = None):
 
 def run_auction(setup: Setup):
 
-    all_chosen_projects = {}
+    all_chosen_projects = []
 
     for config_ar_specific in setup.config['auction_rounds']:
 
-        config_ar = {**setup.config['auction_round_default'], **config_ar_specific}
+        config_ar = setup.config['auction_round_default'] | config_ar_specific
 
         log(f"Enter auction round {config_ar['name']}...")
 
-        set_projects_current(setup, all_chosen_projects, config_ar)
+        set_projects_ar(setup, all_chosen_projects, config_ar)
 
         setup.select_scenario_data('scenarios_bidding')
         setup.select_h2share(auction_year=config_ar['year'])
@@ -39,17 +39,14 @@ def run_auction(setup: Setup):
         yearly = calc_derived_quantities(cost_and_em_bidding, setup)
         yearly, aggregate = calc_auction_quantities(yearly, setup, config_ar)
 
+        chosen_projects = auction(aggregate, setup, config_ar)
+        all_chosen_projects += chosen_projects
+
         # TODO:
         # adjust size by Auslastungsfaktor where necessary
-        # refactor calc_ccfd: all in one routine, two DF yearly and aggregate
-        calc_score()
-        # chosen_projects = auction() # chosen_projects includes column with auction round name
-        auction()
         # calc_payout(chosen_projects)
-        # all_chosen_projects += chosen projects
-        # return all_chosen_projects
 
-    return yearly, aggregate
+    return all_chosen_projects
 
 
 def run_analyze(setup: Setup):
@@ -65,5 +62,4 @@ def run_analyze(setup: Setup):
 
 if __name__ == '__main__':
     config_filepath = 'config/config_all.yml'
-    strike_price = run(config_filepath)
-    print(strike_price)
+    run(config_filepath)

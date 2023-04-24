@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import numpy_financial as npf
 from src.setup.setup import Setup
+from src.tools.common_merges import add_tech_and_industry
 
 
 def calc_cost_and_emissions(setup: Setup, keep_components: bool = False):
@@ -23,22 +24,15 @@ def calc_cost_and_emissions(setup: Setup, keep_components: bool = False):
 
 def split_technology_names(setup: Setup):
 
-    industries = setup.techdata \
-        .filter(["Technology", "Industry"]) \
-        .drop_duplicates()
-
-    data_all = setup.projects_current \
-        .filter(['Project name', 'Technology']) \
+    data_all = add_tech_and_industry(
+        setup.projects_current.filter(['Project name', 'Technology']),
+        setup
+    ) \
         .merge(
             setup.reference_tech,
             how='left',
             on="Technology"
-        ) \
-        .merge(
-            industries,
-            how='left',
-            on="Technology"
-        )
+    )
 
     # used for reference cost
     data_ref = data_all \
