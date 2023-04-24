@@ -12,7 +12,6 @@ def varnames(df: pd.DataFrame):
     return df.columns.difference(index_vars)
 
 
-# TODO: add 100 checks for equal rows and columns
 def with_sensitivities(run_func):
     def sensitivity_wrapper(setup: Setup):
         base = run_func(setup)
