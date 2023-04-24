@@ -100,13 +100,6 @@ def plot_project(fig: pl.graph_objs.Figure, df: pd.DataFrame, vname: str, legend
     vnl, vnu = vname + '_lower', vname + '_upper'
     if not (vnl in df.columns and vnu in df.columns):
         return fig
-    fig = fig.add_scatter(
-        x=df['Period'],
-        y=df[vname + '_lower'],
-        line=dict(width=0),
-        hoverinfo='skip',
-        showlegend=False
-    )
 
     if isinstance(color, tuple):
         rgba = f"rgba{color + (alpha,)}"
@@ -117,10 +110,21 @@ def plot_project(fig: pl.graph_objs.Figure, df: pd.DataFrame, vname: str, legend
 
     fig = fig.add_scatter(
         x=df['Period'],
+        y=df[vname + '_lower'],
+        mode='lines',
+        line=dict(width=0),
+        hoverinfo='skip',
+        showlegend=False
+    )
+
+    fig = fig.add_scatter(
+        x=df['Period'],
         y=df[vname + '_upper'],
+        mode='lines',
         fill='tonexty',
         fillcolor=rgba,
         line=dict(width=0),
+        marker=dict(size=0),
         hoverinfo='skip',
         showlegend=False
     )

@@ -1,7 +1,8 @@
 # %%
 from main import run
 
-config, projects, cost_and_em_actual = run(config_filepath='config/config_UF.yml')
+
+config, projects_uf, cost_and_em_actual = run(config_filepath='config/config_UF.yml')
 
 
 # %% SECTOR COMPARISON  ============================================================================
@@ -9,13 +10,32 @@ config, projects, cost_and_em_actual = run(config_filepath='config/config_UF.yml
 from src.output.plot_project_cost_time_curves import plot_project_cost_time_curves
 from main import run
 
+
 if 'cost_and_em_actual' not in globals():
-    config, projects, cost_and_em_actual = run(config_filepath='config/config_UF.yml')
+    config, projects_uf, cost_and_em_actual = run(config_filepath='config/config_UF.yml')
 
 project_names = [
     'DUMMY INSERT PROJECT NAMES']
 plot_project_cost_time_curves(cost_and_em_actual, print_name='compare_sectors',
                               **{'Project name': project_names})
+
+
+# %% ALL PROJECTS  =================================================================================
+
+import copy
+from src.setup.read_input import read_config
+from main import run
+from src.output.plot_project_cost_time_curves import plot_project_cost_time_curves
+
+
+if 'config' not in globals():
+    config = read_config(filepath='config/config_UF.yml')
+
+config_all = copy.deepcopy(config)
+config_all['projects_file'] = 'config/Projects_ALL.xlsx'
+config_all, projects_all, cost_and_em_all = run(config=config_all)
+
+plot_project_cost_time_curves(cost_and_em_all, print_name='all_projects', color_by='Industry')
 
 
 # %% STEEL PROJECT COMPARISON  =====================================================================
@@ -26,7 +46,7 @@ from main import run
 
 if 'cost_and_em_actual' not in globals():
     from main import run
-    config, projects, cost_and_em_actual = run(config_filepath='config/config_UF.yml')
+    config, projects_uf, cost_and_em_actual = run(config_filepath='config/config_UF.yml')
 
 project_names = [
     'DUMMY INSERT PROJECT NAMES']
@@ -34,22 +54,36 @@ plot_project_cost_time_curves(cost_and_em_actual, print_name='steel_IPCEI',
                               **{'Project name': project_names})
 
 
-# %% BACKGROUND INFO SALZGITTER  ===================================================================
+# %% STACKED BARS  =================================================================================
 
 from src.output.plot_project_cost_time_curves import plot_project_cost_time_curves
 from src.output.plot_stacked_bars import plot_stacked_bars
+from main import run
+
+
+if 'cost_and_em_actual' not in globals():
+    config, projects_uf, cost_and_em_actual = run(config_filepath='config/config_UF.yml')
+
+project_names = [
+    'DUMMY INSERT PROJECT NAMES']
+for project_name in project_names:
+    plot_stacked_bars(cost_and_em_actual, project_name=project_name, cost_per='product')
+    # plot_stacked_bars(cost_and_em_actual, project_name=project_name, cost_per='em_savings',
+    #                   is_diff=True)
+
+
+# %% PRICE SCENARIOS  ==============================================================================
+
 from src.output.plot_price_scenarios import plot_price_scenarios
 from main import run
 
 
 if 'cost_and_em_actual' not in globals():
-    config, projects, cost_and_em_actual = run(config_filepath='config/config_UF.yml')
+    config, projects_uf, cost_and_em_actual = run(config_filepath='config/config_UF.yml')
 
-project_name = 'DUMMY INSERT PROJECT NAMES'
-plot_stacked_bars(cost_and_em_actual, project_name=project_name)
 project_names = [
     'DUMMY INSERT PROJECT NAMES']
-plot_price_scenarios(config, projects, project_names)
+plot_price_scenarios(config, projects_uf, project_names)
 
 # %% INFLUENCE OF H2 SHARE  ========================================================================
 
@@ -58,20 +92,19 @@ from main import run
 
 
 if 'cost_and_em_actual' not in globals():
-    config, projects, cost_and_em_actual = run(config_filepath='config/config_UF.yml')
+    config, projects_uf, cost_and_em_actual = run(config_filepath='config/config_UF.yml')
 
 project_names = [
     'DUMMY INSERT PROJECT NAMES']
 plot_project_cost_time_curves(cost_and_em_actual, print_name='h2share_influence',
                               **{'Project name': project_names})
-# TODO: plot 3 h2 share scenarios in one plot
 
 
 # %% INFLUENCE OF UNCERTAINTIES  ===================================================================
 
 import copy
 from main import run
-from src.input.read_config import read_config
+from src.setup.read_input import read_config
 from src.output.plot_project_cost_time_curves import plot_project_cost_time_curves
 
 

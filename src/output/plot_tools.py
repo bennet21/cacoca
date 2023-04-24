@@ -33,8 +33,8 @@ def set_yrange_min_zero(fig: pl.graph_objs.Figure):
 
 def show_and_save(fig: pl.graph_objs.Figure, base_name: str = None):
     fig.show()
-    if base_name:
-        dir_path = '/mnt/c/Users/jakobdu/data/projects/ccfd/ueckerdt_folie/figures/'
+    if base_name and False:
+        dir_path = 'output/'
         # fig.update_xaxes(title='', visible=False, showticklabels=True)
         fig.update_layout(margin=dict(l=10, r=10, t=10, b=10), title='',
                           width=1000, height=600, font=dict(size=18))

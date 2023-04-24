@@ -1,10 +1,11 @@
 import plotly as pl
 import pandas as pd
-from src.input.read_scenario_data import read_all_scenario_data, years_to_rows, add_variance
+from src.setup.read_input import read_raw_scenario_data
+from src.setup.select_scenario_data import years_to_rows
 from src.output.plot_project_cost_time_curves import plot_project
 from src.output.plot_tools import add_color, show_and_save, set_yrange_min_zero
 from src.output.plot_tools import display_name as dn
-from src.tools.gaussian import get_bounds
+# from src.tools.sensitivities import sensitivity_to_bounds
 
 
 def plot_price_scenarios(config: dict, projects: pd.DataFrame, project_names: list,
@@ -15,15 +16,13 @@ def plot_price_scenarios(config: dict, projects: pd.DataFrame, project_names: li
     scen_dir_path = config['scenarios_dir']
     config = config["scenarios_actual"]
 
-    data_all, h2share = read_all_scenario_data(dirpath=scen_dir_path)
+    prices_raw, _, h2share_raw = read_raw_scenario_data(dirpath=scen_dir_path)
 
-    prices = years_to_rows(
-        data_all.prices, year_name="Period", value_name="Price"
-    )
+    prices = years_to_rows(prices_raw, year_name="Period", value_name="Price")
     prices = prices.drop(columns='Source Reference')
 
     # Hack to make it fit in price plotting scheme below
-    h2share = years_to_rows(h2share, year_name="Period", value_name="Price")
+    h2share = years_to_rows(h2share_raw, year_name="Period", value_name="Price")
 
     h2share_scens = []
     for project_name in project_names:
@@ -36,10 +35,10 @@ def plot_price_scenarios(config: dict, projects: pd.DataFrame, project_names: li
     h2share["Unit"] = "H2 Share"
     prices = pd.concat([prices, h2share])
 
-    add_variance(prices,
-                 relative_standard_deviation=config.get('relative_standard_deviation', None),
-                 absolute_standard_deviation=config.get('absolute_standard_deviation', None))
-    prices = get_bounds(prices)
+    # add_variance(prices,
+    #              relative_standard_deviation=config.get('relative_standard_deviation', None),
+    #              absolute_standard_deviation=config.get('absolute_standard_deviation', None))
+    # prices = get_bounds(prices)
 
     for component_name, cdf in prices.groupby('Component'):
 
@@ -60,7 +59,7 @@ def plot_price_scenarios(config: dict, projects: pd.DataFrame, project_names: li
                 if component_name == 'H2 Share':
                     is_emphasized = scenario_name in h2share_scens
                 else:
-                    is_emphasized = config["Prices " + component_name] == scenario_name
+                    is_emphasized = config["prices"][component_name] == scenario_name
                 emphasize = 'main' if is_emphasized else 'other'
 
             if emphasize == 'other' and not print_other:

@@ -1,48 +1,38 @@
 import pandas as pd
 import numpy as np
 import numpy_financial as npf
-from src.input.read_scenario_data import ScenarioData
-import src.tools.gaussian as gs
+from src.setup.setup import Setup
+from src.tools.common_merges import add_tech_and_industry
 
 
-def calc_cost_and_emissions(projects: pd.DataFrame, techdata: pd.DataFrame,
-                            reference_tech: pd.DataFrame, scendata: ScenarioData,
-                            h2share: pd.DataFrame, config: dict, keep_components: bool = False):
+def calc_cost_and_emissions(setup: Setup, keep_components: bool = False):
 
-    data_old, data_new, data_ref = split_technology_names(projects, techdata, reference_tech)
+    data_old, data_new, data_ref = split_technology_names(setup)
 
-    data_new = calc_single_opmode(data_new, config, projects, techdata, scendata, keep_components)
-    data_old = calc_single_opmode(data_old, config, projects, techdata, scendata, keep_components)
-    data_ref = calc_single_opmode(data_ref, config, projects, techdata, scendata, keep_components)
+    data_new = calc_single_opmode(data_new, setup, keep_components)
+    data_old = calc_single_opmode(data_old, setup, keep_components)
+    data_ref = calc_single_opmode(data_ref, setup, keep_components)
 
-    data_all, variables = merge_operation_modes(data_old, data_new, h2share)
+    data_all, variables = merge_operation_modes(data_old, data_new, setup.h2share)
 
     data_all = merge_with_reference(data_all, data_ref, variables)
 
-    data_all = add_co2_price(data_all, scendata)
+    data_all = add_co2_price(data_all, setup.prices)
 
     return data_all
 
 
-def split_technology_names(projects: pd.DataFrame, techdata: pd.DataFrame,
-                           reference_tech: pd.DataFrame):
+def split_technology_names(setup: Setup):
 
-    industries = techdata \
-        .filter(["Technology", "Industry"]) \
-        .drop_duplicates()
-
-    data_all = projects \
-        .filter(['Project name', 'Technology']) \
+    data_all = add_tech_and_industry(
+        setup.projects_current.filter(['Project name', 'Technology']),
+        setup
+    ) \
         .merge(
-            reference_tech,
+            setup.reference_tech,
             how='left',
             on="Technology"
-        ) \
-        .merge(
-            industries,
-            how='left',
-            on="Technology"
-        )
+    )
 
     # used for reference cost
     data_ref = data_all \
@@ -65,25 +55,23 @@ def split_technology_names(projects: pd.DataFrame, techdata: pd.DataFrame,
     return data_old, data_new, data_ref
 
 
-def calc_single_opmode(data_in: pd.DataFrame, config: dict, projects: pd.DataFrame,
-                       techdata: pd.DataFrame, scendata: ScenarioData,
-                       keep_components: bool = False):
+def calc_single_opmode(data_in: pd.DataFrame, setup: Setup, keep_components: bool = False):
     """
     Calc cost and emissions for one set of specific energy demands
     """
 
-    data_in = calc_capex(data_in, projects, techdata)
+    data_in = calc_capex(data_in, setup)
 
-    yearly_data = expand_by_years(data_in, config, projects)
+    yearly_data = expand_by_years(data_in, setup)
 
-    yearly_data = calc_cost_single_opmode(yearly_data, techdata, scendata, keep_components)
+    yearly_data = calc_cost_single_opmode(yearly_data, setup, keep_components)
 
-    yearly_data = calc_emissions_single_opmode(yearly_data, techdata, scendata)
+    yearly_data = calc_emissions_single_opmode(yearly_data, setup)
 
     return yearly_data
 
 
-def calc_capex(data_in: pd.DataFrame, projects: pd.DataFrame, techdata: pd.DataFrame):
+def calc_capex(data_in: pd.DataFrame, setup: Setup):
 
     needed_project_info = [
         'Share of high CAPEX',
@@ -95,13 +83,13 @@ def calc_capex(data_in: pd.DataFrame, projects: pd.DataFrame, techdata: pd.DataF
 
     data_in = data_in \
         .merge(
-            projects.filter(['Project name'] + needed_project_info),
+            setup.projects_current.filter(['Project name'] + needed_project_info),
             how='left',
             on=['Project name']
         )
 
     def single_tech_param(name: str):
-        return techdata.query(f"Type=='{name}'") \
+        return setup.techdata.query(f"Type=='{name}'") \
             .filter(["Technology", "Value"]) \
             .rename(columns={"Value": name})
 
@@ -134,17 +122,17 @@ def calc_capex(data_in: pd.DataFrame, projects: pd.DataFrame, techdata: pd.DataF
     return data_in
 
 
-def expand_by_years(data_in: pd.DataFrame, config: dict, projects: pd.DataFrame):
+def expand_by_years(data_in: pd.DataFrame, setup: Setup):
 
     # expand projects by calendar years of operation
     data_in = data_in \
         .merge(
-            projects.filter(['Project name', 'Time of investment']),
+            setup.projects_current.filter(['Project name', 'Time of investment']),
             how='left',
             on=['Project name']
         ) \
         .merge(
-            pd.DataFrame.from_dict({'Period': config['years']}),
+            pd.DataFrame.from_dict({'Period': setup.config['years']}),
             how='cross'
         )
     yearly_data = data_in \
@@ -153,8 +141,7 @@ def expand_by_years(data_in: pd.DataFrame, config: dict, projects: pd.DataFrame)
     return yearly_data
 
 
-def calc_cost_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFrame,
-                            scendata: ScenarioData, keep_components: bool = False):
+def calc_cost_single_opmode(yearly_data: pd.DataFrame, setup: Setup, keep_components: bool = False):
     """
     Calc yearly cost for one set of specific energy demands
     """
@@ -162,7 +149,7 @@ def calc_cost_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFrame,
     columns_keep = np.setdiff1d(yearly_data.columns, ['Project name', 'Period'])
 
     # expand by unique list of all occuring components of energy demand
-    materials_in = techdata \
+    materials_in = setup.techdata \
         .query("Type=='Energy demand' | Type=='Feedstock demand'") \
         .filter(["Component"]) \
         .drop_duplicates()
@@ -172,9 +159,9 @@ def calc_cost_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFrame,
     # This is done after expanding by year to later enable time-dependent eneryg demands
     yearly_data = yearly_data \
         .merge(
-            techdata
+            setup.techdata
             .query("Type=='Energy demand' | Type=='Feedstock demand'")
-            .filter(["Technology", "Component", "Value"]),
+            .filter(["Technology", "Type", "Component", "Value"]),
             how='left',
             on=['Technology', 'Component']
         ) \
@@ -184,11 +171,11 @@ def calc_cost_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFrame,
     # add prices to df and calculate cost = en.demand * price
     yearly_data = yearly_data \
         .merge(
-            scendata.prices.drop(columns=["Source Reference", "Unit"]),
+            setup.prices.drop(columns=["Source Reference", "Unit"]),
             how='left',
             on=['Component', 'Period']
         ) \
-        .assign(**gs.dict('cost', lambda df: gs.mul(df, 'Material demand', 'Price'))) \
+        .assign(**{'cost': lambda df: df['Material demand'] * df['Price']})
 
     if keep_components:
         component_cost = yearly_data \
@@ -197,9 +184,18 @@ def calc_cost_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFrame,
             .reset_index()
 
     yearly_data = yearly_data \
+        .groupby(['Project name', 'Period', 'Type'], as_index=False) \
+        .agg({'cost': 'sum'} | {cname: 'first' for cname in columns_keep})
+
+    energy_cost = yearly_data \
+        .query("Type=='Energy demand'") \
+        .filter(['Project name', 'Period', 'cost']) \
+        .rename(columns={'cost': 'Energy cost'})
+
+    yearly_data = yearly_data \
         .groupby(['Project name', 'Period'], as_index=False) \
-        .agg({'cost': 'sum', 'cost_variance': 'sum'} |
-             {cname: 'first' for cname in columns_keep})
+        .agg({'cost': 'sum'} | {cname: 'first' for cname in columns_keep}) \
+        .merge(energy_cost, how='left', on=['Project name', 'Period'])
 
     if keep_components:
         yearly_data = yearly_data \
@@ -209,10 +205,10 @@ def calc_cost_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFrame,
                 on=['Project name', 'Period']
             )
 
-    # add additional OPEX
+    # add additional OPEX and CAPEX
     yearly_data = yearly_data \
         .merge(
-            techdata
+            setup.techdata
             .query("Type=='OPEX'")
             .filter(["Technology", "Value"]),
             how='left',
@@ -221,18 +217,12 @@ def calc_cost_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFrame,
         .rename(columns={"Value": "Additional OPEX"})
     yearly_data["Additional OPEX"].fillna(0., inplace=True)
     yearly_data = yearly_data \
-        .assign(**gs.dict('cost', lambda df: gs.add(df, 'cost', 'Additional OPEX')))
-    # .drop(columns=['Additional OPEX', 'Additional OPEX_variance'], errors='ignore')
-
-    yearly_data = yearly_data \
-        .assign(**gs.dict('cost', lambda df: gs.add(df, 'cost', 'CAPEX annuity')))
-    # .drop(columns=['CAPEX annuity'], errors='ignore')
+        .assign(**{'cost': lambda df: df['cost'] + df['Additional OPEX'] + df['CAPEX annuity']})
 
     return yearly_data
 
 
-def calc_emissions_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFrame,
-                                 scendata: ScenarioData):
+def calc_emissions_single_opmode(yearly_data: pd.DataFrame, setup: Setup):
     """
     Calc emission prices for one set of specific energy demands
     """
@@ -240,7 +230,7 @@ def calc_emissions_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFra
     # Add emissions to df
     yearly_data = yearly_data \
         .merge(
-            techdata
+            setup.techdata
             .query("Type=='Emissions' & Component == 'CO2'")
             .filter(["Technology", "Value"]),
             how='left',
@@ -251,7 +241,7 @@ def calc_emissions_single_opmode(yearly_data: pd.DataFrame, techdata: pd.DataFra
     # add free allocations to df
     yearly_data = yearly_data \
         .merge(
-            scendata.free_allocations
+            setup.free_allocations
             .filter(["Technology", "Period", "Free Allocations"]),
             how='left',
             on=['Technology', 'Period']
@@ -267,7 +257,6 @@ def merge_operation_modes(data_old: pd.DataFrame, data_new: pd.DataFrame, h2shar
         np.intersect1d(data_old.columns, data_new.columns),
         ['Project name', 'Period', 'Technology']
     )
-    variables = [v for v in variables if not str(v).endswith("_variance")]
 
     # merge old and new dataframes
     data_all = data_old \
@@ -285,34 +274,10 @@ def merge_operation_modes(data_old: pd.DataFrame, data_new: pd.DataFrame, h2shar
     # blend cost and emissions of old and new operation mode to overall cost
     for vname in variables:
         data_all = data_all \
-            .rename(columns={vname + '_variance_x': vname + '_x_variance',
-                             vname + '_variance_y': vname + '_y_variance'},
-                    errors='ignore')
-        data_all = data_all \
-            .assign(
-                **gs.dict(
-                    vname,
-                    lambda df: gs.add(
-                        df,
-                        gs.mul(
-                            df,
-                            1. - df['H2 Share'],
-                            vname + '_x'
-                        ),
-                        gs.mul(
-                            df,
-                            df['H2 Share'],
-                            vname + '_y'
-                        )
-                    ))
-            )
-        data_all = data_all \
-            .drop(
-                columns=[vname + '_x',
-                         vname + '_y',
-                         vname + '_x_variance',
-                         vname + '_y_variance'],
-                errors='ignore')
+            .assign(**{vname: lambda df:
+                       (1. - df['H2 Share']) * df[vname + '_x']
+                       + df['H2 Share'] * df[vname + '_y']})
+        data_all = data_all.drop(columns=[vname + '_x', vname + '_y'])
 
     data_all = data_all \
         .drop(columns=['H2 Share'])
@@ -324,11 +289,7 @@ def merge_with_reference(data_all: pd.DataFrame, data_ref: pd.DataFrame, variabl
 
     # add '_ref' to reference varable names
     data_ref = data_ref \
-        .rename(
-            columns={v + suffix: v + '_ref' + suffix
-                     for v in variables for suffix in ['', '_variance']},
-            errors='ignore'
-        ) \
+        .rename(columns={v: v + '_ref' for v in variables}) \
         .drop(columns=['Technology'])
     # merge and calculate difference for all variables in input list
     data_all = data_all \
@@ -339,19 +300,16 @@ def merge_with_reference(data_all: pd.DataFrame, data_ref: pd.DataFrame, variabl
         )
     for vname in variables:
         data_all = data_all \
-            .assign(
-                **gs.dict(vname + '_diff', lambda df: gs.sub(df, vname, vname + '_ref'))
-            )
+            .assign(**{vname + '_diff': lambda df: df[vname] - df[vname + '_ref']})
 
     return data_all
 
 
-def add_co2_price(yearly_data: pd.DataFrame, scendata: ScenarioData):
-    co2prices = scendata.prices \
+def add_co2_price(yearly_data: pd.DataFrame, prices: pd.DataFrame):
+    co2prices = prices \
         .query("Component == 'CO2'") \
-        .filter(["Period", "Price", "Price_variance"]) \
-        .rename(columns={"Price": "CO2 Price", "Price_variance": "CO2 Price_variance"},
-                errors='ignore')
+        .filter(["Period", "Price"]) \
+        .rename(columns={"Price": "CO2 Price"})
     yearly_data = yearly_data \
         .merge(
             co2prices,
