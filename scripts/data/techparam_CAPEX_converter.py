@@ -3,9 +3,9 @@ import pandas as pd
 import numpy as np
 import os
 # CONFIG -----------------------------------------------------------------
-# input_file = 'data/scripts/Input_Modellierung_2023-0321_adapted.xlsx'
+# input_file = 'scripts/data/Input_Modellierung_2023-0321_adapted.xlsx'
 # output_dir = 'data/tech/isi/'
-input_file = 'data/scripts/Tool_ALL.xlsm'
+input_file = 'scripts/data/Tool_ALL.xlsm'
 output_dir = 'data/tech/isi_all/'
 
 # BEGIN READING TECHNOLOGY PARAMETER SHEET -------------------------------
