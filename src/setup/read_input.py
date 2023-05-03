@@ -13,7 +13,8 @@ def read_config(filepath: str):
 
 
 def read_projects(filepath: str, default_wacc: float):
-    projects = pd.read_excel(filepath, sheet_name='Projects')
+    projects = pd.read_csv(filepath)
+    # projects = pd.read_excel(filepath, sheet_name='Projects')
     projects = projects.query("Active == 1")
     projects = projects.fillna({'WACC': default_wacc})
     return projects
@@ -30,19 +31,18 @@ def read_techdata(dir_path: str, filenames_base: list):
     techdata = pd.concat(techdata)
 
     reference_tech = pd.read_csv(
-        os.path.join(dir_path, 'technology_reference_mapping.csv'),
-        encoding="utf-16"
+        os.path.join(dir_path, 'technology_reference_mapping.csv')
     )
 
     return techdata, reference_tech
 
 
 def read_raw_scenario_data(dirpath: str):
-    co2prices = pd.read_csv(os.path.join(dirpath, 'prices_co2.csv'), encoding="utf-16")
+    co2prices = pd.read_csv(os.path.join(dirpath, 'prices_co2.csv'))
     co2prices.insert(0, 'Component', 'CO2', True)
-    fuel_prices = pd.read_csv(os.path.join(dirpath, 'prices_fuels.csv'), encoding="utf-16")
+    fuel_prices = pd.read_csv(os.path.join(dirpath, 'prices_fuels.csv'))
     prices = pd.concat([co2prices, fuel_prices])
-    h2share = pd.read_csv(os.path.join(dirpath, 'h2share.csv'), encoding="utf-16")
-    free_allocations = pd.read_csv(os.path.join(dirpath, 'free_allocations.csv'), encoding="utf-16")
-    # cbam_factor = pd.read_csv(os.path.join(dirpath,'cbam_factor.csv'), encoding="utf-16")
+    h2share = pd.read_csv(os.path.join(dirpath, 'h2share.csv'))
+    free_allocations = pd.read_csv(os.path.join(dirpath, 'free_allocations.csv'))
+    # cbam_factor = pd.read_csv(os.path.join(dirpath,'cbam_factor.csv'))
     return prices, free_allocations, h2share

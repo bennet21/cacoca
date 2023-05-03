@@ -37,7 +37,7 @@ tech_mapping = techparam[['Technology', 'Reference Technology']]
 tech_mapping_filtered = tech_mapping[~tech_mapping['Technology'].isnull()]
 
 # write technology mapping to csv file
-tech_mapping_filtered.to_csv(os.path.join(output_dir, "technology_reference_mapping.csv"), encoding="utf-16", index=None)
+tech_mapping_filtered.to_csv(os.path.join(output_dir, "technology_reference_mapping.csv"), encoding="utf-8", index=None)
 # END TECHNOLOGY MAPPING CSV -------------------------------
 
 # melt down dataframe to create desired format

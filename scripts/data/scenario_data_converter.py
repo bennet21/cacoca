@@ -25,7 +25,7 @@ df = pd.read_excel(
    skiprows=3
 )
 df.rename(columns={"Data source": "Source Reference"}, inplace=True)
-df.to_csv(os.path.join(output_dir, "prices_co2.csv"), encoding="utf-16", index=None)
+df.to_csv(os.path.join(output_dir, "prices_co2.csv"), index=None)
 
 # FUEL PRICES
 df = pd.read_excel(
@@ -35,18 +35,18 @@ df = pd.read_excel(
 )
 df.rename(columns={"Energie Carrier": "Component", "Datasource": "Source Reference"}, inplace=True)
 df = df[~df['Component'].isnull()]
-df.to_csv(os.path.join(output_dir, "prices_fuels.csv"), encoding="utf-16", index=None)
+df.to_csv(os.path.join(output_dir, "prices_fuels.csv"), index=None)
 
 # H2 SHARE
 df = pd.read_excel(
    io=input_file,
    sheet_name ='Scenario Fuel-Mix Steel and Amm',
-   skiprows=2,
+   skiprows=2
 
 )
 df = df[~df['Scenario'].isnull()]
 df = df.drop(columns=["Steel"])
-df.to_csv(os.path.join(output_dir, "h2share.csv"), encoding="utf-16", index=None)
+df.to_csv(os.path.join(output_dir, "h2share.csv"), index=None)
 
 # FREE ALLOCATIONS
 df = pd.read_excel(
@@ -59,8 +59,8 @@ cbam = df.iloc[:1]
 df = df.iloc[1:,]
 df.rename(columns={"Szenario": "Scenario"}, inplace=True)
 df = df[~df['Scenario'].isnull()]
-df.to_csv(os.path.join(output_dir, "free_allocations.csv"), encoding="utf-16", index=None)
+df.to_csv(os.path.join(output_dir, "free_allocations.csv"), index=None)
 
 cbam.drop(columns=['Industry', 'Szenario', 'Technology', 'Comment'], inplace=True)
-cbam.to_csv(os.path.join(output_dir, "cbam_factor.csv"), encoding="utf-16", index=None)
+cbam.to_csv(os.path.join(output_dir, "cbam_factor.csv"), index=None)
 
