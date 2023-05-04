@@ -1,5 +1,5 @@
 # %%
-from main import run
+from cacoca.run import run
 
 
 config, projects_uf, cost_and_em_actual = run(config_filepath='config/config_UF.yml')
@@ -7,8 +7,8 @@ config, projects_uf, cost_and_em_actual = run(config_filepath='config/config_UF.
 
 # %% SECTOR COMPARISON  ============================================================================
 
-from src.output.plot_project_cost_time_curves import plot_project_cost_time_curves
-from main import run
+from cacoca.output.plot_project_cost_time_curves import plot_project_cost_time_curves
+from cacoca.run import run
 
 
 if 'cost_and_em_actual' not in globals():
@@ -23,9 +23,9 @@ plot_project_cost_time_curves(cost_and_em_actual, print_name='compare_sectors',
 # %% ALL PROJECTS  =================================================================================
 
 import copy
-from src.setup.read_input import read_config
-from main import run
-from src.output.plot_project_cost_time_curves import plot_project_cost_time_curves
+from cacoca.setup.read_input import read_config
+from cacoca.run import run
+from cacoca.output.plot_project_cost_time_curves import plot_project_cost_time_curves
 
 
 if 'config' not in globals():
@@ -40,12 +40,12 @@ plot_project_cost_time_curves(cost_and_em_all, print_name='all_projects', color_
 
 # %% STEEL PROJECT COMPARISON  =====================================================================
 
-from src.output.plot_project_cost_time_curves import plot_project_cost_time_curves
-from main import run
+from cacoca.output.plot_project_cost_time_curves import plot_project_cost_time_curves
+from cacoca.run import run
 
 
 if 'cost_and_em_actual' not in globals():
-    from main import run
+    from cacoca.run import run
     config, projects_uf, cost_and_em_actual = run(config_filepath='config/config_UF.yml')
 
 project_names = [
@@ -56,9 +56,9 @@ plot_project_cost_time_curves(cost_and_em_actual, print_name='steel_IPCEI',
 
 # %% STACKED BARS  =================================================================================
 
-from src.output.plot_project_cost_time_curves import plot_project_cost_time_curves
-from src.output.plot_stacked_bars import plot_stacked_bars
-from main import run
+from cacoca.output.plot_project_cost_time_curves import plot_project_cost_time_curves
+from cacoca.output.plot_stacked_bars import plot_stacked_bars
+from cacoca.run import run
 
 
 if 'cost_and_em_actual' not in globals():
@@ -74,8 +74,8 @@ for project_name in project_names:
 
 # %% PRICE SCENARIOS  ==============================================================================
 
-from src.output.plot_price_scenarios import plot_price_scenarios
-from main import run
+from cacoca.output.plot_price_scenarios import plot_price_scenarios
+from cacoca.run import run
 
 
 if 'cost_and_em_actual' not in globals():
@@ -87,8 +87,8 @@ plot_price_scenarios(config, projects_uf, project_names)
 
 # %% INFLUENCE OF H2 SHARE  ========================================================================
 
-from src.output.plot_project_cost_time_curves import plot_project_cost_time_curves
-from main import run
+from cacoca.output.plot_project_cost_time_curves import plot_project_cost_time_curves
+from cacoca.run import run
 
 
 if 'cost_and_em_actual' not in globals():
@@ -103,9 +103,9 @@ plot_project_cost_time_curves(cost_and_em_actual, print_name='h2share_influence'
 # %% INFLUENCE OF UNCERTAINTIES  ===================================================================
 
 import copy
-from main import run
-from src.setup.read_input import read_config
-from src.output.plot_project_cost_time_curves import plot_project_cost_time_curves
+from cacoca.run import run
+from cacoca.setup.read_input import read_config
+from cacoca.output.plot_project_cost_time_curves import plot_project_cost_time_curves
 
 
 if 'config' not in globals():

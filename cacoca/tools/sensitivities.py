@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
 import copy
-from src.setup.setup import Setup
-from src.tools.common_merges import merge_project_dfs
+from ..setup.setup import Setup
+from .common_merges import merge_project_dfs
 
 
 index_vars = ['Project name', 'Technology', 'Industry', 'Period']

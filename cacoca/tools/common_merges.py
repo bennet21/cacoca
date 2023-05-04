@@ -1,5 +1,5 @@
 import pandas as pd
-from src.setup.setup import Setup
+from ..setup.setup import Setup
 
 
 def merge_project_dfs(*dfs: pd.DataFrame):

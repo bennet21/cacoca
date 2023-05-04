@@ -1,5 +1,5 @@
-from src.setup.read_input import read_config, read_projects, read_techdata, read_raw_scenario_data
-from src.setup.select_scenario_data import select_prices, select_free_allocations, select_h2share
+from .read_input import read_config, read_projects, read_techdata, read_raw_scenario_data
+from .select_scenario_data import select_prices, select_free_allocations, select_h2share
 
 
 class Setup():

@@ -1,8 +1,8 @@
 import plotly as pl
 import pandas as pd
 import numpy as np
-from src.output.plot_tools import show_and_save
-from src.output.plot_tools import display_name as dn
+from .plot_tools import show_and_save
+from .plot_tools import display_name as dn
 
 
 # The dict also prescribes the ordering in the plot (from bottom to top):
@@ -24,8 +24,8 @@ colors = {
 }
 
 
-def plot_stacked_bars(projects: pd.DataFrame, project_name: str, cost_per: str = 'product',
-                      is_diff: bool = False):
+def plot_stacked_bars(projects: pd.DataFrame, config: dict, project_name: str,
+                      cost_per: str = 'product', is_diff: bool = False):
 
     if cost_per == 'product':
         yunit = '€/t Produkt'
@@ -163,4 +163,4 @@ def plot_stacked_bars(projects: pd.DataFrame, project_name: str, cost_per: str =
     fig.update_layout(legend_traceorder="reversed",
                       title=f"Kostenvergleich {dn(project_name)}")
     fig.update_layout(barmode="relative")
-    show_and_save(fig, 'stacked_bars_' + project_name)
+    show_and_save(fig, config, 'stacked_bars_' + project_name)

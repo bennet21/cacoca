@@ -1,6 +1,6 @@
 import pandas as pd
-from src.setup.setup import Setup
-from src.tools.tools import log
+from ..setup.setup import Setup
+from ..tools.tools import log
 
 
 def auction(aggregate: pd.DataFrame, setup: Setup, config_ar: dict):

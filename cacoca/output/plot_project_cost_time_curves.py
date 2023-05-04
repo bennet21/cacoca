@@ -1,10 +1,11 @@
 import plotly as pl
 import pandas as pd
-from src.output.plot_tools import add_color, show_and_save, set_yrange_min_zero
-from src.output.plot_tools import display_name as dn
+from .plot_tools import add_color, show_and_save, set_yrange_min_zero
+from .plot_tools import display_name as dn
 
 
 def plot_project_cost_time_curves(projects: pd.DataFrame,
+                                  config: dict,
                                   color_by: str = 'Project name',
                                   print_name: str = None,
                                   one_per_color: bool = False,
@@ -62,7 +63,7 @@ def plot_project_cost_time_curves(projects: pd.DataFrame,
     # fig.update_xaxes(title='Jahr')
     set_yrange_min_zero(fig)
     fig.update_yaxes(title='€ / t CO2')
-    show_and_save(fig, 'cost_diff_curve_' + print_name)
+    show_and_save(fig, config, 'cost_diff_curve_' + print_name)
 
 
 def plot_project(fig: pl.graph_objs.Figure, df: pd.DataFrame, vname: str, legend_name: str,

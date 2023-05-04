@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
 import numpy_financial as npf
-from src.setup.setup import Setup
-from src.tools.common_merges import add_tech_and_industry
+from ..setup.setup import Setup
+from ..tools.common_merges import add_tech_and_industry
 
 
 def calc_cost_and_emissions(setup: Setup, keep_components: bool = False):

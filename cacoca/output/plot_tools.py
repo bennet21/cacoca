@@ -1,5 +1,6 @@
 import plotly as pl
 import pandas as pd
+import os
 
 
 # define colors to use
@@ -31,14 +32,14 @@ def set_yrange_min_zero(fig: pl.graph_objs.Figure):
     fig.update_yaxes(range=yrange)
 
 
-def show_and_save(fig: pl.graph_objs.Figure, base_name: str = None):
+def show_and_save(fig: pl.graph_objs.Figure, config: dict, base_name: str = None):
     fig.show()
-    if base_name and False:
-        dir_path = 'output/'
-        # fig.update_xaxes(title='', visible=False, showticklabels=True)
-        fig.update_layout(margin=dict(l=10, r=10, t=10, b=10), title='',
-                          width=1000, height=600, font=dict(size=18))
-        fig.write_image(dir_path + base_name + '.png')
+    if base_name and config['save_figures']:
+        dir_path = config['output_dir']
+        if config['crop_figures']:
+            fig.update_layout(margin=dict(l=10, r=10, t=10, b=10), title='')
+        fig.update_layout(width=1000, height=600, font=dict(size=18))
+        fig.write_image(os.path.join(dir_path, base_name + '.png'))
 
 
 display_names = {

@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 import yaml
-from src.setup.read_input import read_raw_scenario_data
+from setup.read_input import read_raw_scenario_data
 
 all_components = [
     "Free Allocations",

@@ -1,10 +1,10 @@
-from src.setup.setup import Setup
-from src.calc.calc_cost_and_emissions import calc_cost_and_emissions
-from src.calc.calc_derived_quantities import calc_derived_quantities, calc_payout
-from src.calc.calc_auction_quantities import calc_auction_quantities
-from src.calc.auction import prepare_setup_for_bidding, auction, prepare_setup_for_payout
-from src.tools.sensitivities import with_sensitivities
-from src.tools.tools import log
+from .setup.setup import Setup
+from .calc.calc_cost_and_emissions import calc_cost_and_emissions
+from .calc.calc_derived_quantities import calc_derived_quantities, calc_payout
+from .calc.calc_auction_quantities import calc_auction_quantities
+from .calc.auction import prepare_setup_for_bidding, auction, prepare_setup_for_payout
+from .tools.sensitivities import with_sensitivities
+from .tools.tools import log
 
 
 def run(config_filepath: str = None, config: dict = None):
@@ -68,8 +68,3 @@ def calc_analyze(setup: Setup):
     cost_and_em = calc_cost_and_emissions(setup, keep_components=True)
     yearly = calc_derived_quantities(cost_and_em, setup)
     return yearly
-
-
-if __name__ == '__main__':
-    config_filepath = 'config/config_all.yml'
-    run(config_filepath)

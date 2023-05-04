@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
-from src.setup.setup import Setup
-from src.tools.common_merges import merge_project_dfs
+from ..setup.setup import Setup
+from ..tools.common_merges import merge_project_dfs
 
 
 def calc_derived_quantities(cost_and_em: pd.DataFrame, setup: Setup):

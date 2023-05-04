@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
-from src.setup.setup import Setup
-from src.setup.select_scenario_data import select_prices
-from src.tools.common_merges import merge_project_dfs, add_tech_and_industry
+from ..setup.setup import Setup
+from ..setup.select_scenario_data import select_prices
+from ..tools.common_merges import merge_project_dfs, add_tech_and_industry
 
 
 def calc_auction_quantities(yearly: pd.DataFrame, setup: Setup, auction_config: dict):
