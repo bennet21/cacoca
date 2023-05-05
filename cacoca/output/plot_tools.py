@@ -2,7 +2,6 @@ import plotly as pl
 import pandas as pd
 import os
 
-
 # define colors to use
 def add_color(projects: pd.DataFrame = None, by_column: str = None):
 
@@ -33,7 +32,10 @@ def set_yrange_min_zero(fig: pl.graph_objs.Figure):
 
 
 def show_and_save(fig: pl.graph_objs.Figure, config: dict, base_name: str = None):
-    fig.show()
+    if config['show_figures']:
+        if config['show_figs_in_browser']:
+            pl.io.renderers.default = "browser"
+        fig.show()
     if base_name and config['save_figures']:
         dir_path = config['output_dir']
         if config['crop_figures']:
