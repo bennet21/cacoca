@@ -1,0 +1,9 @@
+# Mapping of variable names used in the VBA scripts of input_viewer.xlsm to those used in the python code / input data.
+# This helps with renaming variables / data columns, as they don't have to be changed in the VBA scripts, but only here, where they are searchable outside of Excel.
+# Strict format: No quotes! key and value separated with three colons, one pair per line. Comments must have "#" as first ccharacter of line (no in-line comments); no empty line at end of file.
+vb_techrefmap:::technology_reference_mapping
+vb_sectorscol:::Industry
+vb_h2sharecol:::H2 Share Scenario
+vb_h2sharefn:::h2share
+vb_techcol:::Technology
+vb_reftechcol:::Reference Technology
