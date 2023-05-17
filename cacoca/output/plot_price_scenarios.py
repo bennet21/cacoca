@@ -8,7 +8,7 @@ from .plot_tools import display_name as dn
 # from tools.sensitivities import sensitivity_to_bounds
 
 
-def plot_price_scenarios(config: dict, projects: pd.DataFrame, project_names: list,
+def plot_price_scenarios(config: dict, projects: pd.DataFrame, project_names_h2share: list,
                          do_emphasize: bool = True):
 
     print_other = True
@@ -20,19 +20,20 @@ def plot_price_scenarios(config: dict, projects: pd.DataFrame, project_names: li
     prices = years_to_rows(prices_raw, year_name="Period", value_name="Price")
     prices = prices.drop(columns='Source Reference')
 
-    # Hack to make it fit in price plotting scheme below
-    h2share = years_to_rows(h2share_raw, year_name="Period", value_name="Price")
+    if project_names_h2share is not None:
+        # Hack to make it fit in price plotting scheme below
+        h2share = years_to_rows(h2share_raw, year_name="Period", value_name="Price")
 
-    h2share_scens = []
-    for project_name in project_names:
-        h2share_scen = projects \
-            .query(f"`Project name` == '{project_name}'")["H2 Share Scenario"] \
-            .values[0]
-        h2share_scens.append(h2share_scen)
+        h2share_scens = []
+        for project_name in project_names_h2share:
+            h2share_scen = projects \
+                .query(f"`Project name` == '{project_name}'")["H2 Share Scenario"] \
+                .values[0]
+            h2share_scens.append(h2share_scen)
 
-    h2share["Component"] = "H2 Share"
-    h2share["Unit"] = "H2 Share"
-    prices = pd.concat([prices, h2share])
+        h2share["Component"] = "H2 Share"
+        h2share["Unit"] = "H2 Share"
+        prices = pd.concat([prices, h2share])
 
     for component_name, cdf in prices.groupby('Component'):
 

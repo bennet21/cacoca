@@ -38,7 +38,9 @@ def sensitivity_to_variance(variance_sum: pd.DataFrame, base: pd.DataFrame, dist
                             std_df: pd.DataFrame):
     vns = varnames(base)
     df_all = merge_project_dfs(base, disturbed) \
-        .merge(std_df, how='left', on='Period')
+        .merge(std_df, how='left', on='Period') \
+        .sort_values(['Project name', 'Period'])
+    variance_sum = variance_sum.sort_values(['Project name', 'Period'])
     for vn in vns:
         variance_sum[vn] += ((df_all[vn + '_y'] - df_all[vn + '_x']) * df_all['StD']) ** 2
     return variance_sum
@@ -53,6 +55,8 @@ def get_yearly_std(prices: pd.DataFrame, component: str, rel_std: float):
 
 
 def get_bounds(base: pd.DataFrame, variance: pd.DataFrame):
+    variance = variance.sort_values(['Project name', 'Period'])
+    base = base.sort_values(['Project name', 'Period'])
     for vname in varnames(base):
         if np.max(variance[vname].values) > 1.e-10:
             base[vname + '_lower'] = base[vname] - 2. * np.sqrt(variance[vname])

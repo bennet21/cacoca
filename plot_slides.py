@@ -2,7 +2,7 @@
 from cacoca.run import run
 
 
-config, projects_uf, cost_and_em_actual = run(config_filepath='config/config_UF.yml')
+config, projects_slides, cost_and_em_actual = run(config_filepath='config/config_slides.yml')
 
 
 # %% SECTOR COMPARISON  ============================================================================
@@ -12,7 +12,7 @@ from cacoca.run import run
 
 
 if 'cost_and_em_actual' not in globals():
-    config, projects_uf, cost_and_em_actual = run(config_filepath='config/config_UF.yml')
+    config, projects_slides, cost_and_em_actual = run(config_filepath='config/config_slides.yml')
 
 project_names = [
     'DUMMY INSERT PROJECT NAMES']
@@ -29,7 +29,7 @@ from cacoca.output.plot_project_cost_time_curves import plot_project_cost_time_c
 
 
 if 'config' not in globals():
-    config = read_config(filepath='config/config_UF.yml')
+    config = read_config(filepath='config/config_slides.yml')
 
 config_all = copy.deepcopy(config)
 config_all['projects_file'] = 'config/Projects_ALL.xlsx'
@@ -46,7 +46,7 @@ from cacoca.run import run
 
 if 'cost_and_em_actual' not in globals():
     from cacoca.run import run
-    config, projects_uf, cost_and_em_actual = run(config_filepath='config/config_UF.yml')
+    config, projects_slides, cost_and_em_actual = run(config_filepath='config/config_slides.yml')
 
 project_names = [
     'DUMMY INSERT PROJECT NAMES']
@@ -62,7 +62,7 @@ from cacoca.run import run
 
 
 if 'cost_and_em_actual' not in globals():
-    config, projects_uf, cost_and_em_actual = run(config_filepath='config/config_UF.yml')
+    config, projects_slides, cost_and_em_actual = run(config_filepath='config/config_slides.yml')
 
 project_names = [
     'DUMMY INSERT PROJECT NAMES']
@@ -79,11 +79,11 @@ from cacoca.run import run
 
 
 if 'cost_and_em_actual' not in globals():
-    config, projects_uf, cost_and_em_actual = run(config_filepath='config/config_UF.yml')
+    config, projects_slides, cost_and_em_actual = run(config_filepath='config/config_slides.yml')
 
 project_names = [
     'DUMMY INSERT PROJECT NAMES']
-plot_price_scenarios(config, projects_uf, project_names)
+plot_price_scenarios(config, projects_slides, project_names)
 
 # %% INFLUENCE OF H2 SHARE  ========================================================================
 
@@ -92,7 +92,7 @@ from cacoca.run import run
 
 
 if 'cost_and_em_actual' not in globals():
-    config, projects_uf, cost_and_em_actual = run(config_filepath='config/config_UF.yml')
+    config, projects_slides, cost_and_em_actual = run(config_filepath='config/config_slides.yml')
 
 project_names = [
     'DUMMY INSERT PROJECT NAMES']
@@ -109,7 +109,7 @@ from cacoca.output.plot_project_cost_time_curves import plot_project_cost_time_c
 
 
 if 'config' not in globals():
-    config = read_config(filepath='config/config_UF.yml')
+    config = read_config(filepath='config/config_slides.yml')
 
 project_names_dict = {
     'lowh2': 'DUMMY INSERT PROJECT NAMES'

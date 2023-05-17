@@ -272,6 +272,7 @@ def merge_operation_modes(data_old: pd.DataFrame, data_new: pd.DataFrame, h2shar
         )
 
     # blend cost and emissions of old and new operation mode to overall cost
+    # TODO: Do not blend CAPEX
     for vname in variables:
         data_all = data_all \
             .assign(**{vname: lambda df:

@@ -17,6 +17,8 @@ def read_projects(filepath: str, default_wacc: float):
     # projects = pd.read_excel(filepath, sheet_name='Projects')
     projects = projects.query("Active == 1")
     projects = projects.fillna({'WACC': default_wacc})
+    if not projects['Project name'].is_unique:
+        raise Exception('Duplicate project names are prohibited.')
     return projects
 
 
