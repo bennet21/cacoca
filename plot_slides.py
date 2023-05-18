@@ -2,7 +2,7 @@
 from cacoca.run import run
 
 
-config, projects_slides, cost_and_em_actual = run(config_filepath='config/config_slides.yml')
+setup, cost_and_em_actual = run(config_filepath='config/config_slides.yml')
 
 
 # %% SECTOR COMPARISON  ============================================================================
@@ -12,7 +12,7 @@ from cacoca.run import run
 
 
 if 'cost_and_em_actual' not in globals():
-    config, projects_slides, cost_and_em_actual = run(config_filepath='config/config_slides.yml')
+    setup, cost_and_em_actual = run(config_filepath='config/config_slides.yml')
 
 project_names = [
     'DUMMY INSERT PROJECT NAMES']
@@ -33,7 +33,7 @@ if 'config' not in globals():
 
 config_all = copy.deepcopy(config)
 config_all['projects_file'] = 'config/Projects_ALL.xlsx'
-config_all, projects_all, cost_and_em_all = run(config=config_all)
+setup, cost_and_em_all = run(config=config_all)
 
 plot_project_cost_time_curves(cost_and_em_all, print_name='all_projects', color_by='Industry')
 
@@ -46,7 +46,7 @@ from cacoca.run import run
 
 if 'cost_and_em_actual' not in globals():
     from cacoca.run import run
-    config, projects_slides, cost_and_em_actual = run(config_filepath='config/config_slides.yml')
+    setup, cost_and_em_actual = run(config_filepath='config/config_slides.yml')
 
 project_names = [
     'DUMMY INSERT PROJECT NAMES']
@@ -62,7 +62,7 @@ from cacoca.run import run
 
 
 if 'cost_and_em_actual' not in globals():
-    config, projects_slides, cost_and_em_actual = run(config_filepath='config/config_slides.yml')
+    setup, cost_and_em_actual = run(config_filepath='config/config_slides.yml')
 
 project_names = [
     'DUMMY INSERT PROJECT NAMES']
@@ -79,11 +79,11 @@ from cacoca.run import run
 
 
 if 'cost_and_em_actual' not in globals():
-    config, projects_slides, cost_and_em_actual = run(config_filepath='config/config_slides.yml')
+    setup, cost_and_em_actual = run(config_filepath='config/config_slides.yml')
 
 project_names = [
     'DUMMY INSERT PROJECT NAMES']
-plot_price_scenarios(config, projects_slides, project_names)
+plot_price_scenarios(setup.config, setup.projects_all, project_names)
 
 # %% INFLUENCE OF H2 SHARE  ========================================================================
 
@@ -92,7 +92,7 @@ from cacoca.run import run
 
 
 if 'cost_and_em_actual' not in globals():
-    config, projects_slides, cost_and_em_actual = run(config_filepath='config/config_slides.yml')
+    setup, cost_and_em_actual = run(config_filepath='config/config_slides.yml')
 
 project_names = [
     'DUMMY INSERT PROJECT NAMES']
@@ -140,7 +140,7 @@ for scen_name, sens_dict in sens_scenarios.items():
     for component, rel_std in sens_dict.items():
         config_sens['relative_standard_deviation'][component] = rel_std
 
-    _, projects_sens, cost_and_em_sens = run(config=config_sens)
+    _, cost_and_em_sens = run(config=config_sens)
 
     for h2name, project_name in project_names_dict.items():
         plot_project_cost_time_curves(cost_and_em_sens,

@@ -58,6 +58,32 @@ def calc_payout(cost_and_em: pd.DataFrame, setup: Setup):
     return payout_yearly, payout_aggregate, payout_sum
 
 
+def add_absolute_hydrogen_demand(cost_and_em: pd.DataFrame, setup: Setup):
+    # We only have the Hydrogen cost, so we divide by the price to get the demand.
+
+    # Units:
+    # Hydrogen cost is in €/t_Product
+    # Hydrogen price is in €/kg_H2
+    # Size is in Mt_Product;
+    # (€/t_Product) / (€/kg_H2) * (1e6 t_Product) = 1e6 kg_H2 = kt_H2
+    # --> multpliy with 1000 to get t_H2
+
+    h2price = setup.prices \
+        .query("Component == 'Hydrogen'") \
+        .filter(['Period', 'Price']) \
+        .rename(columns={'Price': 'Hydrogen Price'})
+    cost_and_em = cost_and_em \
+        .merge(
+            h2price,
+            how='left',
+            on='Period'
+        ) \
+        .assign(**{"Absolute Hydrogen Demand (t)": lambda df:
+                   df["cost_Hydrogen"] / df['Hydrogen Price'] * df['Size'] * 1000.}) \
+        .drop(columns=['Hydrogen Price'])
+    return cost_and_em
+
+
 # total_em_savings = cost_and_em \
 #     .groupby(['Project name']) \
 #     .agg({'Emissions_diff': 'sum'}) \

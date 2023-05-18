@@ -2,7 +2,7 @@ import plotly as pl
 import pandas as pd
 from .plot_tools import add_color, show_and_save, set_yrange_min_zero
 from .plot_tools import display_name as dn
-
+from ..tools.tools import filter_df
 
 def plot_project_cost_time_curves(projects: pd.DataFrame,
                                   config: dict,
@@ -11,13 +11,12 @@ def plot_project_cost_time_curves(projects: pd.DataFrame,
                                   one_per_color: bool = False,
                                   **filter_by: dict):
 
+    projects = filter_df(projects, filter_by=filter_by)
+
     fig = pl.graph_objs.Figure()
 
     legend_title = dn(color_by)
 
-    for filter_column, filter_values in filter_by.items():
-        query_str = " | ".join([f"`{filter_column}` == '{fv}'" for fv in filter_values])
-        projects = projects.query(query_str)
 
     projects = add_color(
         projects=projects,

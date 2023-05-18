@@ -17,7 +17,7 @@ def run(config_filepath: str = None, config: dict = None):
         return all_chosen_projects
     elif mode == 'analyze_cost':
         cost_and_em = run_analyze(setup)
-        return setup.config, setup.projects_all, cost_and_em
+        return setup, cost_and_em
 
 
 def run_auction(setup: Setup):
