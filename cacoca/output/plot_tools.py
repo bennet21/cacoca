@@ -2,6 +2,7 @@ import plotly as pl
 import pandas as pd
 import os
 
+
 # define colors to use
 def add_color(projects: pd.DataFrame = None, by_column: str = None):
 
@@ -62,6 +63,7 @@ display_names = {
     'Additional OPEX': 'Sonstige OPEX',
     'CAPEX annuity': 'CAPEX Annuität',
     'h2share_influence': 'Einfluss des H2-Anteils',
+    'ccsshare_influence': 'Einfluss des CCS-Anteils',
     'all': 'kombiniert',
     'h2': 'H2',
     'ng': 'Erdgas',

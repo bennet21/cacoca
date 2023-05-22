@@ -4,6 +4,7 @@ from .plot_tools import add_color, show_and_save, set_yrange_min_zero
 from .plot_tools import display_name as dn
 from ..tools.tools import filter_df
 
+
 def plot_project_cost_time_curves(projects: pd.DataFrame,
                                   config: dict,
                                   color_by: str = 'Project name',
@@ -16,7 +17,6 @@ def plot_project_cost_time_curves(projects: pd.DataFrame,
     fig = pl.graph_objs.Figure()
 
     legend_title = dn(color_by)
-
 
     projects = add_color(
         projects=projects,
