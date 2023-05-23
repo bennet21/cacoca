@@ -18,11 +18,11 @@ def plot_price_scenarios(setup: Setup, do_emphasize: bool = True):
     prices = years_to_rows(prices_raw, year_name="Period", value_name="Price")
     prices = prices.drop(columns='Source Reference')
 
-    plot_scenarios(prices, setup.config, do_emphasize)
+    plot_scenarios(prices, setup.config, 'prices', do_emphasize)
 
 
-def plot_h2share_scenarios(setup: Setup, project_names: list,
-                           do_emphasize: bool = True):
+def plot_h2share_scenarios(setup: Setup, project_names: list, share_kind: str,
+                           print_prefix: str = "", do_emphasize: bool = True):
 
     scen_dir_path = setup.config['scenarios_dir']
 
@@ -38,14 +38,14 @@ def plot_h2share_scenarios(setup: Setup, project_names: list,
             .values[0]
         h2share_scens.append(h2share_scen)
 
-    h2share["Component"] = "H2 Share"
-    h2share["Unit"] = "H2 Share"
+    h2share["Component"] = share_kind
+    h2share["Unit"] = share_kind
 
-    plot_scenarios(h2share, setup.config, do_emphasize, h2share_scens)
+    plot_scenarios(h2share, setup.config, print_prefix, do_emphasize, h2share_scens)
 
 
-def plot_scenarios(prices: pd.DataFrame, config: dict, do_emphasize: bool = True,
-                   highlighted_scenarios: list = None):
+def plot_scenarios(prices: pd.DataFrame, config: dict, print_prefix: str,
+                   do_emphasize: bool = True, highlighted_scenarios: list = None):
 
     print_other = True
 
@@ -84,10 +84,10 @@ def plot_scenarios(prices: pd.DataFrame, config: dict, do_emphasize: bool = True
                          emphasize=emphasize)
 
         fig.update_layout(legend=dict(title='Szenario'),
-                          title=f"{dn('prices')} {dn(component_name)}")
+                          title=f"{dn(print_prefix)} {dn(component_name)}")
         # fig.update_xaxes(title='Jahr')
 
         set_yrange_min_zero(fig)
         fig.update_yaxes(title=dn(sdf['Unit'].values[0]))
 
-        show_and_save(fig, config, 'prices_' + component_name)
+        show_and_save(fig, config, print_prefix + "_" + component_name)

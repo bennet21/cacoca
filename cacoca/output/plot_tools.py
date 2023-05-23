@@ -68,6 +68,7 @@ display_names = {
     'h2': 'H2',
     'ng': 'Erdgas',
     'elec': 'Strom',
+    'ccoal': 'Kokskohle',
     'lowh2': '10-30% H2',
     'varyh2': '0-100% H2',
     'onlyh2': '100% H2',
@@ -87,6 +88,8 @@ display_names = {
     'vary_h2share': 'Vergleich des Hochlaufs',
     'compare_projects': 'Projektvergleich',
     'Absolute Hydrogen Demand (t)': 'Wasserstoffverbrauch absolut',
+    'h2share': 'H2-Anteil',
+    'ccsshare': 'CCS-Anteil',
     '': '',
     '': ''
 }
