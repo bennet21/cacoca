@@ -87,7 +87,7 @@ display_names = {
     'CO2 Cost': 'Emissionskosten (ETS)',
     'vary_h2share': 'Vergleich des Hochlaufs',
     'compare_projects': 'Projektvergleich',
-    'Absolute Hydrogen Demand (t)': 'Wasserstoffverbrauch absolut',
+    'Absolute Hydrogen Demand (t)': 'H2-Verbrauch absolut kumuliert',
     'h2share': 'H2-Anteil',
     'ccsshare': 'CCS-Anteil',
     '': '',
@@ -101,3 +101,13 @@ def display_name(varname: str):
         return f"Preisunsicherheit {display_name(scen_name)}, {display_name(h2name)}"
     else:
         return display_names.get(varname, varname)
+
+
+def to_rgba(color: str, alpha: float):
+    if isinstance(color, tuple):
+        rgba = f"rgba{color + (alpha,)}"
+    elif color.startswith("#"):
+        rgba = f"rgba{pl.colors.hex_to_rgb(color) + (alpha,)}"
+    else:
+        rgba = color.replace("rgb", "rgba").replace(")", f", {alpha})")
+    return rgba

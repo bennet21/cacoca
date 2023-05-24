@@ -136,7 +136,8 @@ def expand_by_years(data_in: pd.DataFrame, setup: Setup):
             how='cross'
         )
     yearly_data = data_in \
-        .query("Period >= `Time of investment` & Period <= `Time of investment` + 15") \
+        .query("Period >= `Time of investment` &"
+               + f" Period <= `Time of investment` + {setup.config['ccfd_duration']}") \
         .drop(columns=['Time of investment'])
     return yearly_data
 

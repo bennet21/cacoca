@@ -1,7 +1,7 @@
 import plotly as pl
 import pandas as pd
 from .plot_tools import add_color, show_and_save, set_yrange_min_zero
-from .plot_tools import display_name as dn
+from .plot_tools import display_name as dn, to_rgba
 from ..tools.tools import filter_df
 
 
@@ -101,12 +101,7 @@ def plot_project(fig: pl.graph_objs.Figure, df: pd.DataFrame, vname: str, legend
     if not (vnl in df.columns and vnu in df.columns):
         return fig
 
-    if isinstance(color, tuple):
-        rgba = f"rgba{color + (alpha,)}"
-    elif color.startswith("#"):
-        rgba = f"rgba{pl.colors.hex_to_rgb(color) + (alpha,)}"
-    else:
-        rgba = color.replace("rgb", "rgba").replace(")", f", {alpha})")
+    rgba = to_rgba(color, alpha)
 
     fig = fig.add_scatter(
         x=df['Period'],
