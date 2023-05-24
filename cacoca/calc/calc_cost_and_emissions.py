@@ -260,7 +260,9 @@ def merge_operation_modes(data_old: pd.DataFrame, data_new: pd.DataFrame, h2shar
     )
 
     # merge old and new dataframes
+    # (CAPEX is not blended, but 100 % new technology, therefore dropped in old df)
     data_all = data_old \
+        .drop(columns=['CAPEX annuity']) \
         .merge(
             data_new.drop(columns=['Technology']),
             how='left',
@@ -273,8 +275,9 @@ def merge_operation_modes(data_old: pd.DataFrame, data_new: pd.DataFrame, h2shar
         )
 
     # blend cost and emissions of old and new operation mode to overall cost
-    # TODO: Do not blend CAPEX
     for vname in variables:
+        if vname == 'CAPEX annuity':
+            continue
         data_all = data_all \
             .assign(**{vname: lambda df:
                        (1. - df['H2 Share']) * df[vname + '_x']
