@@ -15,6 +15,9 @@ def calc_cost_and_emissions(setup: Setup, keep_components: bool = False):
 
     data_all, variables = merge_operation_modes(data_old, data_new, setup.h2share)
 
+    data_all = calc_cost_wit_capex(data_all)
+    data_ref = calc_cost_wit_capex(data_ref)
+
     data_all = merge_with_reference(data_all, data_ref, variables)
 
     data_all = add_co2_price(data_all, setup.prices)
@@ -217,6 +220,11 @@ def calc_cost_single_opmode(yearly_data: pd.DataFrame, setup: Setup, keep_compon
         ) \
         .rename(columns={"Value": "Additional OPEX"})
     yearly_data["Additional OPEX"].fillna(0., inplace=True)
+    return yearly_data
+
+
+def calc_cost_wit_capex(yearly_data: pd.DataFrame):
+
     yearly_data = yearly_data \
         .assign(**{'cost': lambda df: df['cost'] + df['Additional OPEX'] + df['CAPEX annuity']})
 
