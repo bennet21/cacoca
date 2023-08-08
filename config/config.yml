@@ -1,7 +1,5 @@
 # general:
-output_formats:
-- PIK_csv
-techdata_dir: 'data/tech/isi/'
+techdata_dir: 'data/tech/basic/'
 techdata_files:
 - cement
 - other_industries
@@ -14,7 +12,7 @@ ccfd_duration: 15
 default_wacc: 0.06
 
 # scenarios:
-scenarios_dir: 'data/scenarios/isi/'
+scenarios_dir: 'data/scenarios/basic/'
 scenarios_actual:
   free_allocations: 'Joint product benchmarks, new technologies affect benchmark, incl. CBAM'
   prices:
