@@ -1,2 +1,2 @@
 # cacoca
-The carbon contracts caclulator
+The carbon contracts calculator
