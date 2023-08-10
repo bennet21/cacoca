@@ -26,7 +26,7 @@ def calc_strike_price(yearly: pd.DataFrame, setup: Setup):
         ) \
         .assign(
             **{'CumInterest': lambda df:
-               (1. + df['WACC'])**(df['Period'] - df['Time of investment'])}
+               (1. + df['WACC'])**-(df['Period'] - df['Time of investment'])}
         ) \
         .assign(
             **{'cost_NPV': lambda df:
