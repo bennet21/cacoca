@@ -1,112 +1,60 @@
-# cacoca
-The carbon contracts calculator
+# CaCoCa
+
+CaCoCa (The Carbon Contracts Calculator) is a tool to model carbon contracts for difference (CCfDs) for industrial decarbonization projects. Abatement cost time curves can be calculated, and auctions of such carbon contracts (where the projects bidding the lowest carbon price are awarded contracts) can be modeled.
+
+The techno-economic input data provided in this repository is incomplete and not to be relied upon. It only serves as an example for the functionality of the code. It is advised to use your own data.
 
 ## Installation
 
-For Windows installation, all given commands have to be executed in PowerShell
-(NOT in commandline, that is a different shell and will lead to errors!)
+The Python version and packages are managed using [Poetry](https://python-poetry.org/docs/). Packages are listed in the file [pyproject.toml](pyproject.toml). Detailed instructions for installation can be found in the [documentation](doc/100_getting_started.md).
 
-Note that for paths in commands, Linux path separators (`/`) are mostly given. Windows PowerShell mostly recognizes that, ut in some instances you might have to change that to the Windows separator `\`.
+## Quick start / basic run
 
-### Clone Cacoca
+Runs are configured using a YAML input file. Example input files are located in the `config` folder.
 
-Make sure that you have git installed, have generated a public ssh key and added it to your github account.
-
-Clone the repository using `git clone git@github.com:JakobBD/cacoca.git` from the parent directory of your choice.
-
-### Install Python 3.10.10
-
-We have defined to use this exact version of python. You can download it from [https://www.python.org/downloads/release/python-31010/](https://www.python.org/downloads/release/python-31010/)
-
-#### Windows
-
-In the above link, download the `Windows installer (64-bit)`. For me this meant to uninstall another Python3.10 version first, but there may be other ways.
-
-#### Ubuntu
-
-You can have several python versions in parallel using `pyenv`.
-
-### Install Poetry
-
-Poetry manages Python and library versions.
-
-For installation, follow the instructions on the website: [https://python-poetry.org/docs/](https://python-poetry.org/docs/)
-
-You might have to at the binary path to your PATH environment variable.
-
-Installation was successful if the command `poetry --version` prints the version number.
-
-### Install dependencies
-
-From the cacoca repository, run
+For a test run, go to the main directory and run
 
 ```
-poetry install
-```
-
-This should install all the required packages.
-
-### Add cacoca directory to PYTHONPATH environment variable
-
-Right now, Python will not find the cacoca package, so we have to tell Python where to look for it by adding the directory the the PYTHONPATH environment variable.
-
-#### Windows
-
-In the Windows start menu, search again for `edit environment variables for your account`.
-
-- If select `PYTHONPATH` already appears in the upper window:
-Press `Edit...`, then press `New` and add the location of the cacoca repository. Press OK twice.
-- If it doesn't_ Press `New`, enter `PYTHONPATH` under variable name, and the cacoca repository path as variable value. Again, press OK twice.
-
-This might need a system restart.
-
-#### Ubuntu
-
-Add the line
-```
-export PYTHONPATH=$PYTHONPATH:/MY/CACOCA/EXAMPLE/PATH
-```
-(with an adapted path) to your `~/.bashrc` and save it. Re-open the terminal.
-
-### Windows: Fix Kaleido Bug
-
-I encountered a bug with the kaleido package needed for saving plotly figures as png under Windows (to reproduce the error, run the command gieven in the 'Test Run (Analysis/Plotting)' section): It complained that it couldn't find the kaleido executable. I solved this by looking for the site packages directory by changing to the `cacoca` repo and from there running
-```
-poetry run python -m site
-```
-This will list several directories, of which I selected one that's called
-```
-C:\\Users\\username\\AppData\\Local\\pypoetry\\Cache\\virtualenvs\\cacoca-...-py3.10\\lib\\site-packages
-```
-(can be different on your machine) and from there I opened the file
-```
-kaleido\scopes\base.py
-```
-In line 75, I changed `kaleido` to `kaleido.cmd`.  This solved the bug for me.
-
-## Test Run
-
-### Auction Mode
-
-From the `cacoca` repository, run
-
-```
-poetry run python ./cacoca.py ./config/config.yml
+poetry run python cacoca.py config/config.yml
 ```
 
 This should create some lines of stdout for the different auction rounds.
 
-### Analysis/Plotting Mode
+## Contributors
 
-From the `cacoca` repository, run
+The authors of CaCoCa are:
 
+Jakob Dürrwächter\
+Robin Blömer\
+Johannes Eckstein\
+Falko Ueckerdt
+
+## License
+
+CaCoCa is Copyright (C) 2023, Jakob Dürrwächter, Robin Blömer, Johannes Eckstein and Falko Ueckerdt and is released under the terms of the
+GNU General Public License v3.0. For the full license terms see
+the included [`LICENSE` file](LICENSE).
+
+## Reference / Please cite
+
+To cite CaCoCa, please use:
+
+J. Dürrwächter, R.Blömer, J. Eckstein, F. Ueckerdt (2023). _CaCoCa: The Carbon Contracts Calculator._ Version 0.1.0, <https://github.com/JakobBD/cacoca>.
+
+A BibTeX entry for LaTeX users is:
+
+ ```latex
+@Manual{,
+  title = {CaCoCa: The Carbon Contracts Calculator},
+  author = {Jakob Dürrwächter and Robin Blömer and Johannes Eckstein and Falko Ueckerdt},
+  year = {2023},
+  note = {Version 0.1.0},
+  url = {https://github.com/JakobBD/cacoca},
+}
 ```
-poetry run python ./plot_slides.py
-```
 
-This should create some png files in the `output` directory and it should open browser tabs with the figures.
+## Documentation
 
-Alternatively, you can run this command in your IDE. Make sure to select the cacoca poetry virtual environment as the interpreter.
+Further documentation can be found in the [`doc/` folder](doc/).
 
-In VSCode, executing `plot_slides.py` in interactive mode (using the Jupyter extension) also shows you the plotly figures in an interactive output, if you set `show_figs_in_browser: False` in the file `config/config_slides.yml`. This may not work in other IDEs like PyCharm, but the browser should be fine as an alternative.
 
