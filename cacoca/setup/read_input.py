@@ -12,11 +12,13 @@ def read_config(filepath: str):
     return config
 
 
-def read_projects(filepath: str, default_wacc: float):
-    projects = pd.read_csv(filepath)
+def read_projects(config: dict):
+    projects = pd.read_csv(config['projects_file'])
     # projects = pd.read_excel(filepath, sheet_name='Projects')
     projects = projects.query("Active == 1")
-    projects = projects.fillna({'WACC': default_wacc})
+    projects = projects.fillna({'WACC': config['default_wacc']})
+    if config['do_overwrite_project_start_year']:
+        projects['Time of investment'] = config['project_start_year_overwrite']
     if not projects['Project name'].is_unique:
         raise Exception('Duplicate project names are prohibited.')
     return projects

@@ -1,40 +1,51 @@
 # general:
+mode: auction
 techdata_dir: 'data/tech/basic/'
 techdata_files:
+- basic_chemicals
 - cement
+- glass_and_ceramics
 - other_industries
 - steel
 - steel_dri
-projects_file: 'config/projects.xlsx'
+projects_file: 'config/projects.csv'
+do_overwrite_project_start_year: False
 start_year: 2022
 end_year: 2045
 ccfd_duration: 15
 default_wacc: 0.06
 
+#output
+show_figures: True
+show_figs_in_browser: True
+output_dir: 'output/'
+save_figures: False
+crop_figures: True
+
 # scenarios:
 scenarios_dir: 'data/scenarios/basic/'
 scenarios_actual:
-  free_allocations: 'Joint product benchmarks, new technologies affect benchmark, incl. CBAM'
+  free_allocations: ''
   prices:
-    CO2: 'KSV-Base-CO2'
-    Natural Gas: 'KSV-Base-Erdgas'
-    Electricity: 'KSV-Base-Strom'
-    Hydrogen: 'ISI: best-guess'
-    Coking Coal: 'KSV-Base-Kohle'
-    Injection Coal: 'Einblaskohle a)'
+    Electricity: '100 steady'
+    CO2: 'PIKExpertGuess-CO2'
+    Natural Gas: '40 steady'
+    Hydrogen: 'PIKExpertGuess-H2'
+    Coking Coal: '100 steady'
+    Injection Coal: '70 steady'
     Iron Ore: 'Eisenerz Agora'
     Scrap Steel: 'Zero_Dummy_Scrap'
     DRI-Pellets: 'DRI-Pellets Agora'
     Naphta: 'Naphta a)'
 scenarios_bidding:
-  free_allocations: 'Joint product benchmarks, new technologies affect benchmark, incl. CBAM'
+  free_allocations: ''
   prices:
-    CO2: 'KSV-Base-CO2'
-    Natural Gas: 'KSV-Base-Erdgas'
-    Electricity: 'KSV-Base-Strom'
-    Hydrogen: 'ISI: best-guess'
-    Coking Coal: 'KSV-Base-Kohle'
-    Injection Coal: 'Einblaskohle a)'
+    Electricity: '100 steady'
+    CO2: 'PIKExpertGuess-CO2'
+    Natural Gas: '40 steady'
+    Hydrogen: 'PIKExpertGuess-H2'
+    Coking Coal: '100 steady'
+    Injection Coal: '70 steady'
     Iron Ore: 'Eisenerz Agora'
     Scrap Steel: 'Zero_Dummy_Scrap'
     DRI-Pellets: 'DRI-Pellets Agora'
@@ -45,29 +56,28 @@ scenarios_bidding:
 auction_type: 'price_based'
 rest_budget_treatment: 'do not fill'
 include_negative_payout_projects: True
-criteria_weighting:
-  cost_efficiency: 0.7
-  relative_emission_reduction: 0.15
-  energy_efficiency: 0.15
-budget_cap_parameters:
-  alpha: 0.2
-  min_co2_price: 30.
+auction_round_default:
+  budget_cap_co2_price_scen: 'Low-CO2'
+  budget_cap_alpha: 0.2
+  strike_price_a: 0.5
+  rel_em_red_rr: 0.5
+  rel_em_red_s: 0.2
 auction_rounds:
 - name: 'Call 1 (1/2023)'
   year: 2023
-  budget_MEUR: 3.0
+  budget_BnEUR: 3.0
 - name: 'Call 2 (2/2023)'
   year: 2023
-  budget_MEUR: 3.0
+  budget_BnEUR: 3.0
 - name: 'Call 3 (1/2024)'
   year: 2024
-  budget_MEUR: 4.0
+  budget_BnEUR: 4.0
 - name: 'Call 4 (2/2024)'
   year: 2024
-  budget_MEUR: 4.0
+  budget_BnEUR: 4.0
 - name: 'Call 5 (1/2025)'
   year: 2025
-  budget_MEUR: 5.0
+  budget_BnEUR: 5.0
 - name: 'Call 6 (2/2025)'
   year: 2025
-  budget_MEUR: 5.0
+  budget_BnEUR: 5.0

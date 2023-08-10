@@ -63,17 +63,6 @@ def plot_absolute_hydrogen_demand(projects: pd.DataFrame,
             hoverinfo='text',
             hovertext=dn(project_name)
         )
-        if i == 3:
-            fig = fig.add_scatter(
-                x=pdf['Period'],
-                y=h2sum,
-                mode='lines',
-                line=dict(color='rgb(0,0,0)', width=5, dash='dot'),
-                name=dn('IPCEI'),
-                showlegend=True,
-                hoverinfo='text',
-                hovertext=dn('IPCEI')
-            )
 
     fig.update_layout(legend=dict(title=legend_title),
                       title=dn('Absolute Hydrogen Demand (t)'))

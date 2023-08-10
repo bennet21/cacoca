@@ -55,11 +55,7 @@ display_names = {
     'Industry': 'Sektor',
     'Project name': 'Projekt',
     'compare_sectors': 'Sektorvergleich',
-    'Glass_0.3MT_2028a)': 'Glass (Bsp.)',
-    'HD-Zement a)': 'HD-Zement',
-    'Ammonia_0.3Mt_2025': 'Ammoniak (Bsp.)',
     'Abatement_cost': 'Vermeidungskosten',
-    'steel_IPCEI': 'Stahl IPCEI',
     'Additional OPEX': 'Sonstige OPEX',
     'CAPEX annuity': 'CAPEX Annuität',
     'h2share_influence': 'Einfluss des H2-Anteils',
@@ -82,13 +78,7 @@ display_names = {
     'Coking Coal': 'Kokskohle',
     'H2 Share': 'Anteil Wasserstoff',
     'all_projects': 'Alle Projekte',
-    'P2H_0.5MT_2027a)': 'Elektrodenkessel',
-    'Glass_0.17MT_2028a)': 'Flachglas',
-    'ContainerGlass_0.3MT_2028a)': 'Behälterglas',
     'CO2 Cost': 'Emissionskostendiff. (ETS)',
-    'Test HT WP a)': 'Hochtemperatur Wärmepumpe',
-    'Methanol_0.3Mt_2027': 'Methanol',
-    'Power2Heat HT-WPb)': 'Höchsttemperatur Wärmepumpe',
     '': '',
     '': ''
 }
@@ -110,3 +100,15 @@ def to_rgba(color: str, alpha: float):
     else:
         rgba = color.replace("rgb", "rgba").replace(")", f", {alpha})")
     return rgba
+
+
+def change_output_subdir_by_filename(config: dict, filename):
+    subdirname = os.path.basename(filename)
+    subdirname = os.path.splitext(subdirname)[0]
+    if subdirname == os.path.split(config['output_dir'])[1]:
+        return
+    subdir = os.path.join(config['output_dir'], subdirname)
+    if not os.path.exists(subdir):
+        os.makedirs(subdir)
+    config['output_dir'] = subdir
+    return

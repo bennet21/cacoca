@@ -43,10 +43,7 @@ class Setup():
         if self.config['mode'] not in ['analyze_cost', 'auction']:
             raise Exception('Invalid mode')
 
-        self.projects_all = read_projects(
-            self.config['projects_file'],
-            self.config['default_wacc']
-        )
+        self.projects_all = read_projects(self.config)
         self.projects_current = self.projects_all
 
         self.techdata, self.reference_tech = read_techdata(
