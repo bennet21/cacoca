@@ -46,10 +46,6 @@ def run_auction(setup: Setup):
         log(f"  Payout: {payout_ar/1000.:0.3f} Bn €")
         log("")
 
-        # TODO:
-        # adjust size by Auslastungsfaktor where necessary
-        # add plotting for payout, exclude negative payout projects
-
     return all_chosen_projects
 
 
