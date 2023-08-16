@@ -44,7 +44,7 @@ The standard deviations of the prices $\sigma_{p_i}$ are given as input paramete
 - compute the baseline $\mu_q$ using the expected values of the prices $\mu_q = q(\mu_{p_i})$
 - compute the derivatives w.r.t. each uncertain price (i.e. the coefficients $b_i$, as was shown above) from a finite difference, where the price is disturbed by $1$. This is exact due to the linearity of $q(p_i)$. The coefficients are thus computed as $b_i = \frac{\partial q}{\partial p_i} = \frac{q(p_i+1)-q(p_i)}{1}$.
 - multiply these coefficients with the input standard deviations $\sigma_{p_i}$ and sum them to obtain the total output variance $\sigma_q^2$.
-- The upper and lower bounds of a 95 % confidence interval $\mu_q \pm 2\,\sigma_q$ are computed and given the suffixes `_upper` and `_lower`, respectively.
+- The upper and lower bounds of a 95 % confidence interval $\mu_q \pm 2\sigma_q$ are computed and given the suffixes `_upper` and `_lower`, respectively.
 
 ## Getting to know the code
 
