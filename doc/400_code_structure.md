@@ -23,9 +23,9 @@ A use example is contained in the file `plot_slides.py`, where the parameters un
 
 To implement this, the function decorator `@with_sensitivities` is defined in the file `cacoca/tools/sensitivities.py`. If you are not familiar with the concept of Python function decorators, please refer to a tutorial of your choice. Any function calculating output quantities from input prices can be decorated to obtain the bounds in addition to the mean values.
 
-The implementation assumes all uncertain input parameters $p_i,\;\;i=1,...,N$ to have a normal (Gaussian) distribution with expectation $\mu_{p_i}$ and standard deviation $\sigma_{p_i}$. The current implementation takes advantage of the fact that all output quantities of interest $q$ are linear functions of all $p_i$, such that $q(p_i)$ is of the form
+The implementation assumes all uncertain input parameters $p_i$, $i=1,...,N$ to have a normal (Gaussian) distribution with expectation $\mu_{p_i}$ and standard deviation $\sigma_{p_i}$. The current implementation takes advantage of the fact that all output quantities of interest $q$ are linear functions of all $p_i$, such that $q(p_i)$ is of the form
 
-$q(p_i) = a + \sum_i b_i \, p_i.$
+$q(p_i) = a + \sum_i b_i p_i.$
 
 where the derivatives
 
@@ -33,11 +33,11 @@ $\frac{\partial q}{\partial p_i} = b_i$
 
 This entails that the expectation of the output $\mu_q$ is
 
-$\mu_q = q(\mu_{p_i}) = a + \sum_i b_i \, \mu_{p_i}$
+$\mu_q = q(\mu_{p_i}) = a + \sum_i b_i \mu_{p_i}$
 
 and its variance (i.e. squared standard deviation) $\sigma_q^2$ is
 
-$\sigma_q^2 = \sum_i (b_i \, \sigma_{p_i})^2.$
+$\sigma_q^2 = \sum_i (b_i \sigma_{p_i})^2.$
 
 The standard deviations of the prices $\sigma_{p_i}$ are given as input parameters in the yml file. The trajectories normally given for these prices are taken as their expected values $\mu_{p_i}$. The implementation of the function decorator (more specifically, of the function wrapper) then follows the following steps:
 
