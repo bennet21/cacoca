@@ -39,14 +39,14 @@ the included [`LICENSE` file](LICENSE).
 
 To cite CaCoCa, please use:
 
-J. Dürrwächter, R.Blömer, J. Eckstein, F. Ueckerdt (2023). _CaCoCa: The Carbon Contracts Calculator._ Version 0.1.0, <https://github.com/JakobBD/cacoca>.
+J. Dürrwächter, R.Blömer, P. Verpoort, P. Effing, J. Eckstein, F. Ueckerdt (2023). _CaCoCa: The Carbon Contracts Calculator._ Version 0.1.0, <https://github.com/JakobBD/cacoca>.
 
 A BibTeX entry for LaTeX users is:
 
  ```latex
 @Manual{,
   title = {CaCoCa: The Carbon Contracts Calculator},
-  author = {Jakob Dürrwächter and Robin Blömer and Johannes Eckstein and Falko Ueckerdt},
+  author = {Jakob Dürrwächter and Robin Blömer and Philipp Verpoort and Paul Effing and Johannes Eckstein and Falko Ueckerdt},
   year = {2023},
   note = {Version 0.1.0},
   url = {https://github.com/JakobBD/cacoca},

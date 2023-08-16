@@ -67,7 +67,7 @@ export PYTHONPATH=$PYTHONPATH:/MY/CACOCA/EXAMPLE/PATH
 
 ## Windows: Fix Kaleido Bug
 
-I encountered a bug with the kaleido package needed for saving plotly figures as png under Windows (to reproduce the error, run the command gieven in the 'Test Run (Analysis/Plotting)' section): It complained that it couldn't find the kaleido executable. I solved this by looking for the site packages directory by changing to the `cacoca` repo and from there running
+I encountered a bug with the kaleido package needed for saving plotly figures as png under Windows (to reproduce the error, run the command given in the 'Test Run (Analysis/Plotting)' section): It complained that it couldn't find the kaleido executable. I solved this by looking for the site packages directory by changing to the `cacoca` repo and from there running
 ```
 poetry run python -m site
 ```
@@ -105,5 +105,5 @@ This should create some png files in the `output` directory and it should open b
 
 Alternatively, you can run this command in your IDE. Make sure to select the cacoca poetry virtual environment as the interpreter.
 
-In VSCode, executing `plot_slides.py` in interactive mode (using the Jupyter extension) also shows you the plotly figures in an interactive output, if you set `show_figs_in_browser: False` in the file `config/config_slides.yml`. This may not work in other IDEs like PyCharm, but the browser should be fine as an alternative.
+In VSCode, executing `plot_slides.py` in interactive mode (using the Jupyter extension) also shows you the `plotly` figures in an interactive output, if you set `show_figs_in_browser: False` in the file `config/config_slides.yml`. This may not work in other IDEs like PyCharm, but the browser should be fine as an alternative.
 

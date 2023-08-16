@@ -135,7 +135,7 @@ def expand_by_years(data_in: pd.DataFrame, setup: Setup):
             on=['Project name']
         ) \
         .merge(
-            pd.DataFrame.from_dict({'Period': setup.config['years']}),
+            pd.DataFrame.from_dict({'Period': np.arange(2020, 2061)}),
             how='cross'
         )
     yearly_data = data_in \

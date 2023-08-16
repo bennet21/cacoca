@@ -10,8 +10,6 @@ techdata_files:
 - steel_dri
 projects_file: 'config/projects.csv'
 do_overwrite_project_start_year: False
-start_year: 2022
-end_year: 2045
 ccfd_duration: 15
 default_wacc: 0.06
 
@@ -53,9 +51,6 @@ scenarios_bidding:
 
 
 # auction:
-auction_type: 'price_based'
-rest_budget_treatment: 'do not fill'
-include_negative_payout_projects: True
 auction_round_default:
   budget_cap_co2_price_scen: 'Low-CO2'
   budget_cap_alpha: 0.2

@@ -11,8 +11,6 @@ techdata_files:
 projects_file: 'config/projects.csv'
 do_overwrite_project_start_year: True
 project_start_year_overwrite: 2025
-start_year: 2022
-end_year: 2045
 ccfd_duration: 20
 default_wacc: 0.06
 
