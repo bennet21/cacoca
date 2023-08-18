@@ -13,7 +13,7 @@ def plot_price_scenarios(setup: Setup, do_emphasize: bool = True):
 
     scen_dir_path = setup.config['scenarios_dir']
 
-    prices_raw, _, _ = read_raw_scenario_data(dirpath=scen_dir_path)
+    prices_raw, _, _, _ = read_raw_scenario_data(dirpath=scen_dir_path)
 
     prices = years_to_rows(prices_raw, year_name="Period", value_name="Price")
     prices = prices.drop(columns='Source Reference')
@@ -26,7 +26,7 @@ def plot_h2share_scenarios(setup: Setup, project_names: list, share_kind: str,
 
     scen_dir_path = setup.config['scenarios_dir']
 
-    _, _, h2share_raw = read_raw_scenario_data(dirpath=scen_dir_path)
+    _, _, h2share_raw, _ = read_raw_scenario_data(dirpath=scen_dir_path)
 
     # Hack to make it fit in price plotting scheme below
     h2share = years_to_rows(h2share_raw, year_name="Period", value_name="Price")

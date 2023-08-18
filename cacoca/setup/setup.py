@@ -1,3 +1,5 @@
+import numpy as np
+import pandas as pd
 from .read_input import read_config, read_projects, read_techdata, read_raw_scenario_data
 from .select_scenario_data import select_prices, select_free_allocations, select_h2share
 
@@ -32,6 +34,8 @@ class Setup():
         # For steel_dri, this is the h2 share; for cement, the share with CCS
         self.h2share_raw = None
         self.h2share = None
+        # absolute standard deviation scenarios for sensitivities implementation
+        self.abs_std_raw = None
 
         if config_filepath is None and config is not None:
             self.config = config
@@ -43,6 +47,8 @@ class Setup():
         if self.config['mode'] not in ['analyze_cost', 'auction']:
             raise Exception('Invalid mode')
 
+        self.all_years = pd.DataFrame.from_dict({'Period': np.arange(2020, 2061)})
+
         self.projects_all = read_projects(self.config)
         self.projects_current = self.projects_all
 
@@ -51,7 +57,7 @@ class Setup():
             self.config['techdata_files']
         )
 
-        self.prices_raw, self.free_allocations_raw, self.h2share_raw \
+        self.prices_raw, self.free_allocations_raw, self.h2share_raw, self.abs_std_raw \
             = read_raw_scenario_data(dirpath=self.config['scenarios_dir'])
 
         return

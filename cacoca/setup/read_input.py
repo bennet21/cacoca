@@ -46,5 +46,6 @@ def read_raw_scenario_data(dirpath: str):
     prices = pd.concat([co2prices, fuel_prices])
     h2share = pd.read_csv(os.path.join(dirpath, 'h2share.csv'))
     free_allocations = pd.read_csv(os.path.join(dirpath, 'free_allocations.csv'))
+    absolute_standard_deviations = pd.read_csv(os.path.join(dirpath, 'standard_deviations.csv'))
     # cbam_factor = pd.read_csv(os.path.join(dirpath,'cbam_factor.csv'))
-    return prices, free_allocations, h2share
+    return prices, free_allocations, h2share, absolute_standard_deviations

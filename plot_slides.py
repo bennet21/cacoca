@@ -163,30 +163,53 @@ project_names_dict = {
     'onlyh2': 'Stahl l)'
 }
 
-sens_scenarios = {
-    "all": {
-        "Hydrogen": 0.1,
-        "Natural Gas": 0.1,
-        "Electricity": 0.1,
-        "CO2": 0.2
+uct_prm_definitions = {
+    "Hydrogen": {
+        'is_relative': False,
+        'std_scenario': 'Test',
+        'data_frame': 'prices',
+        'filters': {
+            'Component': 'Hydrogen'
+            }
     },
-    "h2": {
-        "Hydrogen": 0.1
+    "Natural Gas": {
+        'is_relative': True,
+        'std_value': 0.1,
+        'data_frame': 'prices',
+        'filters': {
+            'Component': 'Natural Gas'
+            }
     },
-    "ng": {
-        "Natural Gas": 0.1
+    "Electricity": {
+        'is_relative': True,
+        'std_value': 0.1,
+        'data_frame': 'prices',
+        'filters': {
+            'Component': 'Electricity'
+            }
     },
-    "elec": {
-        "Electricity": 0.1
+    "CO2": {
+        'is_relative': True,
+        'std_value': 0.2,
+        'data_frame': 'prices',
+        'filters': {
+            'Component': 'CO2'
+            }
     }
 }
+# uncertain_parameters:
 
-for scen_name, sens_dict in sens_scenarios.items():
+sens_scenarios = {
+    "all": ['Hydrogen', 'Natural Gas', 'Electricity', 'CO2'],
+    "h2": ['Hydrogen'],
+    "ng": ['Natural Gas'],
+    "elec": ['Electricity']
+}
+
+for scen_name, uct_prms in sens_scenarios.items():
 
     config_sens = copy.deepcopy(config)
-    config_sens['relative_standard_deviation'] = {}
-    for component, rel_std in sens_dict.items():
-        config_sens['relative_standard_deviation'][component] = rel_std
+    config_sens['uncertain_parameters'] = [uct_prm_definitions[up] for up in uct_prms]
 
     setup, cost_and_em_sens = run(config=config_sens)
 
