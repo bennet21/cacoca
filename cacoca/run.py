@@ -8,6 +8,10 @@ from .tools.tools import log
 
 
 def run(config_filepath: str = None, config: dict = None):
+    """
+    Creates Setup object with all necessary data from the config path.
+    Depending on config, it runs either auction or analyze mode.
+    """
 
     setup = Setup(config_filepath, config)
 
@@ -24,6 +28,7 @@ def run_auction(setup: Setup):
 
     all_chosen_projects = []
 
+    # loop over auction rounds (ar)
     for config_ar_specific in setup.config['auction_rounds']:
 
         config_ar = setup.config['auction_round_default'] | config_ar_specific
@@ -32,6 +37,7 @@ def run_auction(setup: Setup):
 
         prepare_setup_for_bidding(setup, all_chosen_projects, config_ar)
 
+        # calculate cost and emissions for bidding
         cost_and_em_bidding = calc_cost_and_emissions(setup)
         yearly = calc_derived_quantities(cost_and_em_bidding, setup)
         yearly, aggregate = calc_auction_quantities(yearly, setup, config_ar)
@@ -50,6 +56,7 @@ def run_auction(setup: Setup):
 
 
 def run_analyze(setup: Setup):
+    """ First selects relevant scenario data, then initializes calculation. """
 
     setup.select_scenario_data(scenarios='scenarios_actual')
     setup.select_h2share()
@@ -61,6 +68,11 @@ def run_analyze(setup: Setup):
 
 @with_sensitivities
 def calc_analyze(setup: Setup):
+    """ 
+    Calculates first cost and emissions and then derived quantities for selected setup.
+    @with_sensitivities decorator calls function multiple times for statistics.
+    """
+
     cost_and_em = calc_cost_and_emissions(setup, keep_components=True)
     yearly = calc_derived_quantities(cost_and_em, setup)
     return yearly
