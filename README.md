@@ -6,7 +6,7 @@ The techno-economic input data provided in this repository is incomplete and not
 
 ## Installation
 
-The Python version and packages are managed using [Poetry](https://python-poetry.org/docs/). Packages are listed in the file [pyproject.toml](pyproject.toml). Detailed instructions for installation can be found in the [documentation](doc/100_getting_started.md).
+The Python version and packages are managed using [PEP 621](https://peps.python.org/pep-0621/). Packages are listed in the file [pyproject.toml](pyproject.toml). Detailed instructions for installation can be found in the [documentation](doc/100_getting_started.md).
 
 ## Quick start / basic run
 
