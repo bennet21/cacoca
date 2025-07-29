@@ -38,7 +38,7 @@ def plot_stacked_bars(projects: pd.DataFrame, config: dict, project_name: str,
 
     projects = projects.query(f"`Project name` == '{project_name}'")
 
-    years = [2025, 2030, 2035, 2040, 2045]
+    years = [2025, 2030, 2035, 2040]
     years = np.intersect1d(years, projects['Period'].values)
     query_str = " | ".join(f"Period == {y}" for y in years)
     projects = projects.query(query_str).drop_duplicates()
@@ -81,7 +81,7 @@ def plot_stacked_bars(projects: pd.DataFrame, config: dict, project_name: str,
             showlegend=False
         )
 
-    add_placeholder(0)
+    # add_placeholder(0)
 
     legend_vars = set()
 
@@ -135,10 +135,12 @@ def plot_stacked_bars(projects: pd.DataFrame, config: dict, project_name: str,
 
             if vn not in bar.vnames:
                 continue
+            
+            project_list = bar.projects['Period'].to_list()
 
             fig.add_bar(
                 name=dn(vn),
-                x=[bar.projects['Period'].to_list(), [bar.name for _ in years]],
+                x=[project_list, [bar.name for _ in project_list]],
                 y=bar.dir * bar.projects[vn],
                 base=bar.base,
                 marker_color=color,
@@ -150,14 +152,14 @@ def plot_stacked_bars(projects: pd.DataFrame, config: dict, project_name: str,
 
         if bar.linecolor:
             fig.add_scatter(
-                x=[bar.projects['Period'].to_list(), [bar.name for _ in years]],
+                x=[project_list, [bar.name for _ in project_list]],
                 y=bar.base,
                 mode='lines',
                 line=dict(color=bar.linecolor, width=2, dash='solid'),
                 showlegend=False,
             )
 
-    add_placeholder(1)
+    # add_placeholder(1)
 
     fig.update_yaxes(title=yunit)
     fig.update_layout(legend_traceorder="reversed",
