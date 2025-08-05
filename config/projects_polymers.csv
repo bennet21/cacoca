@@ -55,4 +55,4 @@ Zement n),1,cement,Agora-Oxyfuel-Drehrohrofen ,0.8,0.8,8760,15,2025,15,,1,Ramp-C
 Zement o),1,cement,Agora-El.LEILAC-Drehrohrofen,0.8,0.8,8760,15,2025,15,,1,Ramp-CCS
 Pyrolyse,1,polymers,Pyrolyse_Steamcracker_Recycling,1,1,8760,15,2025,15,,1,H2-only
 Hydrocracking,1,polymers,Hydrocracking_Steamcracker_Recycling,1,1,8760,15,2025,15,,1,H2-only
-Gasifizierung-FT,1,polymers,Hydrocracking_Steamcracker_Recycling,1,1,8760,15,2025,15,,1,H2-only
+Gasifizierung-FT,1,polymers,Gasifizierung_FT_Steamcracker_Recycling,1,1,8760,15,2025,15,,1,H2-only
