@@ -1,13 +1,27 @@
 ﻿Technology,Mode,Type,Component,Subcomponent,Region,Period,Usage,Value,Uncertainty,Unit,Non-unit conversion factor,Value and uncertainty comment,Source reference,Source comment
-Steamcracker_Naphtha,,High CAPEX,CAPEX,,,2022,,1850,,€/t annual production capacity,,,Gemini,
-Steamcracker_Naphtha,,Energy demand,Natural Gas,,,2022,,6.4,,MWh/t_product,,,Gemini,
-Steamcracker_Naphtha,,Energy demand,Electricity,,,2022,,4.5,,MWh/t_product,,,Gemini,
-Steamcracker_Naphtha,,Feedstock demand,Naphta,,,2022,,3,,t/t_product,,,Gemini,
-Steamcracker_Naphtha,,Emissions,CO2,,,2022,,10.34,,t/t_product,,,Gemini,1.2+3.14
-Steamcracker_Naphtha,,OPEX,Additional OPEX,,,2022,,100,,€/t annual production capacity,,,Gemini,
-Pyrolyse_Steamcracker_Recycling,,High CAPEX,CAPEX,,,2022,,6000,,€/t annual production capacity,,,Gemini,
-Pyrolyse_Steamcracker_Recycling,,Energy demand,Natural Gas,,,2022,,9.75,,MWh/t_product,,,Gemini,
-Pyrolyse_Steamcracker_Recycling,,Energy demand,Electricity,,,2022,,6.15,,MWh/t_product,,,Gemini,
-Pyrolyse_Steamcracker_Recycling,,Feedstock demand,Naphta,,,2022,,0,,t/t_product,,,Gemini,
-Pyrolyse_Steamcracker_Recycling,,Emissions,CO2,,,2022,,2.85,,t/t_product,,,Gemini,
-Pyrolyse_Steamcracker_Recycling,,OPEX,Additional OPEX,,,2022,,508,,€/t annual production capacity,,,Gemini,
+Steamcracker_Naphtha,,High CAPEX,CAPEX,,,2022,,1200,,€/t annual production capacity,,,Gemini,Mittelwert aus Bericht
+Steamcracker_Naphtha,,Energy demand,Natural Gas,,,2022,,4.2,,MWh/t_product,,,Gemini,Mittelwert aus Bericht
+Steamcracker_Naphtha,,Energy demand,Electricity,,,2022,,0.5,,MWh/t_product,,,Gemini,Mittelwert aus Bericht
+Steamcracker_Naphtha,,Feedstock demand,Naphta,,,2022,,3.1,,t/t_product,,,Gemini,Mittelwert aus Bericht
+Steamcracker_Naphtha,,Emissions,CO2,,,2022,,5.14,,t/t_product,,,Gemini,"Mittelwert aus Bericht, inkl. End-of-Life Emissionen"
+Steamcracker_Naphtha,,OPEX,Additional OPEX,,,2022,,100,,€/t annual production capacity,,,Gemini,Wert aus ursprünglicher Datei; im Bericht nur qualitativ
+Pyrolyse_Steamcracker_Recycling,,High CAPEX,CAPEX,,,2022,,1650,,€/t annual production capacity,,,Gemini,Mittelwert aus Bericht
+Pyrolyse_Steamcracker_Recycling,,Energy demand,Natural Gas,,,2022,,2.85,,MWh/t_product,,,Gemini,Mittelwert aus Bericht
+Pyrolyse_Steamcracker_Recycling,,Energy demand,Electricity,,,2022,,0.85,,MWh/t_product,,,Gemini,Mittelwert aus Bericht
+Pyrolyse_Steamcracker_Recycling,,Feedstock demand,PCW,,,2022,,2.8,,t/t_product,,,Gemini,Mittelwert aus Bericht
+Pyrolyse_Steamcracker_Recycling,,Feedstock demand,Hydrogen,,,2022,,0.065,,t/t_product,,,Gemini,Mittelwert aus Bericht
+Pyrolyse_Steamcracker_Recycling,,Emissions,CO2,,,2022,,2.4,,t/t_product,,,Gemini,Mittelwert aus Bericht
+Pyrolyse_Steamcracker_Recycling,,OPEX,Additional OPEX,,,2022,,508,,€/t annual production capacity,,,Gemini,Wert aus ursprünglicher Datei; im Bericht nur qualitativ
+Hydrocracking_Steamcracker_Recycling,,High CAPEX,CAPEX,,,2022,,2550,,€/t annual production capacity,,,Gemini,Mittelwert aus Bericht
+Hydrocracking_Steamcracker_Recycling,,Energy demand,Natural Gas,,,2022,,3.15,,MWh/t_product,,,Gemini,Mittelwert aus Bericht
+Hydrocracking_Steamcracker_Recycling,,Energy demand,Electricity,,,2022,,1.05,,MWh/t_product,,,Gemini,Mittelwert aus Bericht
+Hydrocracking_Steamcracker_Recycling,,Feedstock demand,PCW,,,2022,,1.8,,t/t_product,,,Gemini,Mittelwert aus Bericht
+Hydrocracking_Steamcracker_Recycling,,Feedstock demand,Hydrogen,,,2022,,0.095,,t/t_product,,,Gemini,Mittelwert aus Bericht
+Hydrocracking_Steamcracker_Recycling,,Emissions,CO2,,,2022,,2.12,,t/t_product,,,Gemini,"Mittelwert aus Bericht, Annahme grüner Wasserstoff"
+Hydrocracking_Steamcracker_Recycling,,OPEX,Additional OPEX,,,2022,,508,,€/t annual production capacity,,,Gemini,Wert aus ursprünglicher Datei; im Bericht nur qualitativ
+Gasifizierung_FT_Steamcracker_Recycling,,High CAPEX,CAPEX,,,2022,,4000,,€/t annual production capacity,,,Gemini,Mittelwert aus Bericht
+Gasifizierung_FT_Steamcracker_Recycling,,Energy demand,Natural Gas,,,2022,,1.85,,MWh/t_product,,,Gemini,Mittelwert aus Bericht
+Gasifizierung_FT_Steamcracker_Recycling,,Energy demand,Electricity,,,2022,,1.3,,MWh/t_product,,,Gemini,Mittelwert aus Bericht
+Gasifizierung_FT_Steamcracker_Recycling,,Feedstock demand,PCW,,,2022,,3.2,,t/t_product,,,Gemini,Mittelwert aus Bericht
+Gasifizierung_FT_Steamcracker_Recycling,,Emissions,CO2,,,2022,,1.5,,t/t_product,,,Gemini,Mittelwert aus Bericht
+Gasifizierung_FT_Steamcracker_Recycling,,OPEX,Additional OPEX,,,2022,,508,,€/t annual production capacity,,,Gemini,Wert aus ursprünglicher Datei; im Bericht nur qualitativ

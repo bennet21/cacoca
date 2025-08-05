@@ -28,9 +28,11 @@ if 'cost_and_em_actual' not in globals():
 
 project_names = [
   #  'Zement f)',
-    'Pyrolyse']
-plot_project_cost_time_curves(cost_and_em_actual, config=setup.config, print_name='compare_sectors',
-                              **{'Project name': project_names})
+    'Pyrolyse',
+    'Hydrocracking',
+    'Gasifizierung-FT']
+#plot_project_cost_time_curves(cost_and_em_actual, config=setup.config, print_name='compare_sectors',
+#                              **{'Project name': project_names})
 
 
 # %% ALL PROJECTS  =================================================================================
@@ -50,8 +52,8 @@ config_all = copy.deepcopy(config)
 config_all['projects_file'] = 'config/projects.csv'
 setup_all, cost_and_em_all = run(config=config_all)
 
-plot_project_cost_time_curves(cost_and_em_all, config=setup_all.config, print_name='all_projects',
-                              color_by='Industry')
+#plot_project_cost_time_curves(cost_and_em_all, config=setup_all.config, print_name='all_projects',
+#                              color_by='Industry')
 
 
 # %% STACKED BARS  =================================================================================
@@ -67,12 +69,14 @@ if 'cost_and_em_actual' not in globals():
 
 project_names = [
     #'Zement f)',
-    'Pyrolyse']
+    'Pyrolyse',
+    'Hydrocracking',
+    'Gasifizierung-FT']
 for project_name in project_names:
     plot_stacked_bars(cost_and_em_actual, setup.config, project_name=project_name,
                       cost_per='product')
-    plot_stacked_bars(cost_and_em_actual, config, project_name=project_name,
-                       cost_per='em_savings', is_diff=True)
+    #plot_stacked_bars(cost_and_em_actual, config, project_name=project_name,
+    #                   cost_per='em_savings', is_diff=True)
 
 
 # %% PRICE SCENARIOS  ==============================================================================
@@ -101,8 +105,10 @@ if 'setup' not in globals():
     change_output_subdir_by_filename(setup.config, __file__)
 
 project_names = [
-    'Pyrolyse']
-plot_h2share_scenarios(setup, project_names, 'h2share', 'vary_h2share')
+    'Pyrolyse',
+    'Hydrocracking',
+    'Gasifizierung-FT']
+#plot_h2share_scenarios(setup, project_names, 'h2share', 'vary_h2share')
 
 
 # %% INFLUENCE OF H2 SHARE  ========================================================================
@@ -118,8 +124,8 @@ if 'cost_and_em_actual' not in globals():
 
 project_names = [
     'Pyrolyse']
-plot_project_cost_time_curves(cost_and_em_actual, config=setup.config,
-                              print_name='h2share_influence', **{'Project name': project_names})
+#plot_project_cost_time_curves(cost_and_em_actual, config=setup.config,
+#                              print_name='h2share_influence', **{'Project name': project_names})
 
 
 # %% ABSOLUTE HYDROGEN DEMAND  =====================================================================
@@ -138,7 +144,7 @@ cost_and_em_actual = add_absolute_hydrogen_demand(cost_and_em_actual, setup)
 
 project_names = [
     'Pyrolyse']
-plot_absolute_hydrogen_demand(cost_and_em_actual, setup, project_names)
+#plot_absolute_hydrogen_demand(cost_and_em_actual, setup, project_names)
 
 
 # %% INFLUENCE OF UNCERTAINTIES  ===================================================================
@@ -210,11 +216,11 @@ for scen_name, uct_prms in sens_scenarios.items():
 
     setup, cost_and_em_sens = run(config=config_sens)
 
-    for h2name, project_name in project_names_dict.items():
-        plot_project_cost_time_curves(cost_and_em_sens,
-                                      config=setup.config,
-                                      print_name=f'sensitivity_{scen_name}_{h2name}',
-                                      **{'Project name': [project_name]})
+    #for h2name, project_name in project_names_dict.items():
+        #plot_project_cost_time_curves(cost_and_em_sens,
+        #                              config=setup.config,
+        #                              print_name=f'sensitivity_{scen_name}_{h2name}',
+        #                              **{'Project name': [project_name]})
 
 
 # %%
