@@ -9,7 +9,6 @@ Pyrolyse_Steamcracker_Recycling,,High CAPEX,CAPEX,,,2022,,1650,,€/t annual pro
 Pyrolyse_Steamcracker_Recycling,,Energy demand,Natural Gas,,,2022,,2.85,,MWh/t_product,,,Gemini,Mittelwert aus Bericht
 Pyrolyse_Steamcracker_Recycling,,Energy demand,Electricity,,,2022,,0.85,,MWh/t_product,,,Gemini,Mittelwert aus Bericht
 Pyrolyse_Steamcracker_Recycling,,Feedstock demand,PCW,,,2022,,2.8,,t/t_product,,,Gemini,Mittelwert aus Bericht
-Pyrolyse_Steamcracker_Recycling,,Feedstock demand,Hydrogen,,,2022,,0.065,,t/t_product,,,Gemini,Mittelwert aus Bericht
 Pyrolyse_Steamcracker_Recycling,,Emissions,CO2,,,2022,,2.4,,t/t_product,,,Gemini,Mittelwert aus Bericht
 Pyrolyse_Steamcracker_Recycling,,OPEX,Additional OPEX,,,2022,,508,,€/t annual production capacity,,,Gemini,Wert aus ursprünglicher Datei; im Bericht nur qualitativ
 Hydrocracking_Steamcracker_Recycling,,High CAPEX,CAPEX,,,2022,,2550,,€/t annual production capacity,,,Gemini,Mittelwert aus Bericht
