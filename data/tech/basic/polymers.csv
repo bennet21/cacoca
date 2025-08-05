@@ -1,0 +1,13 @@
+﻿Technology,Mode,Type,Component,Subcomponent,Region,Period,Usage,Value,Uncertainty,Unit,Non-unit conversion factor,Value and uncertainty comment,Source reference,Source comment
+Steamcracker_Naphtha,,High CAPEX,CAPEX,,,2022,,1850,,€/t annual production capacity,,,Gemini,
+Steamcracker_Naphtha,,Energy demand,Natural Gas,,,2022,,6.4,,MWh/t_product,,,Gemini,
+Steamcracker_Naphtha,,Energy demand,Electricity,,,2022,,4.5,,MWh/t_product,,,Gemini,
+Steamcracker_Naphtha,,Feedstock demand,Naphta,,,2022,,3,,t/t_product,,,Gemini,
+Steamcracker_Naphtha,,Emissions,CO2,,,2022,,10.34,,t/t_product,,,Gemini,1.2+3.14
+Steamcracker_Naphtha,,OPEX,Additional OPEX,,,2022,,100,,€/t annual production capacity,,,Gemini,
+Pyrolyse_Steamcracker_Recycling,,High CAPEX,CAPEX,,,2022,,6000,,€/t annual production capacity,,,Gemini,
+Pyrolyse_Steamcracker_Recycling,,Energy demand,Natural Gas,,,2022,,9.75,,MWh/t_product,,,Gemini,
+Pyrolyse_Steamcracker_Recycling,,Energy demand,Electricity,,,2022,,6.15,,MWh/t_product,,,Gemini,
+Pyrolyse_Steamcracker_Recycling,,Feedstock demand,Naphta,,,2022,,0,,t/t_product,,,Gemini,
+Pyrolyse_Steamcracker_Recycling,,Emissions,CO2,,,2022,,2.85,,t/t_product,,,Gemini,
+Pyrolyse_Steamcracker_Recycling,,OPEX,Additional OPEX,,,2022,,508,,€/t annual production capacity,,,Gemini,
