@@ -44,7 +44,7 @@ def plot_stacked_bars(projects: pd.DataFrame, config: dict, project_name: str,
     query_str = " | ".join(f"Period == {y}" for y in years)
     projects = projects.query(query_str).drop_duplicates()
 
-    # 
+    # Hack: Bring Effective CO2 Price in form to be added to reference, divided by emissions diff
     if emission_diff:
         # Emission cost: difference only plotted for reference
         projects = projects.assign(**{
@@ -178,3 +178,4 @@ def plot_stacked_bars(projects: pd.DataFrame, config: dict, project_name: str,
                       title=f"Kostenvergleich {dn(project_name)}")
     fig.update_layout(barmode="relative")
     show_and_save(fig, config, 'stacked_bars_' + project_name)
+    
