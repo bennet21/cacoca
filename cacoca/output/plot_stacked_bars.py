@@ -20,7 +20,8 @@ colors = {
     'Hydrogen': pl.colors.qualitative.Dark24[0],
     'Electricity': pl.colors.qualitative.Dark24[2],
     'Effective CO2 Price': 'rgb(0.2, 0.2, 0.2)',
-    'CO2 Cost': 'rgb(0.2, 0.2, 0.2)'
+    'CO2 Cost': 'rgb(0.2, 0.2, 0.2)',
+    'PCW': pl.colors.qualitative.Dark24[16]
 }
 
 

@@ -79,7 +79,7 @@ display_names = {
     'H2 Share': 'Anteil Wasserstoff',
     'all_projects': 'Alle Projekte',
     'CO2 Cost': 'Emissionskostendiff. (ETS)',
-    '': '',
+    'PCW': 'Post-consumer Kunststoffabfälle',
     '': ''
 }
 
