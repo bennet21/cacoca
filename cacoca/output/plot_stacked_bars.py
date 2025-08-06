@@ -26,7 +26,7 @@ colors = {
 
 
 def plot_stacked_bars(projects: pd.DataFrame, config: dict, project_name: str,
-                      cost_per: str = 'product', is_diff: bool = False):
+                      cost_per: str = 'product', is_diff: bool = False, emission_diff: bool = True):
 
     if cost_per == 'product':
         yunit = '€/t Produkt'
@@ -44,10 +44,24 @@ def plot_stacked_bars(projects: pd.DataFrame, config: dict, project_name: str,
     query_str = " | ".join(f"Period == {y}" for y in years)
     projects = projects.query(query_str).drop_duplicates()
 
-    # Hack: Bring Effective CO2 Price in form to be added to reference, divided by emissions diff
-    projects = projects.assign(**{
-        co2pricename + '_ref': lambda df: df['Effective CO2 Price'] * -df['Emissions_diff'],
-        co2pricename: 0.})
+    # 
+    if emission_diff:
+        # Emission cost: difference only plotted for reference
+        projects = projects.assign(**{
+            co2pricename + '_ref': lambda df: df['Effective CO2 Price'] * -df['Emissions_diff'],
+            co2pricename: 0.})
+        dn_override = dn
+    else:
+        # Emission cost: plotted for both project and reference
+        projects = projects.assign(**{
+            co2pricename + '_ref': lambda df: df['Effective CO2 Price'] * df['Emissions_ref'],
+            co2pricename: lambda df: df['Effective CO2 Price'] * df['Emissions']
+        })
+
+        # override display name for CO2 Cost
+        dn_map = {'CO2 Cost': 'CO₂-Kosten'}
+        def dn_override(vn):
+            return dn_map.get(vn, dn(vn))
 
     variables = ['CAPEX annuity', 'Additional OPEX'] \
         + [cn for cn in projects.columns if str(cn).startswith('cost_')
@@ -63,7 +77,6 @@ def plot_stacked_bars(projects: pd.DataFrame, config: dict, project_name: str,
     pmax = projects.max()
     variables = [vn for vn in variables if max(pmax[vn], pmax[vn + '_ref']) > 1.e-6]
 
-    # colors = get_color(variables + ['Effective CO2 Price'])
     width = 0.9
 
     fig = pl.graph_objs.Figure()
@@ -138,7 +151,7 @@ def plot_stacked_bars(projects: pd.DataFrame, config: dict, project_name: str,
                 continue
 
             fig.add_bar(
-                name=dn(vn),
+                name=dn_override(vn),
                 x=[bar.projects['Period'].to_list(), [bar.name for _ in years]],
                 y=bar.dir * bar.projects[vn],
                 base=bar.base,
