@@ -74,7 +74,7 @@ project_names = [
     'Gasifizierung-FT']
 for project_name in project_names:
     plot_stacked_bars(cost_and_em_actual, setup.config, project_name=project_name,
-                      cost_per='product')
+                      cost_per='product', emission_diff=False)
     #plot_stacked_bars(cost_and_em_actual, config, project_name=project_name,
     #                   cost_per='em_savings', is_diff=True)
 
