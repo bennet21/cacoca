@@ -30,7 +30,8 @@ project_names = [
   #  'Zement f)',
     'Pyrolyse',
     'Hydrocracking',
-    'Gasifizierung-FT']
+    'Gasifizierung-FT',
+    'E-Steamcracker Naphtha']
 #plot_project_cost_time_curves(cost_and_em_actual, config=setup.config, print_name='compare_sectors',
 #                              **{'Project name': project_names})
 
@@ -71,7 +72,8 @@ project_names = [
     #'Zement f)',
     'Pyrolyse',
     'Hydrocracking',
-    'Gasifizierung-FT']
+    'Gasifizierung-FT',
+    'E-Steamcracker Naphtha']
 for project_name in project_names:
     plot_stacked_bars(cost_and_em_actual, setup.config, project_name=project_name,
                       cost_per='product', emission_diff=False)
@@ -107,7 +109,8 @@ if 'setup' not in globals():
 project_names = [
     'Pyrolyse',
     'Hydrocracking',
-    'Gasifizierung-FT']
+    'Gasifizierung-FT',
+    'E-Steamcracker Naphtha']
 #plot_h2share_scenarios(setup, project_names, 'h2share', 'vary_h2share')
 
 

@@ -1,10 +1,16 @@
 ﻿Technology,Mode,Type,Component,Subcomponent,Region,Period,Usage,Value,Uncertainty,Unit,Non-unit conversion factor,Value and uncertainty comment,Source reference,Source comment
-Steamcracker_Naphtha,,High CAPEX,CAPEX,,,2022,,2900,,€/t annual production capacity,,,Gemini,Mittelwert aus Bericht Massenallokation
-Steamcracker_Naphtha,,Energy demand,Natural Gas,,,2022,,4.45,,MWh/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
-Steamcracker_Naphtha,,Energy demand,Electricity,,,2022,,0.45,,MWh/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
-Steamcracker_Naphtha,,Feedstock demand,Naphta,,,2022,,1.6,,t/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
-Steamcracker_Naphtha,,Emissions,CO2,,,2022,,1.25,,t/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
-Steamcracker_Naphtha,,OPEX,Additional OPEX,,,2022,,140,,€/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
+Steamcracker_Naphtha,,High CAPEX,CAPEX,,,2022,,2700,,€/t annual production capacity,,,,Bericht
+Steamcracker_Naphtha,,Energy demand,Natural Gas,,,2022,,4.65,,MWh/t_product,,,,Bericht
+Steamcracker_Naphtha,,Energy demand,Electricity,,,2022,,0.51,,MWh/t_product,,,,Bericht
+Steamcracker_Naphtha,,Feedstock demand,Naphta,,,2022,,1.46,,t/t_product,,,,Bericht
+Steamcracker_Naphtha,,Emissions,CO2,,,2022,,1.57,,t/t_product,,,,Bericht
+Steamcracker_Naphtha,,OPEX,Additional OPEX,,,2022,,64,,€/t_product,,,2.5% CAPEX,Bericht
+eSteamcracker_Naphtha,,High CAPEX,CAPEX,,,2022,,2700,,€/t annual production capacity,,,,Bericht
+eSteamcracker_Naphtha,,Energy demand,Natural Gas,,,2022,,0,,MWh/t_product,,,,Bericht
+eSteamcracker_Naphtha,,Energy demand,Electricity,,,2022,,5.16,,MWh/t_product,,,,Bericht
+eSteamcracker_Naphtha,,Feedstock demand,Naphta,,,2022,,1.46,,t/t_product,,,,Bericht
+eSteamcracker_Naphtha,,Emissions,CO2,,,2022,,0.1,,t/t_product,,,,Bericht
+eSteamcracker_Naphtha,,OPEX,Additional OPEX,,,2022,,64,,€/t_product,,,2.5% CAPEX,Bericht
 Pyrolyse_Steamcracker_Recycling,,High CAPEX,CAPEX,,,2022,,3225,,€/t annual production capacity,,,Gemini,Mittelwert aus Bericht Massenallokation
 Pyrolyse_Steamcracker_Recycling,,Energy demand,Natural Gas,,,2022,,4.9,,MWh/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
 Pyrolyse_Steamcracker_Recycling,,Energy demand,Electricity,,,2022,,0.8,,MWh/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
