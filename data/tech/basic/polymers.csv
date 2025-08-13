@@ -2,29 +2,43 @@
 Steamcracker_Naphtha,,High CAPEX,CAPEX,,,2022,,2700,,€/t annual production capacity,,,,Bericht
 Steamcracker_Naphtha,,Energy demand,Natural Gas,,,2022,,4.65,,MWh/t_product,,,,Bericht
 Steamcracker_Naphtha,,Energy demand,Electricity,,,2022,,0.51,,MWh/t_product,,,,Bericht
-Steamcracker_Naphtha,,Feedstock demand,Naphta,,,2022,,1.46,,t/t_product,,,,Bericht
+Steamcracker_Naphtha,,Feedstock demand,Naphta,,,2022,,1.34,,t/t_product,,,,Bericht
 Steamcracker_Naphtha,,Emissions,CO2,,,2022,,1.57,,t/t_product,,,,Bericht
 Steamcracker_Naphtha,,OPEX,Additional OPEX,,,2022,,64,,€/t_product,,,2.5% CAPEX,Bericht
 eSteamcracker_Naphtha,,High CAPEX,CAPEX,,,2022,,2700,,€/t annual production capacity,,,,Bericht
 eSteamcracker_Naphtha,,Energy demand,Natural Gas,,,2022,,0,,MWh/t_product,,,,Bericht
 eSteamcracker_Naphtha,,Energy demand,Electricity,,,2022,,5.16,,MWh/t_product,,,,Bericht
-eSteamcracker_Naphtha,,Feedstock demand,Naphta,,,2022,,1.46,,t/t_product,,,,Bericht
+eSteamcracker_Naphtha,,Feedstock demand,Naphta,,,2022,,1.34,,t/t_product,,,,Bericht
 eSteamcracker_Naphtha,,Emissions,CO2,,,2022,,0.1,,t/t_product,,,,Bericht
 eSteamcracker_Naphtha,,OPEX,Additional OPEX,,,2022,,64,,€/t_product,,,2.5% CAPEX,Bericht
-Pyrolyse_Steamcracker_Recycling,,High CAPEX,CAPEX,,,2022,,3225,,€/t annual production capacity,,,Gemini,Mittelwert aus Bericht Massenallokation
-Pyrolyse_Steamcracker_Recycling,,Energy demand,Natural Gas,,,2022,,4.9,,MWh/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
-Pyrolyse_Steamcracker_Recycling,,Energy demand,Electricity,,,2022,,0.8,,MWh/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
-Pyrolyse_Steamcracker_Recycling,,Feedstock demand,PCW,,,2022,,2.9,,t/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
-Pyrolyse_Steamcracker_Recycling,,Feedstock demand,Hydrogen,,,2022,,30,,kg/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
-Pyrolyse_Steamcracker_Recycling,,Emissions,CO2,,,2022,,2.15,,t/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
-Pyrolyse_Steamcracker_Recycling,,OPEX,Additional OPEX,,,2022,,215,,€/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
-Hydrocracking_Steamcracker_Recycling,,High CAPEX,CAPEX,,,2022,,5750,,€/t annual production capacity,,,Gemini,Mittelwert aus Bericht Massenallokation
-Hydrocracking_Steamcracker_Recycling,,Energy demand,Natural Gas,,,2022,,4.45,,MWh/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
-Hydrocracking_Steamcracker_Recycling,,Energy demand,Electricity,,,2022,,1.0,,MWh/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
-Hydrocracking_Steamcracker_Recycling,,Feedstock demand,PCW,,,2022,,1.8,,t/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
-Hydrocracking_Steamcracker_Recycling,,Feedstock demand,Hydrogen,,,2022,,50,,kg/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
-Hydrocracking_Steamcracker_Recycling,,Emissions,CO2,,,2022,,2.0,,t/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation Annahme grüner Wasserstoff
-Hydrocracking_Steamcracker_Recycling,,OPEX,Additional OPEX,,,2022,,365,,€/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
+Pyrolyse_Steamcracker_Recycling,,High CAPEX,CAPEX,,,2022,,3737,,€/t annual production capacity,,,,Bericht
+Pyrolyse_Steamcracker_Recycling,,Energy demand,Natural Gas,,,2022,,4.52,,MWh/t_product,,,,Bericht
+Pyrolyse_Steamcracker_Recycling,,Energy demand,Electricity,,,2022,,1.32,,MWh/t_product,,,,Bericht
+Pyrolyse_Steamcracker_Recycling,,Feedstock demand,PCW,,,2022,,2.78,,t/t_product,,,,Bericht
+Pyrolyse_Steamcracker_Recycling,,Feedstock demand,Hydrogen,,,2022,,16.69,,kg/t_product,,,,Bericht
+Pyrolyse_Steamcracker_Recycling,,Emissions,CO2,,,2022,,2.45,,t/t_product,,,,Bericht
+Pyrolyse_Steamcracker_Recycling,,OPEX,Additional OPEX,,,2022,,151,,€/t_product,,,,Bericht
+Pyrolyse_eSteamcracker_Recycling,,High CAPEX,CAPEX,,,2022,,3737,,€/t annual production capacity,,,,Bericht
+Pyrolyse_eSteamcracker_Recycling,,Energy demand,Natural Gas,,,2022,,0,,MWh/t_product,,,,Bericht
+Pyrolyse_eSteamcracker_Recycling,,Energy demand,Electricity,,,2022,,5.98,,MWh/t_product,,,,Bericht
+Pyrolyse_eSteamcracker_Recycling,,Feedstock demand,PCW,,,2022,,2.78,,t/t_product,,,,Bericht
+Pyrolyse_eSteamcracker_Recycling,,Feedstock demand,Hydrogen,,,2022,,16.69,,kg/t_product,,,,Bericht
+Pyrolyse_eSteamcracker_Recycling,,Emissions,CO2,,,2022,,0.98,,t/t_product,,,,Bericht
+Pyrolyse_eSteamcracker_Recycling,,OPEX,Additional OPEX,,,2022,,151,,€/t_product,,,,Bericht
+Hydrocracking_Steamcracker_Recycling,,High CAPEX,CAPEX,,,2022,,7335,,€/t annual production capacity,,,Gemini,Mittelwert aus Bericht Massenallokation
+Hydrocracking_Steamcracker_Recycling,,Energy demand,Natural Gas,,,2022,,4.51,,MWh/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
+Hydrocracking_Steamcracker_Recycling,,Energy demand,Electricity,,,2022,,1.25,,MWh/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
+Hydrocracking_Steamcracker_Recycling,,Feedstock demand,PCW,,,2022,,1.85,,t/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
+Hydrocracking_Steamcracker_Recycling,,Feedstock demand,Hydrogen,,,2022,,55.65,,kg/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
+Hydrocracking_Steamcracker_Recycling,,Emissions,CO2,,,2022,,2.87,,t/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation Annahme grüner Wasserstoff
+Hydrocracking_Steamcracker_Recycling,,OPEX,Additional OPEX,,,2022,,358,,€/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
+Hydrocracking_eSteamcracker_Recycling,,High CAPEX,CAPEX,,,2022,,7335,,€/t annual production capacity,,,Gemini,Mittelwert aus Bericht Massenallokation
+Hydrocracking_eSteamcracker_Recycling,,Energy demand,Natural Gas,,,2022,,0,,MWh/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
+Hydrocracking_eSteamcracker_Recycling,,Energy demand,Electricity,,,2022,,5.91,,MWh/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
+Hydrocracking_eSteamcracker_Recycling,,Feedstock demand,PCW,,,2022,,1.85,,t/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
+Hydrocracking_eSteamcracker_Recycling,,Feedstock demand,Hydrogen,,,2022,,55.65,,kg/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
+Hydrocracking_eSteamcracker_Recycling,,Emissions,CO2,,,2022,,1.5,,t/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation Annahme grüner Wasserstoff
+Hydrocracking_eSteamcracker_Recycling,,OPEX,Additional OPEX,,,2022,,358,,€/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
 Gasifizierung_FT_Steamcracker_Recycling,,High CAPEX,CAPEX,,,2022,,6675,,€/t annual production capacity,,,Gemini,Mittelwert aus Bericht Massenallokation
 Gasifizierung_FT_Steamcracker_Recycling,,Energy demand,Natural Gas,,,2022,,4.0,,MWh/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
 Gasifizierung_FT_Steamcracker_Recycling,,Energy demand,Electricity,,,2022,,1.25,,MWh/t_product,,,Gemini,Mittelwert aus Bericht Massenallokation
