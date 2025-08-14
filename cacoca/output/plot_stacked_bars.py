@@ -100,10 +100,24 @@ def plot_stacked_bars_multi(projects: pd.DataFrame, config: dict, project_names:
     pmax = projects.max()
     variables = [vn for vn in variables if max(pmax[vn], pmax[vn + '_ref']) > 1.e-6]
 
-    # Calculate total number of bars (projects + reference if used)
-    total_bars = len(project_names) + (1 if project_ref is not None else 0)
-    width = 0.9 / total_bars
+    width = 0.9
     fig = pl.graph_objs.Figure()
+
+    def yzero():
+        return 0. * projects['CAPEX annuity']
+
+    def add_placeholder(id: int):
+        fig.add_bar(
+            name='',
+            x=[projects['Period'].to_list(), [' ' * id for _ in years]],
+            y=yzero(),
+            offsetgroup=id,
+            base=0.,
+            width=width,
+            showlegend=False
+        )
+
+    add_placeholder(0)
     
     legend_vars = set()
     
@@ -256,6 +270,8 @@ def plot_stacked_bars_multi(projects: pd.DataFrame, config: dict, project_names:
                 )
         
         offsetgroup += 1
+
+    add_placeholder(1)
 
     # Final layout updates
     fig.update_yaxes(title=yunit)
