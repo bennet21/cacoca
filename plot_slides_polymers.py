@@ -59,7 +59,7 @@ setup_all, cost_and_em_all = run(config=config_all)
 
 # %% STACKED BARS  =================================================================================
 
-from cacoca.output.plot_stacked_bars import plot_stacked_bars
+from cacoca.output.plot_stacked_bars import plot_stacked_bars, plot_stacked_bars_multi
 from cacoca.run import run
 from cacoca.output.plot_tools import change_output_subdir_by_filename
 
@@ -74,6 +74,10 @@ project_names = [
     'Hydrocracking',
     'Gasifizierung-FT',
     'E-Steamcracker Naphtha']
+
+plot_stacked_bars_multi(cost_and_em_actual, setup.config, project_names,
+                        cost_per='product', emission_diff=False, project_ref="Pyrolyse")
+
 for project_name in project_names:
     plot_stacked_bars(cost_and_em_actual, setup.config, project_name=project_name,
                       cost_per='product', emission_diff=False)
