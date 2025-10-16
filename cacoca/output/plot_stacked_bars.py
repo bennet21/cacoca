@@ -350,7 +350,7 @@ def plot_stacked_bars(projects: pd.DataFrame, config: dict, project_name: str,
 
     def add_placeholder(id: int):
         fig.add_bar(
-            name=dn_override(vn),
+            name='',
             x=[projects['Period'].to_list(), [' ' * id for _ in years]],
             y=yzero(),
             offsetgroup=id,
@@ -415,7 +415,7 @@ def plot_stacked_bars(projects: pd.DataFrame, config: dict, project_name: str,
                 continue
 
             fig.add_bar(
-                name=dn(vn),
+                name=dn_override(vn),
                 x=[bar.projects['Period'].to_list(), [bar.name for _ in years]],
                 y=bar.dir * bar.projects[vn],
                 base=bar.base,
