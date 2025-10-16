@@ -77,8 +77,8 @@ def plot_stacked_bars_multi(projects: pd.DataFrame, config: dict, project_names:
         dn_override = dn
     else:
         projects = projects.assign(**{
-            co2pricename + '_ref': lambda df: df['Effective CO2 Price'] * df['Emissions_ref'],
-            co2pricename: lambda df: df['Effective CO2 Price'] * df['Emissions']
+            co2pricename + '_ref': lambda df: df['CO2 Price'] * (df['Emissions_ref'] - df['Free Allocations_ref']),
+            co2pricename: lambda df: df['CO2 Price'] * (df['Emissions'] - df['Free Allocations'])
         })
 
         # override display name for CO2 Cost
@@ -318,8 +318,8 @@ def plot_stacked_bars(projects: pd.DataFrame, config: dict, project_name: str,
     else:
         # Emission cost: plotted for both project and reference
         projects = projects.assign(**{
-            co2pricename + '_ref': lambda df: df['Effective CO2 Price'] * df['Emissions_ref'],
-            co2pricename: lambda df: df['Effective CO2 Price'] * df['Emissions']
+            co2pricename + '_ref': lambda df: df['CO2 Price'] * (df['Emissions_ref'] - df['Free Allocations_ref']),
+            co2pricename: lambda df: df['CO2 Price'] * (df['Emissions'] - df['Free Allocations'])
         })
 
         # override display name for CO2 Cost
