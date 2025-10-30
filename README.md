@@ -8,6 +8,16 @@ The techno-economic input data provided in this repository is incomplete and not
 
 The Python version and packages are managed using [PEP 621](https://peps.python.org/pep-0621/). Packages are listed in the file [pyproject.toml](pyproject.toml). Detailed instructions for installation can be found in the [documentation](doc/100_getting_started.md).
 
+## POSTED Coupling
+
+To use data from POSTED, it's data has to be added to the POSTED dependency. For this, the POSTED datafolder ´inst´ must be copied to ´.venv/Lib´ in CaCoCa. Then, simply run 
+
+```
+generate_cacoca_input_data.py
+```
+
+The POSTED data will be transformed to CaCoCa format and saved in data/tech/posted from where it can be used.
+
 ## Quick start / basic run
 
 Runs are configured using a YAML input file. Example input files are located in the `config` folder.
