@@ -15,7 +15,7 @@ Runs are configured using a YAML input file. Example input files are located in 
 For a test run, go to the main directory and run
 
 ```
-poetry run python cacoca.py config/config.yml
+uv run python cacoca.py config/config.yml
 ```
 
 This should create some lines of stdout for the different auction rounds.
@@ -41,16 +41,16 @@ the included [`LICENSE` file](LICENSE).
 
 To cite CaCoCa, please use:
 
-J. Dürrwächter, R.Blömer, P. Verpoort, P. Effing, J. Eckstein, F. Ueckerdt (2023). _CaCoCa: The Carbon Contracts Calculator._ Version 0.1.0, <https://github.com/JakobBD/cacoca>.
+J. Dürrwächter, R.Blömer, P. Verpoort, B. Weiss, P. Effing, J. Eckstein, F. Ueckerdt (2023). _CaCoCa: The Carbon Contracts Calculator._ Version 2.0.0, <https://github.com/JakobBD/cacoca>.
 
 A BibTeX entry for LaTeX users is:
 
- ```latex
+ ```latex
 @Manual{,
   title = {CaCoCa: The Carbon Contracts Calculator},
-  author = {Jakob Dürrwächter and Robin Blömer and Philipp Verpoort and Paul Effing and Johannes Eckstein and Falko Ueckerdt},
+  author = {Jakob Dürrwächter and Robin Blömer and Philipp Verpoort and Bennet Weiss and Paul Effing and Johannes Eckstein and Falko Ueckerdt},
   year = {2023},
-  note = {Version 0.1.0},
+  note = {Version 2.0.0},
   url = {https://github.com/JakobBD/cacoca},
 }
 ```
