@@ -10,14 +10,18 @@ authors = [
 
 dependencies = [
   "plotly >=5.13.1,<6.0.0",
-  "pandas >=1.5.3,<2.0.0",
+  "pandas >=1.5.3",
   "numpy >=1.24.2,<2.0.0",
   "openpyxl >=3.1.2,<4.0.0",
   "numpy-financial >=1.0.0,<2.0.0",
   "nbformat >=5.8.0,<6.0.0",
   "pyyaml >=6.0,<7.0",
-  "kaleido ==0.1.0"
+  "kaleido ==0.1.0",
+  "posted",
 ]
 
 [project.optional-dependencies]
 dev = ["ipykernel >=6.22.0,<7.0.0"]
+
+[tool.uv.sources]
+posted = { git = "https://github.com/PhilippVerpoort/posted" }
