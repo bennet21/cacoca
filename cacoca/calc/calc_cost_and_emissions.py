@@ -7,14 +7,17 @@ from ..tools.common_merges import add_tech_and_industry
 
 def calc_cost_and_emissions(setup: Setup, keep_components: bool = False):
 
+    # three different operation modes
     data_old, data_new, data_ref = split_technology_names(setup)
 
     data_new = calc_single_opmode(data_new, setup, keep_components)
     data_old = calc_single_opmode(data_old, setup, keep_components)
     data_ref = calc_single_opmode(data_ref, setup, keep_components)
 
+    # data old and new are combined vial fuel mix
     data_all, variables = merge_operation_modes(data_old, data_new, setup.h2share)
 
+    # cost incl capex is determined by new technology, so its calculated only here
     data_all = calc_cost_wit_capex(data_all)
     data_ref = calc_cost_wit_capex(data_ref)
 

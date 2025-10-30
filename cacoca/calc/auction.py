@@ -7,6 +7,7 @@ def auction(aggregate: pd.DataFrame, setup: Setup, config_ar: dict):
     aggregate = aggregate.sort_values('score', ascending=False)
     aggregate['budget_cumsum'] = aggregate['budget_cap'].cumsum()
 
+    # select projects such that their combined budget does not exceed the budget cap
     chosen_projects = aggregate[aggregate['budget_cumsum'] <= config_ar['budget_BnEUR'] * 1000.]
 
     chosen_proj_list = chosen_projects['Project name'].values.tolist()
@@ -21,6 +22,8 @@ def auction(aggregate: pd.DataFrame, setup: Setup, config_ar: dict):
 
 
 def prepare_setup_for_bidding(setup: Setup, all_chosen_projects: list, config_ar: dict):
+    """ Filtering of projects and selection of scenario data for bidding."""
+
     set_projects_ar(setup, all_chosen_projects, config_ar)
     setup.select_scenario_data('scenarios_bidding')
     setup.select_h2share(auction_year=config_ar['year'])
@@ -37,6 +40,8 @@ def prepare_setup_for_payout(setup: Setup, chosen_projects: list, config_ar: dic
 
 
 def set_projects_ar(setup: Setup, all_chosen_projects: list, config_ar: dict):
+    """ Removes previously successful projects and sets their start year."""
+
     setup.projects_current = setup.projects_all[
         ~setup.projects_all['Project name'].isin(all_chosen_projects)] \
         .query(f"`Time of investment` - 3 <= {config_ar['year']}")

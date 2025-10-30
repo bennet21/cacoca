@@ -6,7 +6,17 @@ The techno-economic input data provided in this repository is incomplete and not
 
 ## Installation
 
-The Python version and packages are managed using [Poetry](https://python-poetry.org/docs/). Packages are listed in the file [pyproject.toml](pyproject.toml). Detailed instructions for installation can be found in the [documentation](doc/100_getting_started.md).
+The Python version and packages are managed using [PEP 621](https://peps.python.org/pep-0621/). Packages are listed in the file [pyproject.toml](pyproject.toml). Detailed instructions for installation can be found in the [documentation](doc/100_getting_started.md).
+
+## POSTED Coupling
+
+To use data from POSTED, it's data has to be added to the POSTED dependency. For this, the POSTED datafolder ´inst´ must be copied to ´.venv/Lib´ in CaCoCa. Then, simply run 
+
+```
+generate_cacoca_input_data.py
+```
+
+The POSTED data will be transformed to CaCoCa format and saved in data/tech/posted from where it can be used.
 
 ## Quick start / basic run
 
@@ -15,7 +25,7 @@ Runs are configured using a YAML input file. Example input files are located in 
 For a test run, go to the main directory and run
 
 ```
-poetry run python cacoca.py config/config.yml
+uv run python cacoca.py config/config.yml
 ```
 
 This should create some lines of stdout for the different auction rounds.
@@ -41,16 +51,16 @@ the included [`LICENSE` file](LICENSE).
 
 To cite CaCoCa, please use:
 
-J. Dürrwächter, R.Blömer, P. Verpoort, P. Effing, J. Eckstein, F. Ueckerdt (2023). _CaCoCa: The Carbon Contracts Calculator._ Version 0.1.0, <https://github.com/JakobBD/cacoca>.
+J. Dürrwächter, R.Blömer, P. Verpoort, B. Weiss, P. Effing, J. Eckstein, F. Ueckerdt (2023). _CaCoCa: The Carbon Contracts Calculator._ Version 2.0.0, <https://github.com/JakobBD/cacoca>.
 
 A BibTeX entry for LaTeX users is:
 
- ```latex
+ ```latex
 @Manual{,
   title = {CaCoCa: The Carbon Contracts Calculator},
-  author = {Jakob Dürrwächter and Robin Blömer and Philipp Verpoort and Paul Effing and Johannes Eckstein and Falko Ueckerdt},
+  author = {Jakob Dürrwächter and Robin Blömer and Philipp Verpoort and Bennet Weiss and Paul Effing and Johannes Eckstein and Falko Ueckerdt},
   year = {2023},
-  note = {Version 0.1.0},
+  note = {Version 2.0.0},
   url = {https://github.com/JakobBD/cacoca},
 }
 ```

@@ -23,22 +23,22 @@ In the above link, download the `Windows installer (64-bit)`. For me this meant 
 
 You can have several python versions in parallel using `pyenv`.
 
-## Install Poetry
+## Install a package manager
 
-Poetry manages Python and library versions.
+You could use a package manager like uv. 
 
-For installation, follow the instructions on the website: [https://python-poetry.org/docs/](https://python-poetry.org/docs/)
+For installation, follow the instructions on the website: [https://docs.astral.sh/uv/getting-started/installation/](https://docs.astral.sh/uv/getting-started/installation/)
 
 You might have to at the binary path to your PATH environment variable.
 
-Installation was successful if the command `poetry --version` prints the version number.
+Installation was successful if the command `uv --version` prints the version number.
 
 ## Install dependencies
 
 From the cacoca repository, run
 
 ```
-poetry install
+uv sync
 ```
 
 This should install all the required packages.

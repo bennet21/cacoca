@@ -57,6 +57,8 @@ class Setup():
             self.config['techdata_files']
         )
 
+        # h2_share is actually share of "new" fuel mix, name is slightly misleading
+        # everything is read in as raw data first, scenarios later pick the relevant data
         self.prices_raw, self.free_allocations_raw, self.h2share_raw, self.abs_std_raw \
             = read_raw_scenario_data(dirpath=self.config['scenarios_dir'])
 
