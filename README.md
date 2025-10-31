@@ -37,6 +37,7 @@ The authors of CaCoCa are:
 Jakob Dürrwächter\
 Robin Blömer\
 Philipp Verpoort\
+Bennet Weiss\
 Paul Effing\
 Johannes Eckstein\
 Falko Ueckerdt
