@@ -1,13 +1,30 @@
+"""Convert Posted technology datasets into CaCoCa-compatible CSV inputs.
+
+This module contains functions to convert technology datasets from the Posted
+format into CSV files that are compatible with CaCoCa. The conversion includes translating variable
+names, aggregating data, and filtering out unnecessary information. The end
+result is a set of CSV files that can be directly used as input for CaCoCa
+modeling.
+
+Components can be re-defined via component_type_overrides.
+Example component_type_overrides = {"Natural Gas": "Feedstock demand", "Hydrogen": "Feedstock demand"}
+
+TODO:
+    - heat emission factor
+    - handle CAPEX annualized
+    - add low capex
+    - get emissions via emissions factor
+    - sort by Technology
+"""
+
 import pandas as pd
 from pathlib import Path
 from typing import Dict, Optional, Union
 
 from posted.noslag import DataSet
 
-# TODO heat emission factor?!
-# TODO handle CAPEX annualized
-# Components can be re-defined via component_type_overrides
-# Exmaple component_type_overrrides = {"Natural Gas": "Feedstock demand", "Hydrogen": "Feedstock demand"}
+# Components can be re-defined via component_type_overrides.
+# Example component_type_overrides = {"Natural Gas": "Feedstock demand", "Hydrogen": "Feedstock demand"}
 ENERGY_TYPES = ["Electricity", "Coal", "Natural Gas", "Heat", "Hydrogen"]
 FEEDSTOCK_TYPES = ["Oxygen", "Iron Ore", "Scrap Steel", "Water", "Ammonia", "Captured CO2",
                    "Steel Slab", "Steel Liquid", "Cooling Water", "Methanol",
@@ -48,13 +65,42 @@ EXCLUDED_TECHNAMES = [
     "NGL to Olefins", # POSTED issue: concatenation fails
 ]
 
-
-# TODO add low capex
-# TODO get emissions via emissions factor
-# TODO sort by Technology
-
 def generate_cacoca_input(target_folder: Path, posted_technames: Union[str, list] = None, posted_datafolder: Path = None, component_type_overrides: Optional[Dict[str, str]] = None):
+    """
+    Generate CaCoCa-ready CSV files from Posted datasets.
 
+    Parameters
+    ----------
+    target_folder : Path
+        Destination directory for the generated CSV files; created automatically when absent.
+    posted_technames : Union[str, list], optional
+        One or multiple Posted technology identifiers to process directly. Mutually exclusive with `posted_datafolder`.
+    posted_datafolder : Path, optional
+        Path containing Posted CSV exports; all detected technologies (except those in `EXCLUDED_TECHNAMES`) are processed.
+    component_type_overrides : dict[str, str], optional
+        Mapping from component names (e.g. "Natural Gas") to CaCoCa input types ("Energy demand" or "Feedstock demand").
+        Overrides affect only variables under the "Input" category and validate supplied labels.
+
+    Raises
+    ------
+    ValueError
+        If neither `posted_technames` nor `posted_datafolder` is provided, if the data folder contains no technologies,
+        or if an override supplies an unsupported type label.
+
+    Examples
+    --------
+    Process all technologies in a folder::
+
+        generate_cacoca_input(Path("out"), posted_datafolder=Path("posted_exports"))
+
+    Override the classification for hydrogen and natural gas while processing selected technologies::
+
+        generate_cacoca_input(
+            Path("out"),
+            posted_technames=["SMR with CCS", "Hydrogen Electrolysis"],
+            component_type_overrides={"Hydrogen": "Feedstock demand", "Natural Gas": "Feedstock demand"},
+        )
+    """
     # determine technames to process
     if posted_technames is not None:
         technames = posted_technames if isinstance(posted_technames, list) else [posted_technames]
@@ -73,10 +119,11 @@ def generate_cacoca_input(target_folder: Path, posted_technames: Union[str, list
         save_cacoca_dataframe(df_cacoca, target_folder, techname)
 
 def find_posted_technames(posted_datafolder: Path):
-    """Find available Posted technology files in the given folder."""
+    """Return the Posted technology names discovered in the given folder."""
     return [f.stem for f in posted_datafolder.glob("*.csv")]
 
 def get_posted_df(posted_techname):
+    """Load and aggregate a Posted dataset for the requested technology."""
     posted_parent_variable = f"Tech|{posted_techname}"
     teds = DataSet(posted_parent_variable)
     df_posted = teds.aggregate(region="World", period=2025) 
@@ -84,12 +131,14 @@ def get_posted_df(posted_techname):
     return df_posted, posted_parent_variable
 
 def translate_posted_df_to_cacoca_df(df_posted: pd.DataFrame, posted_parent_variable: str, component_type_overrides: Optional[Dict[str, str]] = None) -> pd.DataFrame:
+    """Perform end-to-end translation from a Posted dataframe to the CaCoCa schema."""
     df_cacoca = initiate_cacoca_dataframe(df_posted, posted_parent_variable, component_type_overrides)
     df_cacoca = aggregate_opex(df_cacoca)
     df_cacoca = filter_cacoca_dataframe(df_cacoca)
     return df_cacoca
 
 def initiate_cacoca_dataframe(df_posted: pd.DataFrame, posted_parent_variable: str, component_type_overrides: Optional[Dict[str, str]] = None) -> pd.DataFrame:
+    """Initialize the CaCoCa dataframe with translated metadata and raw values."""
     variable_extraction = df_posted["variable"].apply(lambda v: variable_translation(v, posted_parent_variable, component_type_overrides))
     type_list = [d["Type"] for d in variable_extraction]
     component_list = [d["Component"] for d in variable_extraction]
@@ -108,23 +157,23 @@ def initiate_cacoca_dataframe(df_posted: pd.DataFrame, posted_parent_variable: s
         "Mode": df_posted["mode"] if "mode" in df_posted.columns else None,
         "Type": type_list,
         "Component": component_list,
-        "Subcomponent": None, # that's ok
-        "Region": None, #that's ok
+        "Subcomponent": None,
+        "Region": None,
         "Period": df_posted["period"],
-        "Usage": None, #that's ok
+        "Usage": None,
         "Value": df_posted["value"],
-        "Uncertainty": None, #that's ok
-        "Unit": df_posted["unit"], # ok
-        "Non-unit conversion factor": None, # ok
-        "Value and uncertainty comment": None, # ok
+        "Uncertainty": None,
+        "Unit": df_posted["unit"],
+        "Non-unit conversion factor": None,
+        "Value and uncertainty comment": None,
         "Source reference": f"Posted {posted_parent_variable}",
-        "Source comment": None, #ok
+        "Source comment": None,
     })
 
     return df_cacoca
 
 def variable_translation(variable: str, parent_variable: str, component_type_overrides: Optional[Dict[str, str]] = None):
-    """Translate Posted variable to CaCoCa Type and Component."""
+    """Translate a Posted variable string into CaCoCa type and component labels."""
 
     # remove parent variable prefix
     variable = variable.replace(f"{parent_variable}|", "")
@@ -146,7 +195,8 @@ def variable_translation(variable: str, parent_variable: str, component_type_ove
         type_ = "OPEX"
     
     elif type_ ==  "Input":
-        override_type = component_type_overrides.get(component)
+        overrides = component_type_overrides or {}
+        override_type = overrides.get(component)
         if override_type:
             if override_type not in {"Energy demand", "Feedstock demand"}:
                 raise ValueError(f"Unsupported override '{override_type}' for component '{component}'.")
@@ -159,6 +209,7 @@ def variable_translation(variable: str, parent_variable: str, component_type_ove
     return {"Type": type_, "Component": component}
             
 def aggregate_opex(df_cacoca: pd.DataFrame) -> pd.DataFrame:
+    """Sum variable and fixed OPEX components once unit consistency is confirmed."""
     # Ensure OPEX components share compatible units before aggregation.
     is_opex_mask = df_cacoca['Component'].isin(POSTED_OPEX_COMPONENTS)
     df_opex = df_cacoca[is_opex_mask].copy()
@@ -192,6 +243,7 @@ def aggregate_opex(df_cacoca: pd.DataFrame) -> pd.DataFrame:
     return df_cacoca
 
 def filter_cacoca_dataframe(df_cacoca: pd.DataFrame) -> pd.DataFrame:
+    """Keep only Type/Component combinations that align with the CaCoCa specification."""
     all_allowed_components = ALLOWED_COMPONENTS + ENERGY_TYPES + FEEDSTOCK_TYPES + EMISSION_TYPES
     
     # Find rows in df_translated with new types/components
@@ -213,6 +265,7 @@ def filter_cacoca_dataframe(df_cacoca: pd.DataFrame) -> pd.DataFrame:
     return df_cacoca
 
 def save_cacoca_dataframe(df_cacoca: pd.DataFrame, target_folder: Path, posted_filename: str):
+    """Save the translated CaCoCa dataframe as a CSV file in the target folder."""
     # ensure target folder exists
     target_folder.mkdir(parents=True, exist_ok=True)
 
