@@ -25,12 +25,33 @@ from posted.noslag import DataSet
 
 # Components can be re-defined via component_type_overrides.
 # Example component_type_overrides = {"Natural Gas": "Feedstock demand", "Hydrogen": "Feedstock demand"}
-ENERGY_TYPES = ["Electricity", "Coal", "Natural Gas", "Heat", "Hydrogen"]
-FEEDSTOCK_TYPES = ["Oxygen", "Iron Ore", "Scrap Steel", "Water", "Ammonia", "Captured CO2",
-                   "Steel Slab", "Steel Liquid", "Cooling Water", "Methanol",
-                   "Alloys", "Directly Reduced Iron", "Graphite Electrode", "Lime",
-                   "Nitrogen", "Steel Scrap"]
+ENERGY_TYPES = [
+    "Electricity",
+    "Coal",
+    "Natural Gas",
+    "Heat",
+    "Hydrogen"
+]
+FEEDSTOCK_TYPES = [
+    "Oxygen", 
+    "Iron Ore",
+    "Scrap Steel",
+    "Water",
+    "Ammonia",
+    "Captured CO2",
+    "Steel Slab",
+    "Steel Liquid",
+    "Cooling Water",
+    "Methanol",               
+    "Alloys",
+    "Directly Reduced Iron",
+    "Graphite Electrode",
+    "Lime",
+    "Nitrogen",
+    "Steel Scrap"
+]
 EMISSION_TYPES = ["CO2"]
+# Types that are allowed in the final CaCoCa csv 
 ALLOWED_TYPES = {
     "High CAPEX",
     "Low CAPEX",
@@ -39,6 +60,7 @@ ALLOWED_TYPES = {
     "OPEX",
     "Emissions",
 }
+# Types/components that are expected to be removed during filtering
 EXPECTED_REMOVAL_TYPES = {
         # specified in project description
         "Lifetime",
@@ -48,10 +70,10 @@ EXPECTED_REMOVAL_TYPES = {
         "Total Output Capacity",
 
         "Capture Rate", # already in tech name
-        "Total Input Capacity", # TODO what do do with this?
-        "Storage Capacity", # TODO what do do with this?
-        "Total Production Expenditure", # TODO what do do with this?
-        "CAPEX Annualised", # TODO what do do with this?
+        # "Total Input Capacity", # TODO what do do with this?
+        # "Storage Capacity", # TODO what do do with this?
+        # "Total Production Expenditure", # TODO what do do with this?
+        # "CAPEX Annualised", # TODO what do do with this?
     }
 POSTED_OPEX_COMPONENTS = ['OPEX Variable', 'OPEX Fixed']
 ALLOWED_COMPONENTS = [
