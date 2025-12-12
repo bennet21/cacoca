@@ -1,12 +1,13 @@
 import pandas as pd
 from pathlib import Path
-from typing import Union
+from typing import Dict, Optional, Union
 
 from posted.noslag import DataSet
 
 # TODO heat emission factor?!
-# TODO Hydrogen could be both energy and feedstock, same for Natural Gas
 # TODO handle CAPEX annualized
+# Components can be re-defined via component_type_overrides
+# Exmaple component_type_overrrides = {"Natural Gas": "Feedstock demand", "Hydrogen": "Feedstock demand"}
 ENERGY_TYPES = ["Electricity", "Coal", "Natural Gas", "Heat", "Hydrogen"]
 FEEDSTOCK_TYPES = ["Oxygen", "Iron Ore", "Scrap Steel", "Water", "Ammonia", "Captured CO2",
                    "Steel Slab", "Steel Liquid", "Cooling Water", "Methanol",
@@ -52,7 +53,7 @@ EXCLUDED_TECHNAMES = [
 # TODO get emissions via emissions factor
 # TODO sort by Technology
 
-def generate_cacoca_input(target_folder: Path, posted_technames: Union[str, list] = None, posted_datafolder: Path = None):
+def generate_cacoca_input(target_folder: Path, posted_technames: Union[str, list] = None, posted_datafolder: Path = None, component_type_overrides: Optional[Dict[str, str]] = None):
 
     # determine technames to process
     if posted_technames is not None:
@@ -68,7 +69,7 @@ def generate_cacoca_input(target_folder: Path, posted_technames: Union[str, list
     for techname in technames:
         print(f"Processing Posted technology file: {techname}")
         df_posted, posted_parent_variable = get_posted_df(techname)
-        df_cacoca = translate_posted_df_to_cacoca_df(df_posted, posted_parent_variable)
+        df_cacoca = translate_posted_df_to_cacoca_df(df_posted, posted_parent_variable, component_type_overrides)
         save_cacoca_dataframe(df_cacoca, target_folder, techname)
 
 def find_posted_technames(posted_datafolder: Path):
@@ -82,14 +83,14 @@ def get_posted_df(posted_techname):
     df_posted.drop(columns=["region"], inplace=True) # region is redundant
     return df_posted, posted_parent_variable
 
-def translate_posted_df_to_cacoca_df(df_posted: pd.DataFrame, posted_parent_variable: str) -> pd.DataFrame:
-    df_cacoca = initiate_cacoca_dataframe(df_posted, posted_parent_variable)
+def translate_posted_df_to_cacoca_df(df_posted: pd.DataFrame, posted_parent_variable: str, component_type_overrides: Optional[Dict[str, str]] = None) -> pd.DataFrame:
+    df_cacoca = initiate_cacoca_dataframe(df_posted, posted_parent_variable, component_type_overrides)
     df_cacoca = aggregate_opex(df_cacoca)
     df_cacoca = filter_cacoca_dataframe(df_cacoca)
     return df_cacoca
 
-def initiate_cacoca_dataframe(df_posted: pd.DataFrame, posted_parent_variable: str) -> pd.DataFrame:
-    variable_extraction = df_posted["variable"].apply(lambda v: variable_translation(v, posted_parent_variable))
+def initiate_cacoca_dataframe(df_posted: pd.DataFrame, posted_parent_variable: str, component_type_overrides: Optional[Dict[str, str]] = None) -> pd.DataFrame:
+    variable_extraction = df_posted["variable"].apply(lambda v: variable_translation(v, posted_parent_variable, component_type_overrides))
     type_list = [d["Type"] for d in variable_extraction]
     component_list = [d["Component"] for d in variable_extraction]
 
@@ -122,7 +123,7 @@ def initiate_cacoca_dataframe(df_posted: pd.DataFrame, posted_parent_variable: s
 
     return df_cacoca
 
-def variable_translation(variable: str, parent_variable: str):
+def variable_translation(variable: str, parent_variable: str, component_type_overrides: Optional[Dict[str, str]] = None):
     """Translate Posted variable to CaCoCa Type and Component."""
 
     # remove parent variable prefix
@@ -145,7 +146,12 @@ def variable_translation(variable: str, parent_variable: str):
         type_ = "OPEX"
     
     elif type_ ==  "Input":
-        if component in ENERGY_TYPES:
+        override_type = component_type_overrides.get(component)
+        if override_type:
+            if override_type not in {"Energy demand", "Feedstock demand"}:
+                raise ValueError(f"Unsupported override '{override_type}' for component '{component}'.")
+            type_ = override_type
+        elif component in ENERGY_TYPES:
             type_ = "Energy demand"
         elif component in FEEDSTOCK_TYPES:
             type_ = "Feedstock demand"
