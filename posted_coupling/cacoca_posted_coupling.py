@@ -16,12 +16,15 @@ TODO:
     - get emissions via emissions factor
     - sort by Technology
 """
-
-import pandas as pd
+import logging
 from pathlib import Path
 from typing import Dict, Optional, Union
 
+import pandas as pd
+
 from posted.noslag import DataSet
+
+logger = logging.getLogger(__name__)
 
 # Components can be re-defined via component_type_overrides.
 # Example component_type_overrides = {"Natural Gas": "Feedstock demand", "Hydrogen": "Feedstock demand"}
@@ -135,7 +138,7 @@ def generate_cacoca_input(target_folder: Path, posted_technames: Union[str, list
         raise ValueError("Either posted_datafolder or posted_technames must be provided.")
     
     for techname in technames:
-        print(f"Processing Posted technology file: {techname}")
+        logger.info("Processing Posted technology file: %s", techname)
         df_posted, posted_parent_variable = get_posted_df(techname)
         df_cacoca = translate_posted_df_to_cacoca_df(df_posted, posted_parent_variable, component_type_overrides)
         save_cacoca_dataframe(df_cacoca, target_folder, techname)
@@ -278,8 +281,8 @@ def filter_cacoca_dataframe(df_cacoca: pd.DataFrame) -> pd.DataFrame:
     unexpected_dropped = dropped_rows[~dropped_rows["Type"].isin(EXPECTED_REMOVAL_TYPES)]
     if not unexpected_dropped.empty:
         unique_dropped = unexpected_dropped[["Type", "Component"]].drop_duplicates()
-        print("Warning: Unexpected unique Type/Component combinations are dropped:")
-        print(unique_dropped)
+        combos = ", ".join(f"{row.Type}/{row.Component}" for row in unique_dropped.itertuples(index=False))
+        logger.warning("Dropping unexpected Type/Component combinations: %s", combos)
 
     # Keep only valid rows
     df_cacoca = df_cacoca[mask_valid]
