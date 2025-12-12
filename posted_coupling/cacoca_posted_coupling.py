@@ -10,15 +10,20 @@ Components can be re-defined via component_type_overrides.
 Example component_type_overrides = {"Natural Gas": "Feedstock demand", "Hydrogen": "Feedstock demand"}
 
 TODO:
-    - heat emission factor
     - handle CAPEX annualized
-    - add low capex
+    - handle OPEX Fixed given in $/a. Would have to be converted to $ using annuity factor
+        however, annuity factor depends on lifetime and discount rate.
+        Lifetime is available in Posted, discount rate not.
+        Latter is assumption in CaCoCa, so it would have to be handled there.
+        => Option: add OPEX Fixed in CaCoCa: use lifetime and FLH/8760 to calculate ANF (which maybe exists already?)
+    - Low CAPEX on CaCoCa is not used. [that's ok]
     - get emissions via emissions factor
-    - sort by Technology
+    - heat emission factor
 """
 import logging
 from pathlib import Path
 from typing import Dict, Optional, Union
+from pandas.core.groupby.generic import DataFrameGroupBy
 
 import pandas as pd
 
@@ -67,7 +72,7 @@ ALLOWED_TYPES = {
 EXPECTED_REMOVAL_TYPES = {
         # specified in project description
         "Lifetime",
-        "OCF",
+        "OCF", # TODO would this be required in CaCoCa for annuity calculation?
         "Output Capacity",
         "Output", # TODO remove also Output|...
         "Total Output Capacity",
@@ -76,9 +81,12 @@ EXPECTED_REMOVAL_TYPES = {
         # "Total Input Capacity", # TODO what do do with this?
         # "Storage Capacity", # TODO what do do with this?
         # "Total Production Expenditure", # TODO what do do with this?
-        # "CAPEX Annualised", # TODO what do do with this?
+        # "CAPEX Annualised", # TODO Should this be moved to CaCoCa?
     }
-POSTED_OPEX_COMPONENTS = ['OPEX Variable', 'OPEX Fixed']
+POSTED_OPEX_COMPONENTS = [
+    'OPEX Variable',
+    'OPEX Fixed'
+]
 ALLOWED_COMPONENTS = [
     "CAPEX",
     "Additional OPEX",
@@ -232,10 +240,15 @@ def variable_translation(variable: str, parent_variable: str, component_type_ove
             type_ = "Feedstock demand"
     
     return {"Type": type_, "Component": component}
-            
+
+def are_consistent_units(grouped_df: DataFrameGroupBy) -> bool:
+    unit_counts = grouped_df['Unit'].nunique(dropna=False)
+    if not (unit_counts["Unit"] == 1).all():
+        return False
+    return True
+
 def aggregate_opex(df_cacoca: pd.DataFrame) -> pd.DataFrame:
     """Sum variable and fixed OPEX components once unit consistency is confirmed."""
-    # Ensure OPEX components share compatible units before aggregation.
     is_opex_mask = df_cacoca['Component'].isin(POSTED_OPEX_COMPONENTS)
     df_opex = df_cacoca[is_opex_mask].copy()
     df_other = df_cacoca[~is_opex_mask]
@@ -245,23 +258,21 @@ def aggregate_opex(df_cacoca: pd.DataFrame) -> pd.DataFrame:
         df_opex['Component'] = pd.Categorical(df_opex['Component'], categories=POSTED_OPEX_COMPONENTS, ordered=True)
         df_opex = df_opex.sort_values("Component")
 
-        # ensure OPEX components share the same unit before aggregation
+        # group and aggregate OPEX components
         grouping_cols = [col for col in df_cacoca.columns if col not in ['Component', 'Value', 'Unit']]
-        inconsistent_units = df_opex.groupby(grouping_cols, dropna=False)['Unit'].nunique()
-        inconsistent_units = inconsistent_units[inconsistent_units > 1]
-        if not inconsistent_units.empty:
-            conflicts = []
-            for idx in inconsistent_units.index:
-                if not grouping_cols:
-                    conflicts.append("global")
-                else:
-                    idx = idx if isinstance(idx, tuple) else (idx,)
-                    conflicts.append(", ".join(f"{col}={val}" for col, val in zip(grouping_cols, idx)))
-            raise ValueError("OPEX components have incompatible units for: " + "; ".join(conflicts))
-        agg_logic = {'Value': 'sum', 'Unit': 'first'}
-        aggregated_opex = df_opex.groupby(grouping_cols, as_index=False, dropna=False).agg(agg_logic)
-        aggregated_opex['Component'] = 'Additional OPEX'
+        grouped_opex = df_opex.groupby(grouping_cols, as_index=False, dropna=False)
+        
 
+        if are_consistent_units(grouped_opex):
+            # sum over all OPEX types
+            agg_logic = {'Value': 'sum', 'Unit': 'first'}
+            aggregated_opex = grouped_opex.agg(agg_logic)
+        else:
+            # keep only OPEX variable
+            logger.warning("Inconsistent units found within OPEX components. Only OPEX Variable kept.")
+            aggregated_opex = df_opex[df_opex['Component'] == 'OPEX Variable'].copy()
+
+        aggregated_opex['Component'] = 'Additional OPEX'
         # add aggregated OPEX back to CaCoCa dataframe
         df_cacoca = pd.concat([df_other, aggregated_opex], ignore_index=True)
     
