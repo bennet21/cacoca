@@ -4,21 +4,23 @@ This module contains functions to convert technology datasets from the Posted
 format into CSV files that are compatible with CaCoCa. The conversion includes translating variable
 names, aggregating data, and filtering out unnecessary information. The end
 result is a set of CSV files that can be directly used as input for CaCoCa
-modeling.
+modeling. 
 
 Components can be re-defined via component_type_overrides.
 Example component_type_overrides = {"Natural Gas": "Feedstock demand", "Hydrogen": "Feedstock demand"}
 
+Emissions are only considered as they are explicitly given in Posted.
+No specific emissions calculations through energy/feedstock use are performed.
+Low CAPEX on CaCoCa is not used.
+Annualized CAPEX is not supported.
+
 TODO:
-    - handle CAPEX annualized
     - handle OPEX Fixed given in $/a. Would have to be converted to $ using annuity factor
         however, annuity factor depends on lifetime and discount rate.
         Lifetime is available in Posted, discount rate not.
         Latter is assumption in CaCoCa, so it would have to be handled there.
         => Option: add OPEX Fixed in CaCoCa: use lifetime and FLH/8760 to calculate ANF (which maybe exists already?)
-    - Low CAPEX on CaCoCa is not used. [that's ok]
-    - get emissions via emissions factor
-    - heat emission factor
+    - Units: Are Posted units compatible (they are often in USD, while CaCoCa expects USD/t)
 """
 import logging
 from pathlib import Path
@@ -72,21 +74,23 @@ ALLOWED_TYPES = {
 EXPECTED_REMOVAL_TYPES = {
         # specified in project description
         "Lifetime",
-        "OCF", # TODO would this be required in CaCoCa for annuity calculation?
+        "OCF", # indirectly set through FLH
         "Output Capacity",
         "Output", # TODO remove also Output|...
         "Total Output Capacity",
 
+        # other variables
         "Capture Rate", # already in tech name
-        # "Total Input Capacity", # TODO what do do with this?
-        # "Storage Capacity", # TODO what do do with this?
-        # "Total Production Expenditure", # TODO what do do with this?
-        # "CAPEX Annualised", # TODO Should this be moved to CaCoCa?
+        "Total Input Capacity",
+        "Storage Capacity",
+        "Total Production Expenditure",
+        "CAPEX Annualised", # TODO Not compatible with CaCoCa yet
     }
 POSTED_OPEX_COMPONENTS = [
     'OPEX Variable',
     'OPEX Fixed'
 ]
+# TODO split Additional OPEX into variable and fixed
 ALLOWED_COMPONENTS = [
     "CAPEX",
     "Additional OPEX",
