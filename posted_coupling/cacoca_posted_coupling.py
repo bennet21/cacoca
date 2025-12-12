@@ -153,7 +153,7 @@ def variable_translation(variable: str, parent_variable: str):
     return {"Type": type_, "Component": component}
             
 def aggregate_opex(df_cacoca: pd.DataFrame) -> pd.DataFrame:
-    # TODO Warning: This assumes OPEX and CAPEX have compatible unit!
+    # Ensure OPEX components share compatible units before aggregation.
     is_opex_mask = df_cacoca['Component'].isin(POSTED_OPEX_COMPONENTS)
     df_opex = df_cacoca[is_opex_mask].copy()
     df_other = df_cacoca[~is_opex_mask]
@@ -163,8 +163,19 @@ def aggregate_opex(df_cacoca: pd.DataFrame) -> pd.DataFrame:
         df_opex['Component'] = pd.Categorical(df_opex['Component'], categories=POSTED_OPEX_COMPONENTS, ordered=True)
         df_opex = df_opex.sort_values("Component")
 
-        # aggregate OPEX components
+        # ensure OPEX components share the same unit before aggregation
         grouping_cols = [col for col in df_cacoca.columns if col not in ['Component', 'Value', 'Unit']]
+        inconsistent_units = df_opex.groupby(grouping_cols, dropna=False)['Unit'].nunique()
+        inconsistent_units = inconsistent_units[inconsistent_units > 1]
+        if not inconsistent_units.empty:
+            conflicts = []
+            for idx in inconsistent_units.index:
+                if not grouping_cols:
+                    conflicts.append("global")
+                else:
+                    idx = idx if isinstance(idx, tuple) else (idx,)
+                    conflicts.append(", ".join(f"{col}={val}" for col, val in zip(grouping_cols, idx)))
+            raise ValueError("OPEX components have incompatible units for: " + "; ".join(conflicts))
         agg_logic = {'Value': 'sum', 'Unit': 'first'}
         aggregated_opex = df_opex.groupby(grouping_cols, as_index=False, dropna=False).agg(agg_logic)
         aggregated_opex['Component'] = 'Additional OPEX'
