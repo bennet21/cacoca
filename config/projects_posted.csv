@@ -1,2 +1,46 @@
 Project name,Active,Industry,Technology,Project size/Production capacity [Mt/a] or GW,Planned production volume p.a.,Max. full load hours,Technical lifetime,Time of investment,Project duration [a],WACC,Share of high CAPEX,H2 Share Scenario
-Zement Posted,1,Cement Production,Tail-end CaL 50% IL (w/ CC),1,1,8760,20,2025,15,,1,H2-only
+Blast Furnace and Basic Oxygen Furnace with CC - BF-BOF-POST (w/ 60% CC),1,Blast Furnace and Basic Oxygen Furnace with CC,BF-BOF-POST (w/ 60% CC),1,1,8760,20,2025,15,,1,H2-only
+Blast Furnace and Basic Oxygen Furnace with CC - TGR-BOF-POST (w/ 41% CC),1,Blast Furnace and Basic Oxygen Furnace with CC,TGR-BOF-POST (w/ 41% CC),1,1,8760,20,2025,15,,1,H2-only
+Cement Production - Integrated CaL (w/ CC),1,Cement Production,Integrated CaL (w/ CC),1,1,8760,20,2025,15,,1,H2-only
+Cement Production - Standard (w/o CC),1,Cement Production,Standard (w/o CC),1,1,8760,20,2025,15,,1,H2-only
+Cement Production - Tail-end CaL 20% IL (w/ CC),1,Cement Production,Tail-end CaL 20% IL (w/ CC),1,1,8760,20,2025,15,,1,H2-only
+Cement Production - Tail-end CaL 50% IL (w/ CC),1,Cement Production,Tail-end CaL 50% IL (w/ CC),1,1,8760,20,2025,15,,1,H2-only
+Coal Gasification - Standard,1,Coal Gasification,Standard,1,1,8760,20,2025,15,,1,H2-only
+Coal Gasification - w/ CC (92.5%),1,Coal Gasification,w/ CC (92.5%),1,1,8760,20,2025,15,,1,H2-only
+Direct Air Capture - HT-DAC,1,Direct Air Capture,HT-DAC,1,1,8760,20,2025,15,,1,H2-only
+Direct Air Capture - LT-DAC,1,Direct Air Capture,LT-DAC,1,1,8760,20,2025,15,,1,H2-only
+Electric Arc Furnace - Electric Arc Furnace|w/ reheating,1,Electric Arc Furnace,Electric Arc Furnace|w/ reheating,1,1,8760,20,2025,15,,1,H2-only
+Electric Arc Furnace - Electric Arc Furnace|w/o reheating,1,Electric Arc Furnace,Electric Arc Furnace|w/o reheating,1,1,8760,20,2025,15,,1,H2-only
+Electrolysis - AEL|1 MW,1,Electrolysis,AEL|1 MW,1,1,8760,20,2025,15,,1,H2-only
+Electrolysis - AEL|100 MW,1,Electrolysis,AEL|100 MW,1,1,8760,20,2025,15,,1,H2-only
+Electrolysis - AEL|130000 Nm³/h,1,Electrolysis,AEL|130000 Nm³/h,1,1,8760,20,2025,15,,1,H2-only
+Electrolysis - AEL|5 MW,1,Electrolysis,AEL|5 MW,1,1,8760,20,2025,15,,1,H2-only
+Electrolysis - PEM|1 MW,1,Electrolysis,PEM|1 MW,1,1,8760,20,2025,15,,1,H2-only
+Electrolysis - PEM|100 MW,1,Electrolysis,PEM|100 MW,1,1,8760,20,2025,15,,1,H2-only
+Electrolysis - PEM|130000 Nm³/h,1,Electrolysis,PEM|130000 Nm³/h,1,1,8760,20,2025,15,,1,H2-only
+Electrolysis - PEM|5 MW,1,Electrolysis,PEM|5 MW,1,1,8760,20,2025,15,,1,H2-only
+Electrolysis - SOEC|1 MW,1,Electrolysis,SOEC|1 MW,1,1,8760,20,2025,15,,1,H2-only
+Electrolysis - SOEC|100 MW,1,Electrolysis,SOEC|100 MW,1,1,8760,20,2025,15,,1,H2-only
+Electrolysis - SOEC|130000 Nm³/h,1,Electrolysis,SOEC|130000 Nm³/h,1,1,8760,20,2025,15,,1,H2-only
+Electrolysis - SOEC|5 MW,1,Electrolysis,SOEC|5 MW,1,1,8760,20,2025,15,,1,H2-only
+Haber-Bosch with ASU - Haber-Bosch with ASU,1,Haber-Bosch with ASU,Haber-Bosch with ASU,1,1,8760,20,2025,15,,1,H2-only
+Haber-Bosch with Reforming - Haber-Bosch with Reforming,1,Haber-Bosch with Reforming,Haber-Bosch with Reforming,1,1,8760,20,2025,15,,1,H2-only
+Heatpump for DAC - Heatpump for DAC,1,Heatpump for DAC,Heatpump for DAC,1,1,8760,20,2025,15,,1,H2-only
+Hydrogen Liquefaction - Hydrogen Liquefaction,1,Hydrogen Liquefaction,Hydrogen Liquefaction,1,1,8760,20,2025,15,,1,H2-only
+Hydrogen Storage - AGCS,1,Hydrogen Storage,AGCS,1,1,8760,20,2025,15,,1,H2-only
+Hydrogen Storage - SC,1,Hydrogen Storage,SC,1,1,8760,20,2025,15,,1,H2-only
+Iron Direct Reduction - Iron Direct Reduction,1,Iron Direct Reduction,Iron Direct Reduction,1,1,8760,20,2025,15,,1,H2-only
+Methanation - BIO,1,Methanation,BIO,1,1,8760,20,2025,15,,1,H2-only
+Methanation - CAT,1,Methanation,CAT,1,1,8760,20,2025,15,,1,H2-only
+Methane Reforming - ATR|94.50%,1,Methane Reforming,ATR|94.50%,1,1,8760,20,2025,15,,1,H2-only
+Methane Reforming - SMR|0.00%,1,Methane Reforming,SMR|0.00%,1,1,8760,20,2025,15,,1,H2-only
+Methane Reforming - SMR|55.70%,1,Methane Reforming,SMR|55.70%,1,1,8760,20,2025,15,,1,H2-only
+Methane Reforming - SMR|90.00%,1,Methane Reforming,SMR|90.00%,1,1,8760,20,2025,15,,1,H2-only
+Methane Reforming - SMR|96.20%,1,Methane Reforming,SMR|96.20%,1,1,8760,20,2025,15,,1,H2-only
+Methanol Synthesis - Methanol Synthesis,1,Methanol Synthesis,Methanol Synthesis,1,1,8760,20,2025,15,,1,H2-only
+Methanol to Gasoline - Methanol to Gasoline,1,Methanol to Gasoline,Methanol to Gasoline,1,1,8760,20,2025,15,,1,H2-only
+Methanol to Kerosene - Methanol to Kerosene,1,Methanol to Kerosene,Methanol to Kerosene,1,1,8760,20,2025,15,,1,H2-only
+Methanol to Olefins - Methanol to Olefins,1,Methanol to Olefins,Methanol to Olefins,1,1,8760,20,2025,15,,1,H2-only
+Steel Casting - Steel Casting,1,Steel Casting,Steel Casting,1,1,8760,20,2025,15,,1,H2-only
+Steel Hot Rolling - Steel Hot Rolling,1,Steel Hot Rolling,Steel Hot Rolling,1,1,8760,20,2025,15,,1,H2-only
+Urea Synthesis - Urea Synthesis,1,Urea Synthesis,Urea Synthesis,1,1,8760,20,2025,15,,1,H2-only

@@ -2,4 +2,5 @@ Technology,Mode,Type,Component,Subcomponent,Region,Period,Usage,Value,Uncertaint
 Haber-Bosch with ASU,,High CAPEX,CAPEX,,,2025,,590.5,,USD_2005,,,Posted Tech|Haber-Bosch with ASU,
 Haber-Bosch with ASU,,Energy demand,Electricity,,,2025,,0.8197,,MWh,,,Posted Tech|Haber-Bosch with ASU,
 Haber-Bosch with ASU,,Energy demand,Hydrogen,,,2025,,6.202,,MWh,,,Posted Tech|Haber-Bosch with ASU,
-Haber-Bosch with ASU,,OPEX,Additional OPEX,,,2025,,3.132,,USD_2005,,,Posted Tech|Haber-Bosch with ASU,
+Haber-Bosch with ASU,,OPEX Fixed,OPEX Fixed,,,2025,,18.67,,USD_2005/a,,,Posted Tech|Haber-Bosch with ASU,
+Haber-Bosch with ASU,,OPEX Variable,OPEX Variable,,,2025,,3.132,,USD_2005,,,Posted Tech|Haber-Bosch with ASU,
