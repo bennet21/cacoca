@@ -57,6 +57,8 @@ display_names = {
     'compare_sectors': 'Sektorvergleich',
     'Abatement_cost': 'Vermeidungskosten',
     'Additional OPEX': 'Sonstige OPEX',
+    'OPEX Variable': 'Variable OPEX',
+    'OPEX Fixed': 'Fixe OPEX',
     'CAPEX annuity': 'CAPEX Annuität',
     'h2share_influence': 'Einfluss des H2-Anteils',
     'ccsshare_influence': 'Einfluss des CCS-Anteils',

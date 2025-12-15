@@ -10,6 +10,8 @@ from .plot_tools import display_name as dn
 colors = {
     'CAPEX annuity': 'rgb(0.4, 0.4, 0.4)',
     'Additional OPEX': 'rgb(0.7, 0.7, 0.7)',
+    'OPEX Variable': 'rgb(0.7, 0.7, 0.7)',
+    'OPEX Fixed annuity': 'rgb(0.6, 0.6, 0.6)',
     'Iron Ore': pl.colors.qualitative.Dark24[3],
     'DRI-Pellets': pl.colors.qualitative.Dark24[4],
     'Scrap Steel': pl.colors.qualitative.Dark24[14],
@@ -86,7 +88,8 @@ def plot_stacked_bars_multi(projects: pd.DataFrame, config: dict, project_names:
         def dn_override(vn):
             return dn_map.get(vn, dn(vn))
 
-    variables = ['CAPEX annuity', 'Additional OPEX'] \
+    base_vars = ['CAPEX annuity', 'Additional OPEX', 'OPEX Variable', 'OPEX Fixed annuity']
+    variables = [v for v in base_vars if v in projects.columns] \
         + [cn for cn in projects.columns if str(cn).startswith('cost_')
            and not str(cn).endswith(('_variance', '_diff', '_ref', '_upper', '_lower'))]
     if not is_diff:
@@ -327,7 +330,8 @@ def plot_stacked_bars(projects: pd.DataFrame, config: dict, project_name: str,
         def dn_override(vn):
             return dn_map.get(vn, dn(vn))
 
-    variables = ['CAPEX annuity', 'Additional OPEX'] \
+    base_vars = ['CAPEX annuity', 'Additional OPEX', 'OPEX Variable', 'OPEX Fixed annuity']
+    variables = [v for v in base_vars if v in projects.columns] \
         + [cn for cn in projects.columns if str(cn).startswith('cost_')
            and not str(cn).endswith(('_variance', '_diff', '_ref', '_upper', '_lower'))]
     if not is_diff:

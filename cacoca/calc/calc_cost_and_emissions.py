@@ -3,6 +3,7 @@ import numpy as np
 import numpy_financial as npf
 from ..setup.setup import Setup
 from ..tools.common_merges import add_tech_and_industry
+from ..tools.tools import calc_annualized_specific_cost
 
 
 def calc_cost_and_emissions(setup: Setup, keep_components: bool = False):
@@ -113,11 +114,18 @@ def calc_capex(data_in: pd.DataFrame, setup: Setup):
         .assign(
             **{"CAPEX annuity": lambda df:
                 # NB: npf.pmt already divides by lifetime to get cost per t of product
-                npf.pmt(df['WACC'], df['Technical lifetime'], -df['CAPEX total'])
-                * df['Project size/Production capacity [Mt/a] or GW']
-                / df['Planned production volume p.a.']}
-        ) \
-        .drop(columns=needed_project_info)
+                calc_annualized_specific_cost(df, df['CAPEX total'])}
+        )
+
+    if not setup.techdata.query("Type=='OPEX Fixed'").empty:
+        data_in = data_in \
+            .merge(single_tech_param('OPEX Fixed'), how='left', on='Technology') \
+            .assign(
+                **{"OPEX Fixed annuity": lambda df:
+                    calc_annualized_specific_cost(df, df['OPEX Fixed'].fillna(0.).astype(float))}
+            )
+
+    data_in = data_in.drop(columns=needed_project_info)
 
     # projects = projects \
     #     .assign(
@@ -223,6 +231,20 @@ def calc_cost_single_opmode(yearly_data: pd.DataFrame, setup: Setup, keep_compon
         ) \
         .rename(columns={"Value": "Additional OPEX"})
     yearly_data["Additional OPEX"].fillna(0., inplace=True)
+
+    # add OPEX Variable (if present)
+    if not setup.techdata.query("Type=='OPEX Variable'").empty:
+        yearly_data = yearly_data \
+            .merge(
+                setup.techdata
+                .query("Type=='OPEX Variable'")
+                .filter(["Technology", "Value"]),
+                how='left',
+                on=['Technology']
+            ) \
+            .rename(columns={"Value": "OPEX Variable"})
+        yearly_data["OPEX Variable"].fillna(0., inplace=True)
+
     return yearly_data
 
 
@@ -230,6 +252,11 @@ def calc_cost_wit_capex(yearly_data: pd.DataFrame):
 
     yearly_data = yearly_data \
         .assign(**{'cost': lambda df: df['cost'] + df['Additional OPEX'] + df['CAPEX annuity']})
+    
+    if 'OPEX Variable' in yearly_data.columns:
+        yearly_data['cost'] += yearly_data['OPEX Variable']
+    if 'OPEX Fixed annuity' in yearly_data.columns:
+        yearly_data['cost'] += yearly_data['OPEX Fixed annuity']
 
     return yearly_data
 
@@ -272,8 +299,9 @@ def merge_operation_modes(data_old: pd.DataFrame, data_new: pd.DataFrame, h2shar
 
     # merge old and new dataframes
     # (CAPEX is not blended, but 100 % new technology, therefore dropped in old df)
+    # error='ignore' to avoid issues if CAPEX annuity or OPEX Fixed annuity are not present
     data_all = data_old \
-        .drop(columns=['CAPEX annuity']) \
+        .drop(columns=['CAPEX annuity', 'OPEX Fixed annuity'], errors='ignore') \
         .merge(
             data_new.drop(columns=['Technology']),
             how='left',
@@ -287,7 +315,7 @@ def merge_operation_modes(data_old: pd.DataFrame, data_new: pd.DataFrame, h2shar
 
     # blend cost and emissions of old and new operation mode to overall cost
     for vname in variables:
-        if vname == 'CAPEX annuity':
+        if vname == 'CAPEX annuity' or vname == 'OPEX Fixed annuity':
             continue
         data_all = data_all \
             .assign(**{vname: lambda df:
