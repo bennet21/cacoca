@@ -68,6 +68,8 @@ ALLOWED_TYPES = {
     "Energy demand",
     "Feedstock demand",
     "OPEX",
+    "OPEX Variable",
+    "OPEX Fixed",
     "Emissions",
 }
 # Types/components that are expected to be removed during filtering
@@ -90,10 +92,11 @@ POSTED_OPEX_COMPONENTS = [
     'OPEX Variable',
     'OPEX Fixed'
 ]
-# TODO split Additional OPEX into variable and fixed
 ALLOWED_COMPONENTS = [
     "CAPEX",
     "Additional OPEX",
+    "OPEX Variable",
+    "OPEX Fixed",
 ]
 TRANSLATION = {"Fossil Gas": "Natural Gas"}
 EXCLUDED_TECHNAMES = [
@@ -253,32 +256,15 @@ def are_consistent_units(grouped_df: DataFrameGroupBy) -> bool:
 
 def aggregate_opex(df_cacoca: pd.DataFrame) -> pd.DataFrame:
     """Sum variable and fixed OPEX components once unit consistency is confirmed."""
-    is_opex_mask = df_cacoca['Component'].isin(POSTED_OPEX_COMPONENTS)
-    df_opex = df_cacoca[is_opex_mask].copy()
-    df_other = df_cacoca[~is_opex_mask]
-
-    if not df_opex.empty:
-        # sort (as OPEX Variable should be the master for other columns): 
-        df_opex['Component'] = pd.Categorical(df_opex['Component'], categories=POSTED_OPEX_COMPONENTS, ordered=True)
-        df_opex = df_opex.sort_values("Component")
-
-        # group and aggregate OPEX components
-        grouping_cols = [col for col in df_cacoca.columns if col not in ['Component', 'Value', 'Unit']]
-        grouped_opex = df_opex.groupby(grouping_cols, as_index=False, dropna=False)
-        
-
-        if are_consistent_units(grouped_opex):
-            # sum over all OPEX types
-            agg_logic = {'Value': 'sum', 'Unit': 'first'}
-            aggregated_opex = grouped_opex.agg(agg_logic)
-        else:
-            # keep only OPEX variable
-            logger.warning("Inconsistent units found within OPEX components. Only OPEX Variable kept.")
-            aggregated_opex = df_opex[df_opex['Component'] == 'OPEX Variable'].copy()
-
-        aggregated_opex['Component'] = 'Additional OPEX'
-        # add aggregated OPEX back to CaCoCa dataframe
-        df_cacoca = pd.concat([df_other, aggregated_opex], ignore_index=True)
+    # Currently Type is "OPEX" for both.
+    # We want Type="OPEX Variable" for "OPEX Variable" component
+    # and Type="OPEX Fixed" for "OPEX Fixed" component.
+    
+    mask_var = df_cacoca['Component'] == 'OPEX Variable'
+    mask_fix = df_cacoca['Component'] == 'OPEX Fixed'
+    
+    df_cacoca.loc[mask_var, 'Type'] = 'OPEX Variable'
+    df_cacoca.loc[mask_fix, 'Type'] = 'OPEX Fixed'
     
     return df_cacoca
 
