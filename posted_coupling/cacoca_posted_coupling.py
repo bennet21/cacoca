@@ -7,12 +7,13 @@ result is a set of CSV files that can be directly used as input for CaCoCa
 modeling. 
 
 Components can be re-defined via component_type_overrides.
+This can be useful as Natural Gas could be both energy or feedstock.
 Example component_type_overrides = {"Natural Gas": "Feedstock demand", "Hydrogen": "Feedstock demand"}
 
 Emissions are only considered as they are explicitly given in Posted.
 No specific emissions calculations through energy/feedstock use are performed.
 Low CAPEX on CaCoCa is not used.
-Annualized CAPEX is not supported.
+Annualized CAPEX is not supported and will be omitted.
 
 TODO:
     - handle OPEX Fixed given in $/a. Would have to be converted to $ using annuity factor

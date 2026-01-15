@@ -30,6 +30,7 @@ def read_techdata(dir_path: str, filenames_base: list):
     ]
     for df, fnb in zip(techdata, filenames_base):
         df.insert(0, "Industry", fnb, True)
+    techdata = [df for df in techdata if not df.empty]
     techdata = pd.concat(techdata)
 
     reference_tech = pd.read_csv(
