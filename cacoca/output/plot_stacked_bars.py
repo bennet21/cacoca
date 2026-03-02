@@ -25,8 +25,8 @@ colors = {
 
 
 def plot_stacked_bars_multi(projects: pd.DataFrame, config: dict, project_names: list[str],
-                      project_ref: str = None, cost_per: str = 'product', is_diff: bool = False, 
-                      emission_diff: bool = True):
+                      project_ref: str = None, cost_per: str = 'product',
+                      emission_diff: bool = False):
     """
     Plot stacked bar charts for multiple projects and a single reference.
     
@@ -43,10 +43,8 @@ def plot_stacked_bars_multi(projects: pd.DataFrame, config: dict, project_names:
         If None, no reference is shown.
     cost_per : str
         'product' or 'em_savings' to determine the y-axis unit
-    is_diff : bool
-        If True, plot the difference between project and reference
     emission_diff : bool
-        If True, handle emission costs as differences only
+        If True, plot co2 costs difference on the reference bar.
     """
     if cost_per == 'product':
         yunit = '€/t Produkt'
@@ -83,8 +81,8 @@ def plot_stacked_bars_multi(projects: pd.DataFrame, config: dict, project_names:
     variables = ['CAPEX annuity', 'Additional OPEX'] \
         + [cn for cn in projects.columns if str(cn).startswith('cost_')
            and not str(cn).endswith(('_variance', '_diff', '_ref', '_upper', '_lower'))]
-    if not is_diff:
-        variables.append(co2pricename)
+
+    variables.append(co2pricename)
 
     if cost_per == 'em_savings':
         for vn in variables:
@@ -196,12 +194,6 @@ def plot_stacked_bars_multi(projects: pd.DataFrame, config: dict, project_names:
             .filter(['Period'] + variables) \
             .rename(columns=lambda cn: str(cn).replace('cost_', ''))
 
-        # Extract CO2 price data if needed for differential plotting
-        if is_diff and emission_diff:
-            projects_co2price = project_data \
-                .filter(['Period', co2pricename + '_ref']) \
-                .rename(columns={co2pricename + '_ref': co2pricename})
-
         class Bar():
             def __init__(self, name, projects: pd.DataFrame, linecolor=None, reversed=False, base=None):
                 self.name = name
@@ -220,13 +212,6 @@ def plot_stacked_bars_multi(projects: pd.DataFrame, config: dict, project_names:
                   linecolor=pl.colors.qualitative.Dark24[10])
 
         bars = [new]
-
-        # Add CO2 bar if using differential emissions
-        if is_diff and emission_diff:
-            co2 = Bar(name=f'CO2: {display_project_name}',
-                      projects=projects_co2price,
-                      linecolor='rgb(0., 0., 0.)')
-            bars.append(co2)
 
         # Add bars for each project
         for bar in bars:
@@ -284,7 +269,7 @@ def plot_stacked_bars_multi(projects: pd.DataFrame, config: dict, project_names:
     show_and_save(fig, config, filename)
 
 def plot_stacked_bars(projects: pd.DataFrame, config: dict, project_name: str,
-                      cost_per: str = 'product', is_diff: bool = False, emission_diff: bool = True):
+                      cost_per: str = 'product', emission_diff: bool = False):
 
     if cost_per == 'product':
         yunit = '€/t Produkt'
@@ -318,8 +303,8 @@ def plot_stacked_bars(projects: pd.DataFrame, config: dict, project_name: str,
     variables = ['CAPEX annuity', 'Additional OPEX'] \
         + [cn for cn in projects.columns if str(cn).startswith('cost_')
            and not str(cn).endswith(('_variance', '_diff', '_ref', '_upper', '_lower'))]
-    if not is_diff:
-        variables.append(co2pricename)
+
+    variables.append(co2pricename)
 
     if cost_per == 'em_savings':
         for vn in variables:
@@ -370,26 +355,13 @@ def plot_stacked_bars(projects: pd.DataFrame, config: dict, project_name: str,
             self.dir = -1 if reversed else 1
             self.base = yzero() if base is None else base
 
-    if not is_diff:
-        new = Bar(name='Vorhaben',
-                  projects=projects_new,
-                  linecolor=pl.colors.qualitative.Dark24[10])
-        ref = Bar(name='Referenz',
-                  projects=projects_ref,
-                  linecolor='rgb(0., 0., 0.)')
-        bars = [new, ref]
-    else:
-        new = Bar(name='Vorhaben',
-                  projects=projects_new)
-        ref = Bar(name='Referenz',
-                  projects=projects_ref,
-                  linecolor=pl.colors.qualitative.Dark24[10],
-                  reversed=True,
-                  base=new.base)
-        co2 = Bar(name='CO2-Preis',
-                  projects=projects_co2price,
-                  linecolor='rgb(0., 0., 0.)')
-        bars = [new, ref, co2]
+    new = Bar(name='Vorhaben',
+                projects=projects_new,
+                linecolor=pl.colors.qualitative.Dark24[10])
+    ref = Bar(name='Referenz',
+                projects=projects_ref,
+                linecolor='rgb(0., 0., 0.)')
+    bars = [new, ref]
 
     for bar in bars:
 
