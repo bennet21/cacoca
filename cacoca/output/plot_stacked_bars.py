@@ -5,24 +5,28 @@ from .plot_tools import show_and_save
 from .plot_tools import display_name as dn
 
 
-# The dict also prescribes the ordering in the plot (from bottom to top):
-# CAPEX, OPEX, non-energy feedstock, energy carriers, CO2 price
+# The dict prescribes colors and ordering in the plot (from bottom to top):
 colors = {
-    'CAPEX annuity': 'rgb(0.4, 0.4, 0.4)',
-    'Additional OPEX': 'rgb(0.7, 0.7, 0.7)',
-    'Iron Ore': pl.colors.qualitative.Dark24[3],
-    'DRI-Pellets': pl.colors.qualitative.Dark24[4],
-    'Scrap Steel': pl.colors.qualitative.Dark24[14],
-    'Naphta': pl.colors.qualitative.Dark24[17],
-    'Coking Coal': pl.colors.qualitative.Dark24[16],
-    'Injection Coal': pl.colors.qualitative.Dark24[6],
-    'Natural Gas': pl.colors.qualitative.Dark24[13],
-    'Hydrogen': pl.colors.qualitative.Dark24[0],
-    'Electricity': pl.colors.qualitative.Dark24[2],
-    'Effective CO2 Price': 'rgb(0.2, 0.2, 0.2)',
-    'CO2 Cost': 'rgb(0.2, 0.2, 0.2)',
-}
+    # 1. FINANCIALS & EMISSIONS (Gray)
+    'CO2 Cost': '#333333',              # Dark Grey
+    'Effective CO2 Price': '#333333',   # Dark Grey
+    'CAPEX annuity': '#666666',         # Mid-Grey
+    'Additional OPEX': '#B3B3B3',       # Light Grey
+    
+    # 2. FEEDSTOCK INPUTS
+    'Iron Ore': '#A04000',
+    'DRI-Pellets': "#C0703B",
+    'Scrap Steel': "#68839E",
 
+    # 3. ENERGY & CARBON INPUTS
+    'Coking Coal': '#42032E',
+    'Injection Coal': "#5E3360",
+    'Naphta': '#E67E22',
+    'Biomass': '#229954',
+    'Natural Gas': '#2980B9',
+    'Hydrogen': '#00BCD4',
+    'Electricity': '#F1C40F',
+}
 
 def plot_stacked_bars_multi(projects: pd.DataFrame, config: dict, project_names: list[str],
                       project_ref: str = None, cost_per: str = 'product',
