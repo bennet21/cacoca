@@ -74,17 +74,11 @@ def plot_stacked_bars_multi(projects: pd.DataFrame, config: dict, project_names:
         projects = projects.assign(**{
             co2pricename + '_ref': lambda df: df['Effective CO2 Price'] * -df['Emissions_diff'],
             co2pricename: 0.})
-        dn_override = dn
     else:
         projects = projects.assign(**{
             co2pricename + '_ref': lambda df: df['CO2 Price'] * (df['Emissions_ref'] - df['Free Allocations_ref']),
             co2pricename: lambda df: df['CO2 Price'] * (df['Emissions'] - df['Free Allocations'])
         })
-
-        # override display name for CO2 Cost
-        dn_map = {'CO2 Cost': 'CO₂-Kosten'}
-        def dn_override(vn):
-            return dn_map.get(vn, dn(vn))
 
     variables = ['CAPEX annuity', 'Additional OPEX'] \
         + [cn for cn in projects.columns if str(cn).startswith('cost_')
@@ -160,7 +154,7 @@ def plot_stacked_bars_multi(projects: pd.DataFrame, config: dict, project_names:
                     continue
 
                 fig.add_bar(
-                    name=dn_override(vn),
+                    name=dn(vn),
                     x=[ref.projects['Period'].to_list(), [ref.name for _ in years]],
                     y=ref.dir * ref.projects[vn],
                     base=ref.base,
@@ -245,7 +239,7 @@ def plot_stacked_bars_multi(projects: pd.DataFrame, config: dict, project_names:
                     continue
 
                 # For multi-project, we'll add the project name to the bar name for clarity
-                display_name = f"{dn_override(vn)} ({bar.name})" if vn in legend_vars else dn_override(vn)
+                display_name = f"{dn(vn)} ({bar.name})" if vn in legend_vars else vn
 
                 fig.add_bar(
                     name=display_name,
@@ -314,18 +308,12 @@ def plot_stacked_bars(projects: pd.DataFrame, config: dict, project_name: str,
         projects = projects.assign(**{
             co2pricename + '_ref': lambda df: df['Effective CO2 Price'] * -df['Emissions_diff'],
             co2pricename: 0.})
-        dn_override = dn
     else:
         # Emission cost: plotted for both project and reference
         projects = projects.assign(**{
             co2pricename + '_ref': lambda df: df['CO2 Price'] * (df['Emissions_ref'] - df['Free Allocations_ref']),
             co2pricename: lambda df: df['CO2 Price'] * (df['Emissions'] - df['Free Allocations'])
         })
-
-        # override display name for CO2 Cost
-        dn_map = {'CO2 Cost': 'CO₂-Kosten'}
-        def dn_override(vn):
-            return dn_map.get(vn, dn(vn))
 
     variables = ['CAPEX annuity', 'Additional OPEX'] \
         + [cn for cn in projects.columns if str(cn).startswith('cost_')
@@ -415,7 +403,7 @@ def plot_stacked_bars(projects: pd.DataFrame, config: dict, project_name: str,
                 continue
 
             fig.add_bar(
-                name=dn_override(vn),
+                name=dn(vn),
                 x=[bar.projects['Period'].to_list(), [bar.name for _ in years]],
                 y=bar.dir * bar.projects[vn],
                 base=bar.base,
