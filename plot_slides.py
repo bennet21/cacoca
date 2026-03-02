@@ -18,9 +18,10 @@ if 'cost_and_em_actual' not in globals():
     change_output_subdir_by_filename(setup.config, __file__)
 
 project_names = [
-    'Stahl b)',
-    'Andere a)',
-    'Zement a)']
+    'Scrap0_DRI100',
+    'Scrap50_DRI50',
+    'Scrap100_DRI0',
+    'BF_BOF_reference']
 plot_project_cost_time_curves(cost_and_em_actual, config=setup.config, print_name='compare_sectors',
                               **{'Project name': project_names})
 
@@ -48,7 +49,7 @@ plot_project_cost_time_curves(cost_and_em_all, config=setup_all.config, print_na
 
 # %% STACKED BARS  =================================================================================
 
-from cacoca.output.plot_stacked_bars import plot_stacked_bars
+from cacoca.output.plot_stacked_bars import plot_stacked_bars, plot_stacked_bars_multi
 from cacoca.run import run
 from cacoca.output.plot_tools import change_output_subdir_by_filename
 
@@ -58,15 +59,16 @@ if 'cost_and_em_actual' not in globals():
     change_output_subdir_by_filename(setup.config, __file__)
 
 project_names = [
-    'Stahl b)',
-    'Andere a)',
-    'Zement a)']
+    'Scrap0_DRI100',
+    'Scrap50_DRI50',
+    'Scrap100_DRI0'
+    ]
+
+plot_stacked_bars_multi(cost_and_em_actual, setup.config, project_names=project_names, project_ref="Scrap0_DRI100",
+                cost_per='product', emission_diff=False, export_csv=True)
 for project_name in project_names:
     plot_stacked_bars(cost_and_em_actual, setup.config, project_name=project_name,
-                      cost_per='product')
-    # plot_stacked_bars(cost_and_em_actual, config, project_name=project_name,
-    #                   cost_per='em_savings', is_diff=True)
-
+                      cost_per='em_savings', emission_diff = False, export_csv=True)
 
 # %% PRICE SCENARIOS  ==============================================================================
 
@@ -94,9 +96,10 @@ if 'setup' not in globals():
     change_output_subdir_by_filename(setup.config, __file__)
 
 project_names = [
-    'Stahl j)',
-    'Stahl k)',
-    'Stahl l)']
+    'Scrap0_DRI100',
+    'Scrap50_DRI50',
+    'Scrap100_DRI0',
+    'BF_BOF_reference']
 plot_h2share_scenarios(setup, project_names, 'h2share', 'vary_h2share')
 
 
@@ -112,9 +115,10 @@ if 'cost_and_em_actual' not in globals():
     change_output_subdir_by_filename(setup.config, __file__)
 
 project_names = [
-    'Stahl j)',
-    'Stahl k)',
-    'Stahl l)']
+    'Scrap0_DRI100',
+    'Scrap50_DRI50',
+    'Scrap100_DRI0',
+    'BF_BOF_reference']
 plot_project_cost_time_curves(cost_and_em_actual, config=setup.config,
                               print_name='h2share_influence', **{'Project name': project_names})
 
@@ -134,13 +138,10 @@ if 'cost_and_em_actual' not in globals():
 cost_and_em_actual = add_absolute_hydrogen_demand(cost_and_em_actual, setup)
 
 project_names = [
-    'Stahl a)',
-    'Stahl b)',
-    'Stahl c)',
-    'Stahl d)',
-    'Stahl j)',
-    'Stahl k)',
-    'Stahl l)']
+    'Scrap0_DRI100',
+    'Scrap50_DRI50',
+    'Scrap100_DRI0',
+    'BF_BOF_reference']
 plot_absolute_hydrogen_demand(cost_and_em_actual, setup, project_names)
 
 

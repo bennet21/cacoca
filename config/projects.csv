@@ -54,3 +54,10 @@ Zement l),1,cement,"Agora-Oxyfuel-Drehrohrofen ",0.737,0.737,8760,15,2026,15,,0.
 Zement m),1,cement,"Agora-Oxyfuel-Drehrohrofen ",1,1,8760,15,2026,15,,0.5,Ramp-CCS
 Zement n),1,cement,"Agora-Oxyfuel-Drehrohrofen ",0.8,0.8,8760,15,2025,15,,1,Ramp-CCS
 Zement o),1,cement,Agora-El.LEILAC-Drehrohrofen,0.8,0.8,8760,15,2025,15,,1,Ramp-CCS
+Dummy_Scrap a),1,scrap_steel,Dummy_Scrap,0.5,0.5,8760,20,2025,15,,1,H2-only
+Scrap0_DRI100,1,scrap_steel,Scrap0_DRI100,1,1,8760,20,2028,15,,1,H2-only
+Scrap20_DRI80,1,scrap_steel,Scrap20_DRI80,1,1,8760,20,2028,15,,1,H2-only
+Scrap50_DRI50,1,scrap_steel,Scrap50_DRI50,1,1,8760,20,2028,15,,1,H2-only
+Scrap80_DRI20,1,scrap_steel,Scrap80_DRI20,1,1,8760,20,2028,15,,1,H2-only
+Scrap100_DRI0,1,scrap_steel,Scrap100_DRI0,1,1,8760,20,2028,15,,1,H2-only
+BF_BOF_reference,1,scrap_steel,BF_BOF_reference,1,1,8760,20,2028,15,,1,H2-only

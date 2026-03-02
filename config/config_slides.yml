@@ -8,11 +8,12 @@ techdata_files:
 - other_industries
 - steel
 - steel_dri
+- scrap_steel
 projects_file: 'config/projects.csv'
 do_overwrite_project_start_year: True
 project_start_year_overwrite: 2025
 ccfd_duration: 20
-default_wacc: 0.06
+default_wacc: 0.075
 
 #output
 show_figures: True
@@ -24,15 +25,16 @@ crop_figures: True
 # scenarios
 scenarios_dir: 'data/scenarios/basic/'
 scenarios_actual:
-  free_allocations: ''
+  free_allocations: 'base_allocation'
   prices:
-    Electricity: '100 steady'
-    CO2: 'PIKExpertGuess-CO2'
-    Natural Gas: '40 steady'
-    Hydrogen: 'PIKExpertGuess-H2'
-    Coking Coal: '100 steady'
-    Injection Coal: '70 steady'
-    Iron Ore: 'Eisenerz Agora'
-    Scrap Steel: 'Zero_Dummy_Scrap'
-    DRI-Pellets: 'DRI-Pellets Agora'
-    Naphta: 'Naphta a)'
+    Electricity: 'OL_scrap_base_elec' #ok
+    CO2: 'PIKExpertGuess-CO2' #ok
+    Natural Gas: 'OL_scrap_base_ngas' #ok
+    Hydrogen: 'OL_scrap_base_hy' #ok
+    Coking Coal: 'OL_scrap_base_ccoal' #ok
+    Injection Coal: 'OL_scrap_base_icoal' #ok
+    Iron Ore: 'OL_scrap_base_iore' #ok
+    Scrap Steel: 'OL_scrap_base_scrap' #ok
+    DRI-Pellets: 'DRI-Pellets Agora' #ok
+    Naphta: 'Naphta a)' #ok
+    Biomass: 'OL_scrap_base_biomass' #ok

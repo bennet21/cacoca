@@ -299,12 +299,12 @@ def plot_stacked_bars_multi(projects: pd.DataFrame, config: dict, project_names:
     add_placeholder(1)
 
     # Final layout updates
-    fig.update_yaxes(title=yunit)
+    fig.update_yaxes(title="€/t crude steel")
     project_names_display = ', '.join([dn(name) for name in project_names])
     ref_text = f" (Ref: {dn(project_ref)})" if project_ref is not None else ""
     fig.update_layout(
         legend_traceorder="reversed",
-        title=f"Kostenvergleich: {project_names_display}{ref_text}",
+        title=f"Production Cost Comparison: {project_names_display}{ref_text}",
         barmode="relative"
     )
 
