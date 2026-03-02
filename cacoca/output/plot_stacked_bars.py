@@ -49,6 +49,10 @@ def plot_stacked_bars_multi(projects: pd.DataFrame, config: dict, project_names:
         'product' or 'em_savings' to determine the y-axis unit
     emission_diff : bool
         If True, plot co2 costs difference on the reference bar.
+    export_csv : bool
+        If True, export the data used for plotting to a CSV file.
+    csv_dir : str
+        Directory to save the CSV file if export_csv is True. If None, saves to current directory.
     """
     if cost_per == 'product':
         yunit = '€/t Produkt'
@@ -113,6 +117,7 @@ def plot_stacked_bars_multi(projects: pd.DataFrame, config: dict, project_names:
             if not df_ref.empty:
                 ref_cols = ['Project name', 'Period'] + [vn + '_ref' for vn in variables]
                 row = df_ref[ref_cols].copy()
+                row['Project name'] = 'Reference'
                 # Rename _ref columns to match normal variable names for clarity
                 row = row.rename(columns={vn + '_ref': vn for vn in variables})
                 export_rows.append(row)
