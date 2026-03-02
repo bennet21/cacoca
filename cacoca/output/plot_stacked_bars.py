@@ -179,29 +179,36 @@ def plot_stacked_bars_multi(projects: pd.DataFrame, config: dict, project_names:
                 if vn not in colors:
                     raise Exception(f"Variable {vn} not found in colors dict")
 
+            ref.pos_base = ref.base.copy()
+            ref.neg_base = ref.base.copy()
+
             for vn, color in list(colors.items())[::ref.dir]:
                 if vn not in ref.vnames:
                     continue
 
+                values = ref.dir * ref.projects[vn]
+                effective_base = ref.pos_base.where(values >= 0, ref.neg_base)
+
                 fig.add_bar(
                     name=dn(vn),
                     x=[ref.projects['Period'].to_list(), [ref.name for _ in years]],
-                    y=ref.dir * ref.projects[vn],
-                    base=ref.base,
+                    y=values,
+                    base=effective_base,
                     marker_color=color,
                     width=width,
                     offsetgroup=offsetgroup,
                     showlegend=vn not in legend_vars
                 )
                 legend_vars.add(vn)
-                ref.base += ref.dir * ref.projects[vn]
+                ref.pos_base += values.clip(lower=0)
+                ref.neg_base += values.clip(upper=0)
 
             if ref.linecolor:
                 fig.add_scatter(
                     x=[ref.projects['Period'].to_list(), [ref.name for _ in years]],
-                    y=ref.base,
-                    mode='lines',
-                    line=dict(color=ref.linecolor, width=2, dash='solid'),
+                    y=ref.pos_base + ref.neg_base,
+                    mode='lines+markers',
+                    line=dict(color='black', width=2, dash='solid'),
                     showlegend=False,
                 )
 
@@ -251,6 +258,9 @@ def plot_stacked_bars_multi(projects: pd.DataFrame, config: dict, project_names:
                 if vn not in colors:
                     raise Exception(f"Variable {vn} not found in colors dict")
 
+            bar.pos_base = bar.base.copy()
+            bar.neg_base = bar.base.copy()
+
             for vn, color in list(colors.items())[::bar.dir]:
                 if vn not in bar.vnames:
                     continue
@@ -258,25 +268,29 @@ def plot_stacked_bars_multi(projects: pd.DataFrame, config: dict, project_names:
                 # For multi-project, we'll add the project name to the bar name for clarity
                 display_name = f"{dn(vn)} ({bar.name})" if vn in legend_vars else vn
 
+                values = bar.dir * bar.projects[vn]
+                effective_base = bar.pos_base.where(values >= 0, bar.neg_base)
+
                 fig.add_bar(
                     name=display_name,
                     x=[bar.projects['Period'].to_list(), [bar.name for _ in years]],
-                    y=bar.dir * bar.projects[vn],
-                    base=bar.base,
+                    y=values,
+                    base=effective_base,
                     marker_color=color,
                     width=width,
                     offsetgroup=offsetgroup,
                     showlegend=vn not in legend_vars
                 )
                 legend_vars.add(vn)
-                bar.base += bar.dir * bar.projects[vn]
+                bar.pos_base += values.clip(lower=0)
+                bar.neg_base += values.clip(upper=0)
 
             if bar.linecolor:
                 fig.add_scatter(
                     x=[bar.projects['Period'].to_list(), [bar.name for _ in years]],
-                    y=bar.base,
-                    mode='lines',
-                    line=dict(color=bar.linecolor, width=2, dash='solid'),
+                    y=bar.pos_base + bar.neg_base,
+                    mode='lines+markers',
+                    line=dict(color='#D81B60', width=2, dash='solid'),
                     showlegend=False,
                 )
 
@@ -412,29 +426,37 @@ def plot_stacked_bars(projects: pd.DataFrame, config: dict, project_name: str,
             if vn not in colors:
                 raise Exception(f"Variable {vn} not found in colors dict")
 
+        bar.pos_base = bar.base.copy()
+        bar.neg_base = bar.base.copy()
+
         for vn, color in list(colors.items())[::bar.dir]:
 
             if vn not in bar.vnames:
                 continue
 
+            values = bar.dir * bar.projects[vn]
+            effective_base = bar.pos_base.where(values >= 0, bar.neg_base)
+
             fig.add_bar(
                 name=dn(vn),
                 x=[bar.projects['Period'].to_list(), [bar.name for _ in years]],
-                y=bar.dir * bar.projects[vn],
-                base=bar.base,
+                y=values,
+                base=effective_base,
                 marker_color=color,
                 width=width,
                 showlegend=vn not in legend_vars
             )
             legend_vars.add(vn)
-            bar.base += bar.dir * bar.projects[vn]
+            bar.pos_base += values.clip(lower=0)
+            bar.neg_base += values.clip(upper=0)
 
         if bar.linecolor:
+            color = '#D81B60' if bar.name == 'Vorhaben' else 'black'
             fig.add_scatter(
                 x=[bar.projects['Period'].to_list(), [bar.name for _ in years]],
-                y=bar.base,
-                mode='lines',
-                line=dict(color=bar.linecolor, width=2, dash='solid'),
+                y=bar.pos_base + bar.neg_base,
+                mode='lines+markers',
+                line=dict(color=color, width=2, dash='solid'),
                 showlegend=False,
             )
 
