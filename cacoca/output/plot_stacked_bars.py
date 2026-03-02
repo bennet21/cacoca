@@ -26,7 +26,7 @@ colors = {
 
 def plot_stacked_bars_multi(projects: pd.DataFrame, config: dict, project_names: list[str],
                       project_ref: str = None, cost_per: str = 'product',
-                      emission_diff: bool = False):
+                      emission_diff: bool = False, export_csv: bool = False, csv_dir: str = None):
     """
     Plot stacked bar charts for multiple projects and a single reference.
     
@@ -94,6 +94,34 @@ def plot_stacked_bars_multi(projects: pd.DataFrame, config: dict, project_names:
 
     width = 0.9
     fig = pl.graph_objs.Figure()
+
+    # Export CSV if requested (for all projects, only columns that are plotted)
+    if export_csv:
+        # Only include _ref columns for the reference project, and normal columns for the others
+        export_rows = []
+        for pname in project_names:
+            df_proj = projects[projects['Project name'] == pname]
+            if not df_proj.empty:
+                row = df_proj[['Project name', 'Period'] + variables].copy()
+                export_rows.append(row)
+        if project_ref is not None:
+            df_ref = projects[projects['Project name'] == project_ref]
+            if not df_ref.empty:
+                ref_cols = ['Project name', 'Period'] + [vn + '_ref' for vn in variables]
+                row = df_ref[ref_cols].copy()
+                # Rename _ref columns to match normal variable names for clarity
+                row = row.rename(columns={vn + '_ref': vn for vn in variables})
+                export_rows.append(row)
+        if export_rows:
+            export_df = pd.concat(export_rows, ignore_index=True)
+            filename = f'stacked_bars_multi_{len(project_names)}_projects'
+            if project_ref is not None:
+                filename += f'_ref_{project_ref}'
+            filename += '.csv'
+            if csv_dir is not None:
+                import os
+                filename = os.path.join(csv_dir, filename)
+            export_df.to_csv(filename, index=False)
 
     def yzero():
         return 0. * projects['CAPEX annuity']
@@ -269,7 +297,7 @@ def plot_stacked_bars_multi(projects: pd.DataFrame, config: dict, project_names:
     show_and_save(fig, config, filename)
 
 def plot_stacked_bars(projects: pd.DataFrame, config: dict, project_name: str,
-                      cost_per: str = 'product', emission_diff: bool = False):
+                      cost_per: str = 'product', emission_diff: bool = False, export_csv: bool = False, csv_dir: str = None):
 
     if cost_per == 'product':
         yunit = '€/t Produkt'
@@ -315,6 +343,17 @@ def plot_stacked_bars(projects: pd.DataFrame, config: dict, project_name: str,
     variables = [vn for vn in variables if max(pmax[vn], pmax[vn + '_ref']) > 1.e-6]
 
     width = 0.9
+
+    # Export CSV if requested (only columns that are plotted)
+    if export_csv:
+        export_cols = ['Project name', 'Period'] + variables + [vn + '_ref' for vn in variables]
+        export_df = projects[export_cols].copy()
+        export_df = export_df.loc[:, (export_df != 0).any(axis=0)]
+        filename = f'stacked_bars_{project_name}.csv'
+        if csv_dir is not None:
+            import os
+            filename = os.path.join(csv_dir, filename)
+        export_df.to_csv(filename, index=False)
 
     fig = pl.graph_objs.Figure()
 
